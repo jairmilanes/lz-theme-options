@@ -1,0 +1,54 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: LZ Theme Options 1.0\n"
+"POT-Creation-Date: 2014-01-19 15:05-0300\n"
+"PO-Revision-Date: 2014-01-19 15:16-0300\n"
+"Last-Translator: Jair Milanes <weblayoutz@gmail.com>\n"
+"Language-Team: Jair Milanes Junior <weblayoutz@gmail.com>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;_e;_m\n"
+"X-Poedit-Basepath: E:\\Servidor\\Zend\\Apache2\\htdocs\\DEVELOPMENT"
+"\\bazaarDelas\\oc-content\\plugins\\lz_theme_options\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: builder.php:228
+msgid "There were some errors in the form."
+msgstr "Erros foram encontrados no formulário."
+
+#: builder.php:235
+msgid "Could not sav to database."
+msgstr "Não foi possível salvar suas configurações."
+
+#: builder.php:236
+msgid "Theme options updated!"
+msgstr "Tema atualizado com sucesso!"
+
+#: builder.php:305
+msgid "File already exists, try another file or change the filename."
+msgstr ""
+"O arquivo enviado já existe, tente outro arquivo ou altere o nome do arquivo "
+"e tente novamente."
+
+#: builder.php:389
+msgid "A error ocurred, could not save options."
+msgstr "Ocorreu um erro, não foi possível salvar suas alterações."
+
+#: builder.php:390 builder.php:403
+msgid "Theme options reset completed succecifully!"
+msgstr "Reset efetuado com sucesso!"
+
+#: builder.php:396
+msgid "Ops! Default velues are not valid!"
+msgstr "Ops! Os valores padrão são inválidos!"
+
+#: view/settings.php:8
+msgid "LZ Theme options"
+msgstr "LZ Opções do tema"
+
+#: view/settings.php:36
+msgid "Do you realy wish to reset all your options to it's default values ?"
+msgstr "Você realmente deseja retornar os valores padrões?"

@@ -1,0 +1,767 @@
+/***********************************************************
+OVERWRITES
+***********************************************************/
+#content-page {
+	padding: 0 !important;
+}
+#content-page > div > .grid-first-row,
+#content-page > div > .grid-first-row > .row-wrapper {
+	margin: 0 !important;
+}
+
+/***********************************************************
+LZTO
+***********************************************************/
+#lzto {
+	width: 100%;
+	height: 100%;
+	float: left;
+	position: relative;
+	box-sizing: border-box;
+	overflow: hidden;
+	-webkit-transition: all 150ms linear;
+	-moz-transition: all 150ms linear;
+	-o-transition: all 150ms linear;
+	-ms-transition: all 150ms linear;
+	transition: all 150ms linear;
+}
+#lzto .canvas {
+	width: 80%;
+	height: 100%;
+	margin-left: 20%;
+	overflow: hidden;
+}
+#lzto .canvas iframe {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+#lzto .menu {
+	width: 20%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	background: #666;
+}
+#lzto .menu h2 {
+	text-align: center;
+	font-size: 16px;
+	color: #222;
+	margin: 0;
+	padding-top: 10px;
+	background: #666 url( ../img/gear-icon.png ) no-repeat 100% center;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #555;
+	font-weight: normal;
+	text-shadow: 0 1px 1px #888;
+	text-transform:uppercase
+}
+#lzto .menu .menu_container > ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+#lzto .menu .menu_container > ul > li {
+	padding: 0;
+	display: block;
+	float: left;
+	width: 100%;
+}
+#lzto .menu .menu_container > ul > li > a {
+	display: block;
+	width: 90%;
+	float: left;
+	text-align: right;
+	padding-right: 10%;
+	color: #ccc;
+	font-size: 14px;
+	line-height: 45px;
+	height: 45px;
+	border-bottom: 1px solid #555;
+	border-top: 1px solid #777;
+	-webkit-text-shadow: 0 1px 1px #333;
+	-moz-text-shadow: 0 1px 1px #333;
+	text-shadow: 0 1px 1px #333;
+	-webkit-transition: all 100ms linear;
+    -moz-transition: all 100ms linear;
+    -o-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+	position: relative;
+}
+
+#lzto .menu .menu_container > ul > li > a > span {
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 25px;
+	height: 45px;
+	width: 25px;
+	background: url(../img/arrow-right-icon.png) no-repeat center center;
+	-webkit-transition: all 100ms linear;
+    -moz-transition: all 100ms linear;
+    -o-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+	opacity: 0;
+}
+#lzto .menu .menu_container > ul > li:hover > a {
+	color: #fff;
+	text-decoration:  none;
+	background: #777;
+	width: 85%;
+	padding-right: 15%;
+}
+#lzto .menu .menu_container > ul > li:hover > a > span {
+	right: 3px;
+	opacity: 1;
+}
+#lzto .menu .menu_container > ul > li > div {
+	display: block;
+	bottom:  45px;
+	position: absolute;
+	top: 0;
+	left: -25%;
+	opacity: 0;
+	background: #555;
+	/* border-right: 3px solid #32C9D9; */
+	-webkit-transition: all 200ms ease-in;
+    -moz-transition: all 200ms ease-in;
+    -o-transition: all 200ms ease-in;
+    -ms-transition: all 200ms ease-in;
+    transition: all 200ms ease-in;
+	visibility: hidden;
+}
+#lzto .menu .menu_container > ul > li > div.active {
+	left: 0;
+	opacity: 1;
+	visibility: visible;
+}
+#lzto .menu .menu_container > ul > li > div h3 {
+	height: 35px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	color: #444;
+	margin:  0;
+	font-size:  16px;
+	line-height:  35px;
+	width:  85%;
+	padding-left: 13%;
+	text-align:  left;
+	font-weight:  normal;
+	text-shadow: 1px 1px 1px #E1EEEF;
+	background: #32C9D9 url( ../img/menu-icon.png ) no-repeat 0 center;
+}
+#lzto .menu .menu_container > ul > li .description {
+	display: block;
+	height: 20px;
+	width: 20px;
+	position: absolute;
+	right: 5px;
+	top: 5px;	
+	background: url(../img/info-icon.png) no-repeat center center;
+	cursor: pointer;
+}
+#lzto .menu > .close_btn {
+	position: absolute;
+	top: 0;
+	right: -50px;
+	opacity: 0;
+	height: 35px;
+	width: 35px;
+	background: #32C9D9;
+	-webkit-transition: all 200ms linear;
+    -moz-transition: all 200ms linear;
+    -o-transition: all 200ms linear;
+    -ms-transition: all 200ms linear;
+    transition: all 200ms linear;
+	visibility: hidden;
+	background-image: url(../img/close-icon.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	z-index: 10;
+}
+#lzto .menu > .close_btn.active {
+	visibility: visible;
+	right: -25px;
+	opacity: 1;
+	cursor:  pointer;
+}
+#lzto .menu_form {
+	position: relative;
+	width: 100%;
+	padding: 0;
+	z-index: 10;
+}
+#lzto .menu_form label {
+	display: block;
+	margin-bottom: 5px;
+	color: #ccc;
+	font-size: 12px;
+}
+#lzto .menu_form input {
+	display: block;
+	width: 100%;
+	height: 35px;
+	color: #fff;
+	padding: 0 3%;
+	background-color: #444;
+	border: 1px solid #666;
+}
+#lzto .menu_form input:focus {
+	background-color: #fff;
+	border: 1px solid #fff;
+	color: #333;
+}
+#lzto .menu_form .select-box {
+	width: 100%;	
+}
+#lzto .menu_form .select-box > a {
+	width: 80%;
+	padding: 5px 15% 7px 5%;
+}
+#lzto .menu_form .select-box select {
+	width: 100%;
+}
+#lzto .menu_form textarea {
+	background: #444;
+	border: 1px solid #666;
+	width: 94%;
+	padding: 3%;
+	color: #fff;
+	min-height: 100px;
+}
+#lzto .menu_form .form-group-container {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	top: 35px;
+	overflow-y: scroll;
+	width: 100%;
+	overflow-x: hidden;
+}
+
+#lzto .menu_form .form-group {
+	border-bottom: 1px solid #444;
+	border-top: 1px solid #666;
+	padding: 5%;
+	float: left;
+	width: 90%;
+	position: relative;
+}
+#lzto .menu_form .form-group:first-child {
+	border-top: none;
+}
+#lzto .menu_form .form-group:last-child {
+	border-bottom: none;
+}
+#lzto .menu_form .form-group input[type="text"],
+#lzto .menu_form .form-group input[type="email"],
+#lzto .menu_form .form-group input[type="number"],
+#lzto .menu_form .form-group input[type="url"] {
+	display: inline-block;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	vertical-align: top;	
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#lzto .menu_form .form-group.text {
+	
+}
+#lzto .menu_form .form-group.checkbox > label {
+	float: left;
+	width: 100%;	
+	line-height: 25px;
+}
+#lzto .menu_form .form-group.checkbox input {
+	float: left;
+	width: 20px;
+	height: 20px;
+	margin: 0;
+	margin-right: 10px;
+}
+#lzto .menu_form .form-group.radio label {
+	float: left;
+	margin-right: 10px;
+	line-height: 25px;
+}
+#lzto .menu_form .form-group.radio input {
+	float: left;
+	width: 20px;
+	height: 20px;
+	margin: 0;
+	margin-right: 5px;
+}
+#lzto .menu_form .form-group.select .select-box {
+	float: left;
+	width: 95%;
+	margin: 0;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#lzto .menu_form .form-group.select .select-box > a {
+	background-image: linear-gradient(bottom,#333 0,#666 100%);
+	background-image: -o-linear-gradient(bottom,#333 0,#666 100%);
+	background-image: -moz-linear-gradient(bottom,#333 0,#666 100%);
+	background-image: -webkit-linear-gradient(bottom,#333 0,#666 100%);
+	background-image: -ms-linear-gradient(bottom,#333 0,#666 100%);
+	background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0,#333),color-stop(1,#666));
+	border: 1px solid #666;
+	height: 20px;
+	line-height: 30px;
+}
+#lzto .menu_form .form-group.select .select-box select {
+	width: 100%;	
+}
+#lzto .menu_form .form-group.file input {
+	float: left;
+	padding: 5px 5%;
+	height: auto;
+	width: 90%;
+}
+
+
+#lzto .menu_form fieldset {
+	width: 95%;
+	margin: 0;
+	padding: 0;
+}
+#lzto .menu_form fieldset > .fieldset_inner {
+	width: 94%;
+	float: left;
+	height: 25px;
+	padding: 3%;
+	margin: 2%;
+	overflow: hidden;
+	border: 1px solid #666;
+	-webkit-transition: all 200ms linear;
+    -moz-transition: all 200ms linear;
+    -o-transition: all 200ms linear;
+    -ms-transition: all 200ms linear;
+	 transition: all 200ms linear;
+}
+#lzto .menu_form fieldset > .fieldset_inner .form-group {
+	width: 100%;
+	padding: 5% 0;
+}
+#lzto .menu_form fieldset legend {
+	display: block;
+	width: 100%;
+	font-size: 13px;
+	color: #ccc;
+	line-height: 35px;
+	height: 35px;
+	font-weight: 700;
+	-webkit-transition: all 200ms linear;
+    -moz-transition: all 200ms linear;
+    -o-transition: all 200ms linear;
+    -ms-transition: all 200ms linear;
+    transition: all 200ms linear;
+	cursor: pointer;
+}
+#lzto .menu_form fieldset > .form-group {
+	padding: 5% 0;
+	width: 100%;
+}
+#lzto .menu_form fieldset.open > div {
+	height: auto;
+	border-color: #32C9D9;	
+}
+#lzto .menu_form fieldset.open legend {
+	font-size: 11px;
+}
+#lzto .menu_form fieldset:hover > div {
+	border-color: #32C9D9;
+}
+#lzto .menu_form fieldset:hover legend {
+	color: #fff ;
+}
+
+#lzto .menu_form .error {
+	border-color: #F00;
+}
+#lzto .menu_form p.error {
+	font-size: 11px; text-align: right; color: #F00; margin: 0; margin-top: 4px;
+}
+
+
+
+
+
+
+
+
+
+
+#lzto .menu .menu_action {
+	height: 45px;
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background: #444;	
+}
+#lzto .menu .menu_action > input[type="submit"] {
+	float: right;	
+	margin: 5px 5px 0 0;
+}
+#lzto .menu .menu_action > input[type="reset"] {
+	float: left;	
+	margin: 5px 0 0 5px;
+}
+#lzto .menu .menu_action > a {
+	display: block;
+	float: left;
+	margin-left: 15px;
+	line-height: 35px;
+	margin-top: 5px;
+	color: #ccc;
+	font-size: 12px;
+}
+#lzto .menu .menu_action > a > img {
+	display: block;
+	float: left;
+	width: 16px;
+	margin-top: 9px;
+	margin-right: 5px;	
+}
+
+#lzto .info {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 15%;
+	height: 100%;
+	background: #21A3B1;
+	color: #fff;
+	-webkit-transition: all 200ms linear;
+    -moz-transition: all 200ms linear;
+    -o-transition: all 200ms linear;
+    -ms-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+#lzto .info.active {
+	left: 15%;	
+}
+#lzto .info > .inner {
+	position: relative;
+	top: 50%;
+	margin: 0 15px 0 15px;
+	margin-top: -50%;
+	
+}
+
+
+#lzto .upload_button .qq-upload-button {
+	margin: 0 auto;
+}
+#lzto .upload_button .qq-upload-list {
+	width: 100%;
+	float: left;
+	clear: both;
+	margin: 0;
+	padding: 0;
+	margin-top: 10px;
+}
+#lzto .upload_button .qq-upload-list > li {
+	display: inline-block;
+	width: 100%;
+	float: left;
+}
+
+#lzto .upload_button li {
+	width: 100%;
+	padding: 0; 
+	background: #333;
+}
+#lzto .upload_button li > span {
+	display: block;	
+}
+#lzto .upload_button .qq-progress-bar-container-selector {
+	width: 100%;
+	float: left;
+	clear: both;
+	background: #555;
+	position: relative;
+}
+#lzto .upload_button .qq-progress-bar-container-selector .qq-progress-bar {
+	height: 3px;
+	width: 100%;
+	float: left;
+	background: #0C3;	
+	margin-top: 17px;
+}
+#lzto .upload_button .qq-progress-bar-container-selector .qq-upload-status-text {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	color: #ccc;
+	font-size: 11px;
+	line-height: 12px;
+}
+
+#lzto .upload_button li > .qq-upload-file {
+	color: #ccc;
+	font-size: 11px;
+	float: left;
+	width: 60%;
+	word-wrap: break-word;
+	padding-left: 2%;
+	padding-top: 3px;
+}
+
+#lzto .upload_button li > .qq-upload-size {
+	color: #00BED6;
+	font-size: 11px;
+	float: left;
+	widht: 20%;
+	margin-top: 3px;
+}
+#lzto .upload_button li > a {
+	display: block;
+	float: right;
+	width: 15px;
+	height: 15px;
+	margin-top: 5px;
+	margin-right: 5px;
+}
+#lzto .upload_button li > a.qq-upload-delete {
+	width: 15px;
+	height: 15px;
+	background: url( ../img/close-icon15.png ) no-repeat center center;	
+}
+#lzto .upload_button li > .thumb {
+	width: 100%;
+	clear: both;
+	margin-top: 5px;
+	border-top: 1px solid #444;
+}
+#lzto .upload_button li > .thumb > img {
+	max-width: 90%;
+	display: block;
+	margin: 10px auto;	
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#lzto .menu_form .texture_field,
+#lzto .menu_form .color_field,
+#lzto .menu_form .texture_field > ul,
+#lzto .menu_form .color_field > ul {
+	float: left;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+
+#lzto .menu_form .texture_field.small li,
+#lzto .menu_form .color_field.small li {
+	display: inline-block;
+	float: left;
+	width: 27px;
+	height: 27px;
+	margin: 2px;
+}
+#lzto .menu_form .texture_field.small li span,
+#lzto .menu_form .color_field.small li span {
+	display: block;
+	height: 25px;
+	width: 25px;
+	margin: 2px;
+	background: #666;
+	-webkit-transition: all 100ms linear;
+    -moz-transition: all 100ms linear;
+    -o-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+}
+#lzto .menu_form .texture_field.small li.active span,
+#lzto .menu_form .texture_field.small li span:hover,
+#lzto .menu_form .color_field.small li.active span,
+#lzto .menu_form .color_field.small li span:hover {
+	height: 26px;
+	width: 26px;
+	margin: 0;
+	cursor: pointer;
+	border: 1px solid #fff;
+}
+#lzto .menu_form .texture_field.medium li,
+#lzto .menu_form .color_field.medium li {
+	display: inline-block;
+	float: left;
+	width: 37px;
+	height: 37px;
+	margin: 2px;
+}
+#lzto .menu_form .texture_field.medium li span,
+#lzto .menu_form .color_field.medium li span {
+	display: block;
+	height: 35px;
+	width: 35px;
+	margin: 2px;
+	background: #666;
+	-webkit-transition: all 100ms linear;
+    -moz-transition: all 100ms linear;
+    -o-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+}
+#lzto .menu_form .texture_field.medium li.active span,
+#lzto .menu_form .texture_field.medium li span:hover,
+#lzto .menu_form .color_field.medium li.active span,
+#lzto .menu_form .color_field.medium li span:hover {
+	height: 36px;
+	width: 36px;
+	margin: 0;
+	cursor: pointer;
+	border: 1px solid #fff;
+}
+
+#lzto .menu_form .texture_field.large li,
+#lzto .menu_form .color_field.large li {
+	display: inline-block;
+	float: left;
+	width: 57px;
+	height: 57px;
+	margin: 2px;
+}
+#lzto .menu_form .texture_field.large li span,
+#lzto .menu_form .color_field.large li span {
+	display: block;
+	height: 55px;
+	width: 55px;
+	margin: 2px;
+	background: #666;
+	-webkit-transition: all 100ms linear;
+    -moz-transition: all 100ms linear;
+    -o-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+}
+#lzto .menu_form .texture_field.large li.active span,
+#lzto .menu_form .texture_field.large li span:hover,
+#lzto .menu_form .color_field.large li.active span,
+#lzto .menu_form .color_field.large li span:hover {
+	height: 56px;
+	width: 56px;
+	margin: 0;
+	cursor: pointer;
+	border: 1px solid #fff;
+}
+
+
+
+
+#lzto .menu_form .sliderange_field > input {
+	width: 40%;
+	float: left;
+	margin: 0 5%;	
+}
+#lzto .menu_form .sliderange_field > div.slider {
+	margin-top: 7px;	
+}
+#lzto .menu_form .sliderange_field > input.range_min,
+#lzto .menu_form .sliderange_field > input.range_max {
+	width: 50%;
+	margin: 0 auto;
+	float: none;
+}
+
+
+#lzto .ui-slider-range {
+	background: #00BED6 !important;	
+}
+
+
+#lzto .upload_button .qq-upload-fail .qq-progress-bar-container-selector { height: 20px; }
+#lzto .upload_button .qq-upload-fail .qq-upload-file { color: #E25252; }
+#lzto .upload_button .qq-upload-fail .qq-upload-size { color: #E25252; }
+#lzto .upload_button .qq-upload-fail .qq-upload-delete,
+#lzto .upload_button .qq-upload-fail .thumb { display: none; }
+
+
+/*************************************************************
+FULL SCREEN
+*************************************************************/
+#sidebar.full_screen,
+#header.full_screen,
+#content-head.full_screen,
+#footer.full_screen {
+	-webkit-transition: all 400ms linear;
+	-moz-transition: all 400ms linear;
+	-o-transition: all 400ms linear;
+	-ms-transition: all 400ms linear;
+	transition: all 400ms linear;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+	opacity: 0;
+}
+#footer.full_screen > a {
+	display: none;
+}
+#header.full_screen,
+#content-head.full_screen,
+#footer.full_screen {
+	height: 0;
+	
+}
+#content.full_screen {
+	padding: 0;
+	margin: 0;
+}
+#sidebar.full_screen {
+	width: 0;
+}
+
+@media (min-width: 1280px) {
+	#lzto .canvas {
+		width: 85%;
+		height: 100%;
+		margin-left: 15%;
+	}
+	#lzto .menu {
+		width: 15%;
+		height: 100%;
+
+	}
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+	
+}
+
+@media (max-width: 767px) {
+	#lzto .canvas {
+		width: 80%;
+		height: 100%;
+		margin-left: 20%;
+		overflow: hidden;
+	}
+	#lzto .canvas iframe {
+		width: 100%;
+		height: 100%;
+		border: none;
+	}
+	#lzto .menu {
+		width: 20%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		border-right: 2px solid #efefef;
+		z-index: 1;
+	}
+}
