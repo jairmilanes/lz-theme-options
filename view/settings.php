@@ -44,7 +44,7 @@
 				<input type="reset" value="reset" class="btn"
 					data-url="<?php echo osc_ajax_hook_url( 'lzto_reset_form' ); ?>"
 						data-confirm="<?php _e('Do you realy wish to reset all your options to it\'s default values ?','lz_theme_options')?>"/>
-						<a href="#" id="full_screen_btn"><img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/expand_icon_green.png';?>" width="24"/> Full screen</a>
+						<a href="#" id="full_screen_btn"><img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/expand_icon_green.png';?>" width="24"/> <span>Full screen</span></a>
 				
 				<input type="submit" value="save" class="btn btn-submit"/>
 			</div>
@@ -82,7 +82,7 @@ $(document).ready(function(){
 			$('#sidebar').addClass('full_screen');
 			$('#content').addClass('full_screen');
 			$('#footer').addClass('full_screen');
-			$(this).html('<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/expand_icon_gray.png';?>" width="24"/> Exit full screen');
+			$(this).html('<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/expand_icon_gray.png';?>" width="24"/> <span>Exit full screen</span>');
 
 		} else {
 			var i = 0;

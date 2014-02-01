@@ -737,22 +737,6 @@ FULL SCREEN
 	width: 0;
 }
 
-@media (min-width: 1280px) {
-	#lzto .canvas {
-		width: 85%;
-		height: 100%;
-		margin-left: 15%;
-	}
-	#lzto .menu {
-		width: 15%;
-		height: 100%;
-
-	}
-}
-
-@media (min-width: 768px) and (max-width: 979px) {
-	
-}
 
 @media (max-width: 767px) {
 	#lzto .canvas {
@@ -774,5 +758,31 @@ FULL SCREEN
 		left: 0;
 		border-right: 2px solid #efefef;
 		z-index: 1;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+	
+}
+
+@media (min-width: 979px) and (max-width: 1280px) {
+	
+}
+
+@media (min-width: 1280px) {
+	#lzto .canvas {
+		width: 85%;
+		height: 100%;
+		margin-left: 15%;
+	}
+	#lzto .menu {
+		width: 15%;
+		height: 100%;
+
+	}
+}
+@media (max-width: 1366px) {
+	#lzto #full_screen_btn > span {
+		display: none;
 	}
 }

@@ -70,16 +70,12 @@ class Builder {
 			$forms = $this->form->getAllInstances();
 			
 			//printR($forms,true);
-			
 			foreach( $forms as $parent => $form ){
 				$name = $form->getName();
 				$group = $form->getGroup();
 				if( !empty($group) ){
 					if( isset( $data[$group][$parent] ) ){
 						$pars = array_filter( $data[$group][$parent] );
-						
-						
-						
 						if( !empty($pars) ){
 							$form->addData( $pars );
 						}
@@ -118,7 +114,7 @@ class Builder {
 	 * @param string $field Name of the field
 	 */
 	public function getOption( $group, $field ){
-		return '';//$this->options->getOption( $field, $group );
+		return $this->options->getOption( $field, $group );
 	}
 
 	public function getGroupName( $group ){
