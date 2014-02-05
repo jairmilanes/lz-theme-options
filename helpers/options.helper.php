@@ -110,7 +110,7 @@ class OptionsHelper {
 			case 'googleFont':
 				$method = 'setOptionTypeOptions';
 				break;
-			case 'sliderange':
+			case 'slideRange':
 				$method = 'setOptionTypeSlideRange';
 				break;
 			case 'ajaxFile':

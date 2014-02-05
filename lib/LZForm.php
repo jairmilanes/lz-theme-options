@@ -160,7 +160,9 @@ class LZForm
         }
 
         $field_name = Useful::slugify($field_name, '_');
-
+		
+        
+        
         if (isset($this->fields->$field_name) && !$overwrite) {
             return false;
         }
@@ -181,6 +183,22 @@ class LZForm
     }
 
     protected function getFieldTypeInstance( $type, $label, $attributes = array() ){
+    	$file = $this->base_path.'Field'.DIRECTORY_SEPARATOR.ucfirst($type).'.php';
+    	$namespace = "Lib\\Field\\" . ucfirst($type);
+    	
+    	if( file_exists( $file ) ){
+    		if( !class_exists($namespace) ){
+    			require $file;
+    		}
+    		//var_dump($namespace);
+    		return new $namespace($label, $attributes);
+    	}
+    	 
+    	return false;
+    	/*
+    	
+    	
+    	
     	$file = $this->base_path.'Field'.DIRECTORY_SEPARATOR.$type.'.php';
     	if( file_exists( $file ) ){
 			require_once $file;
@@ -189,6 +207,7 @@ class LZForm
 			return new $namespace($label, $attributes);
     	}
     	return false;
+    	*/
     }
 
     /**
