@@ -1,7 +1,7 @@
 <?php
 namespace Lib\Field;
 
-class TextArea extends Text
+class Textarea extends Text
 {
 	public $field_type = 'textarea';
 	

@@ -47,8 +47,9 @@ class OptionsHelper {
 			if( !isset($options['options']) || !is_array($options['options'])){
 				$options['options'] = array();
 			}
+			//var_dump($title);echo '<br/>';
 			$method = $this->findFieldType( $title, $options, $group_slug, $group_parent );
-
+			//var_dump($method);echo '<br/>';echo '<br/>';echo '<br/>';
 			if( method_exists( $this, $method ) ){
 
 				if( !empty($group_parent) ){
@@ -447,7 +448,7 @@ class OptionsHelper {
 	protected function setOptionTypeOptions( $type, $title, array $data, $group_slug, $group_parent = null ){
 		return Lib\LZForm::getInstance( $group_slug )->addField( $title, $type, array(
 				'id'			=> 'field_'.strtolower( $title ),
-				'class' 		=> 'text_field',
+				'class' 		=> 'options_field',
 				'required' 		=> @$data['required'],
 				'label'			=> @$data['label'],
 				'false_values'  => array(),
