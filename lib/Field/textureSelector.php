@@ -21,7 +21,7 @@ class TextureSelector extends Options
             $field .= sprintf('<li class="texture %s" %s><span style="background: url( %s ) repeat top left;" data-value="%s"></span></li>', ((string) $key === (string) $value ? 'active' : ''), $attributes['string'], osc_current_web_theme_url($attributes['val']), $key);
         }
         $field .= '</ul>';
-        $field .= sprintf('<input type="hidden" name="%2$s[%3$s][%1$s]" id="%2$s_%3$s_%1$s">', $name, $form_name, $group);
+        $field .= sprintf('<input type="hidden" name="%2$s[%3$s][%1$s]" id="%2$s_%3$s_%1$s" value="%4$s">', $name, $form_name, $group, $value);
         $field .= '</div>';
         
         $class = !empty($this->error) ? 'error choice_label' : 'choice_label';

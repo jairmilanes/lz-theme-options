@@ -39,7 +39,10 @@ class SlideRange extends Text
     	if( !isset($this->attributes['type']) || empty($this->attributes['type']) ){
     		$this->attributes['type'] = true;
     	}
-    	$field  = '<div class="sliderange_field">';
+    	if( !isset($this->attributes['step']) || empty($this->attributes['step']) ){
+    		$this->attributes['type'] = 5;
+    	}
+    	$field  = sprintf('<div class="sliderange_field" data-step="%s">', $this->attributes['step'] );
     	switch( $this->attributes['type'] ){
     		case "min":
     			$field .= sprintf( '<input readonly type="text" class="range_min" name="%2$s[%3$s][%1$s][max]" id="%2$s_%3$s_%1$s_max" value="%4$s">', $name, $form_name, $group, @$value['max']);

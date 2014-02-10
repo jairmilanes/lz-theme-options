@@ -111,6 +111,9 @@ class OptionsHelper {
 			case 'googleFont':
 				$method = 'setOptionTypeOptions';
 				break;
+			case 'toggleSwitch':
+				$method = 'setOptionTypeToggleSwitch';
+				break;
 			case 'slideRange':
 				$method = 'setOptionTypeSlideRange';
 				break;
@@ -415,7 +418,8 @@ class OptionsHelper {
 				'max' 			=> @$data['max'],
 				'min' 			=> @$data['min'],
 				'type' 			=> @$data['type'],
-				'value'			=> @$data['value']
+				'value'			=> @$data['value'],
+				'step'			=> @$data['step']
 		));
 	}
 
@@ -448,7 +452,7 @@ class OptionsHelper {
 	protected function setOptionTypeOptions( $type, $title, array $data, $group_slug, $group_parent = null ){
 		return Lib\LZForm::getInstance( $group_slug )->addField( $title, $type, array(
 				'id'			=> 'field_'.strtolower( $title ),
-				'class' 		=> 'options_field',
+				'class' 		=> 'options_field '.@$data['class'],
 				'required' 		=> @$data['required'],
 				'label'			=> @$data['label'],
 				'false_values'  => array(),
@@ -457,6 +461,18 @@ class OptionsHelper {
 				'false_values'  => @$data['false_values'],
 				'option_size'   => @$data['option_size']
 		));
+	}
+	
+	/**
+	 * Creates a toggleSwtch type of field
+	 *
+	 * @param string $type
+	 * @param string $title
+	 * @param array $data
+	 */
+	protected function setOptionTypeToggleSwitch( $type = 'checkbox', $title, array $data, $group_slug, $group_parent = null ){
+		$data['class'] = 'toggleSwitch';
+		$this->setOptionTypeOptions('checkbox', $title, $data, $group_slug, $group_parent);
 	}
 
 	/**

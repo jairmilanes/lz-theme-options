@@ -185,31 +185,13 @@ class LZForm
     protected function getFieldTypeInstance( $type, $label, $attributes = array() ){
     	$file = $this->base_path.'Field'.DIRECTORY_SEPARATOR.ucfirst($type).'.php';
     	$namespace = "Lib\\Field\\" . ucfirst($type);
-    	/*var_dump($namespace);echo '<br/>';
-    	var_dump($file);echo '<br/>';
-    	var_dump(file_exists( $file ));echo '<br/>';*/
     	if( file_exists( $file ) ){
     		if( !class_exists($namespace) ){
     			require $file;
     		}
-    		//var_dump($namespace);
     		return new $namespace($label, $attributes);
     	}
-    	 
     	return false;
-    	/*
-    	
-    	
-    	
-    	$file = $this->base_path.'Field'.DIRECTORY_SEPARATOR.$type.'.php';
-    	if( file_exists( $file ) ){
-			require_once $file;
-			$class = ucfirst( strtolower($type) );
-			$namespace = "Lib\\Field\\" . ucfirst($type);
-			return new $namespace($label, $attributes);
-    	}
-    	return false;
-    	*/
     }
 
     /**

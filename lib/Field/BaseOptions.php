@@ -6,7 +6,7 @@ use Lib\Field;
 
 abstract class BaseOptions extends Field
 {
-
+	protected $attributes = array();
     protected $label, $options = array();
     protected $required = true;
     protected $false_values = array();
@@ -24,6 +24,7 @@ abstract class BaseOptions extends Field
         if (isset($attributes['false_values'])) {
             $this->false_values = $attributes['false_values'];
         }
+        $this->attributes = $attributes;
     }
 
     public function getAttributeString($val)

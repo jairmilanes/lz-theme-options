@@ -150,12 +150,15 @@ function lzto_admin_header(){
 	if( Params::getParam('page') == 'plugins' && Params::getParam('file') == 'lz_theme_options/view/settings.php' ){
 		$lzto_general_settings = lzto_hasOption('general_settings', 'theme_color');
 		if( !empty($lzto_general_settings)){ 
-			osc_enqueue_style('lz_options', osc_plugin_url('lz_theme_options/assets').'assets/js/plugins/icheck/skins/square/'.$lzto_general_settings.'.css' );
+			osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/square/'.$lzto_general_settings.'.css' );
 		} else {
-			osc_enqueue_style('lz_options', osc_plugin_url('lz_theme_options/assets').'assets/js/plugins/icheck/skins/square/aero.css' );
+			osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/square/aero.css' );
 		}
+		osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.css' );
+		osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/themes/toggles-dark.css' );
 		osc_enqueue_style('lz_options', osc_plugin_url('lz_theme_options/assets').'assets/css/lz_options.css' );
 		osc_enqueue_style('colpick', osc_plugin_url('lz_theme_options/assets').'assets/css/colpick.css' );
+		osc_enqueue_script('toggles');
 		osc_enqueue_script('jquery-fineuploader');
 		osc_enqueue_script('colpick');
 		osc_enqueue_script('lz_theme_options');
@@ -245,6 +248,8 @@ if( OSCLASS_VERSION < 3.3 ){
 	osc_register_script('jquery-fineuploader', osc_plugin_url('lz_theme_options/assets').'assets/js/fineuploader/jquery.fineuploader.min.js' );
 }
 osc_register_script('colpick', osc_plugin_url('lz_theme_options/assets').'assets/js/colpick.js' );
+osc_register_script('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/jquery.icheck.min.js' );
+osc_register_script('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.min.js');
 osc_register_script('lz_theme_options', osc_plugin_url('lz_theme_options/assets').'assets/js/lz_theme_options.js' );
 
 lzto_init();

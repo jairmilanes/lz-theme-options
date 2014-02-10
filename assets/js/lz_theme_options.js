@@ -136,6 +136,34 @@ $(document).ready(function(){
 	});
 	
 	/***************************************************************************
+	 * THEME OPTIONS SWICHS
+	 **************************************************************************/
+	if( $('#lzto input.toggleSwitch').length > 0 ){
+		$('#lzto input.toggleSwitch').each( function(index, elem){
+			$(elem).parent().addClass('toggle-dark');
+			var id = 'switch_'+$(elem).attr( 'id' );
+			var template = '<div id="'+id+'" data-checkbox="'+$(elem).attr( 'id' )+'"></div>';
+			$(elem).before( template );
+			$(elem).css( 'display','none' ).parent().find('label').css( 'display','none' );
+			var data = { 
+				checkbox: $(elem),
+				width:    120, // width used if not set in css
+   				height:   30, // height if not set in css
+    			type:     'select',
+				on:       $(elem).is(':checked'),
+				text: {
+				  on: 'ON', // text for the ON position
+				  off: 'OFF' // and off
+				}
+			};
+			$('#'+id).toggles( data ).on('toggle', function (e, active) {
+				$(elem).prop('checked', active );
+			});
+		});
+	}
+	
+	
+	/***************************************************************************
 	 * THEME OPTIONS DESCRIPTIONS
 	 **************************************************************************/
 	 $('#lzto .menu_form fieldset').each( function(index, elem){
@@ -162,13 +190,13 @@ $(document).ready(function(){
 			  var type = slider.data('type');
 			  var smin = slider.data('min');
 			  var smax = slider.data('max');
-				
+			  var step = $(elem).data('step');
 			  var val_min = parseInt( $('input#'+slider.attr('id')+"_min").val() );
 			  var val_max = parseInt( $('input#'+slider.attr('id')+"_max").val() );
 			  
 			  if( !val_min ) val_min = 0;
 		      if( !val_max ) val_max = 10000;
- console.log(type);
+
 			  switch( type ){
 					case "min":
 					var options = {
@@ -176,6 +204,7 @@ $(document).ready(function(){
 						  min: smin,
 						  max: smax,
 						  value: val_max,
+						  step: step,
 						  slide: function( event, ui ) {
 							 $('input#'+slider.attr('id')+"_max").val(ui.value);
 						  }
@@ -187,6 +216,7 @@ $(document).ready(function(){
 						  min: smin,
 						  max: smax,
 						  value: val_min,
+						  step: step,
 						  slide: function( event, ui ) {
 							 $('input#'+slider.attr('id')+"_min").val( ui.value );
 						  }
@@ -201,6 +231,7 @@ $(document).ready(function(){
 						  	val_min,
 							val_max
 						  ],
+						  step: step,
 						  slide: function( event, ui ) {
 							  console.log(ui);
 							 $('input#'+slider.attr('id')+"_min").val(ui.values[ 0 ]);
@@ -209,7 +240,6 @@ $(document).ready(function(){
 					  };
 						break; 
 			  }
-			  options.step = 2000;
 			  slider.slider(options);
 
 		  });

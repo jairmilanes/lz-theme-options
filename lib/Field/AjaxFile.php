@@ -115,31 +115,33 @@ class AjaxFile extends Field
 
     public function validate($val)
     {
-        if ($this->required) {
-            if ($val['error'] != 0 || $val['size'] == 0) {
-                $this->error[] = 'is required';
-            }
-        }
-        if ($val['error'] == 0) {
-            if ($val['size'] > $this->max_size) {
-                $this->error[] = sprintf('must be less than %sMb', $this->max_size / 1024 / 1024);
-            }
-            if ($this->type == 'image') {
-                $image = getimagesize($val['tmp_name']);
-                if ($image[0] > $this->width || $image[1] > $this->height) {
-                    $this->error[] = sprintf('must contain an image no more than %s pixels wide and %s pixels high', $this->width, $this->height);
-                }
-                if ($image[0] < $this->min_width || $image[1] < $this->min_height) {
-                    $this->error[] = sprintf('must contain an image at least %s pixels wide and %s pixels high', $this->min_width, $this->min_height);
-                }
-                if (!in_array($image['mime'], $this->mime_types)) {
-                    $this->error[] = $this->error_types[$this->type];
-                }
-            } elseif (!in_array($val['type'], $this->mime_types)) {
-                $this->error[] = $this->error_types[$this->type];
-            }
-        }
-
+    	if( !empty($val) ){
+    	
+	        if ($this->required) {
+	            if ($val['error'] != 0 || $val['size'] == 0) {
+	                $this->error[] = 'is required';
+	            }
+	        }
+	        if ($val['error'] == 0) {
+	            if ($val['size'] > $this->max_size) {
+	                $this->error[] = sprintf('must be less than %sMb', $this->max_size / 1024 / 1024);
+	            }
+	            if ($this->type == 'image') {
+	                $image = getimagesize($val['tmp_name']);
+	                if ($image[0] > $this->width || $image[1] > $this->height) {
+	                    $this->error[] = sprintf('must contain an image no more than %s pixels wide and %s pixels high', $this->width, $this->height);
+	                }
+	                if ($image[0] < $this->min_width || $image[1] < $this->min_height) {
+	                    $this->error[] = sprintf('must contain an image at least %s pixels wide and %s pixels high', $this->min_width, $this->min_height);
+	                }
+	                if (!in_array($image['mime'], $this->mime_types)) {
+	                    $this->error[] = $this->error_types[$this->type];
+	                }
+	            } elseif (!in_array($val['type'], $this->mime_types)) {
+	                $this->error[] = $this->error_types[$this->type];
+	            }
+	        }
+    	}
         return !empty($this->error) ? false : true;
     }
 
