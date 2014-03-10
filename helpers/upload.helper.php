@@ -159,9 +159,15 @@ class UploadHelper {
 	 */
 	public static function getFileByName($field_name, $group){
 		$results 	= array();
-		$file 		= osc_get_preference( osc_current_web_theme().'_'.$group.'_'.$field_name, 'lz_theme_options_uploads' );
 		
-		//var_dump($file);
+		$theme = osc_current_web_theme();
+
+		if( function_exists('lz_demo_selected_theme') ){
+			$theme = lz_demo_selected_theme();
+		}
+
+		$file = osc_get_preference( $theme.'_'.$group.'_'.$field_name, 'lz_theme_options_uploads' );
+
 		if( !empty( $file ) ){
 			$f 				 = explode( '||', $file );
 			$uid 		     = $f[0];
@@ -188,7 +194,7 @@ class UploadHelper {
 			$field_name = Params::getParam('field_name');
 			$group      = Params::getParam('group');
 			$results    = self::getFileByName( $field_name, $group );
-
+		
 			if( !empty($results) ){
 				$files      = Session::newInstance()->_get('ajax_files');
 				if( empty($files)){ $files = array(); }

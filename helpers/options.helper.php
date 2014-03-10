@@ -6,7 +6,6 @@
  */
 class OptionsHelper {
 
-	//protected $data				  = array();
 	protected $groups             = array();
 	protected $fields             = array();
 	protected $db_data			  = array();
@@ -29,7 +28,10 @@ class OptionsHelper {
 			$this->groups[$group_slug] = $group['title'];
 			$this->setOptionsField( $group['fields'], $group_slug );
 		}
-		return;
+		if( empty($this->db_data) ){
+			$this->db_data = $this->default_values;
+		}
+		return true;
 	}
 
 	/**
@@ -47,33 +49,32 @@ class OptionsHelper {
 			if( !isset($options['options']) || !is_array($options['options'])){
 				$options['options'] = array();
 			}
-			//var_dump($title);echo '<br/>';
+
 			$method = $this->findFieldType( $title, $options, $group_slug, $group_parent );
-			//var_dump($method);echo '<br/>';echo '<br/>';echo '<br/>';
+
 			if( method_exists( $this, $method ) ){
 
-				if( !empty($group_parent) ){
-					Lib\LZForm::getInstance( $group_slug )->setGroup($group_parent);
-				}
+				Lib\LZForm::getInstance( $group_slug )->setGroup( $group_parent );
 
 				$this->$method( $options['type'], $title, $options['options'], $group_slug, $group_parent );
 
 				$this->addToFields( $title, $group_slug,  $group_parent );
 
-				$results = array();
 				if( $options['type'] !== 'fieldGroup' ){
 					$this->checkForFiles( $title, $group_slug, $group_parent );
 				}
 
-				if( isset( $options['default'] ) ){
+				if( isset( $options['default'] ) && !empty($options['default']) ){
 					$this->addToDefaults($title, $options['default'], $group_slug, $group_parent );
 				}
 
 				if( isset( $options['description'] ) ){
 					Lib\LZForm::getInstance( $group_slug )->addDescription( $title, $options['description'] );
 				}
+				
 			}
 		}
+		
 		return;
 	}
 
@@ -263,6 +264,10 @@ class OptionsHelper {
 		}
 		return $this->fields;
 	}
+	
+	public function getDefaults(){
+		return $this->default_values;
+	}
 
 	/**
 	 * Gets the group name by it's slug name
@@ -385,7 +390,6 @@ class OptionsHelper {
 	 * @param string $group_parent
 	 */
 	protected function setOptionTypeText( $type, $title, array $data, $group_slug, $group_parent = null ){
-
 		return Lib\LZForm::getInstance( $group_slug )->addField( $title, $type, array(
 				'id'			=> 'field_'.strtolower( $title ),
 				'class' 		=> 'text_field '.@$data['class'],
@@ -413,12 +417,12 @@ class OptionsHelper {
 				'class' 		=> 'text_field '.@$data['class'],
 				'required' 		=> @$data['required'],
 				'label'			=> @$data['label'],
-				'max_length' 	=> @$data['max_length'],
-				'min_length' 	=> @$data['min_length'],
+				//'max_length' 	=> @$data['max_length'],
+				//'min_length' 	=> @$data['min_length'],
 				'max' 			=> @$data['max'],
 				'min' 			=> @$data['min'],
 				'type' 			=> @$data['type'],
-				'value'			=> @$data['value'],
+				//'value'			=> @$data['value'],
 				'step'			=> @$data['step']
 		));
 	}

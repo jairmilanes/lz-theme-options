@@ -1,25 +1,28 @@
-<?php /*
-Plugin Name: Theme options
-Plugin URI: http://www.jmilanes.com.br/
-Description: Theme options plugin
-Version: 1.0
-Author: Jair Milanes Junior
-Author URI: http://www.jmilanes.com.br/
-Short Name: lzto
-Plugin update URI: lzto
+<?php 
+/*
+	Plugin Name: Theme options
+	Plugin URI: http://www.jmilanes.com.br/
+	Description: Theme options plugin
+	Version: 1.0
+	Author: Jair Milanes Junior
+	Author URI: http://www.jmilanes.com.br/
+	Short Name: lzto
+	Plugin update URI: lzto
 */
-
 /**
  * Load
  */
 function lzto_init(){
-	
-	require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
-	
-	$theme = osc_current_web_theme();
-	$file = osc_themes_path().'/'.osc_current_web_theme().'/options.php';
+	$theme_options = false;
 
-	 
+	$theme = osc_current_web_theme();
+
+	if( function_exists('lz_demo_selected_theme') ){
+		$theme = lz_demo_selected_theme();
+	}
+
+	$file = osc_themes_path().$theme.'/options.php';
+
 	if( file_exists( $file ) ){
 		if( OC_ADMIN ){
 			if( Params::getParam('page') !== 'plugins' ){
@@ -31,25 +34,27 @@ function lzto_init(){
 			if( Params::getParam('action') == 'renderplugin' && !strstr( Params::getParam('file'),'lz_theme_options/view/settings' ) ){
 				return;
 			}
-		}
+		} 
 		$settings = array();
 		require $file;
+		
 		if( function_exists( 'get_theme_options' ) ){
-			Builder::newInstance()->setOptions( get_theme_options() );
-			define( 'THEME_OPTIONS_ENABLED', true );
+			require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
+			$theme_options = Builder::newInstance()->setOptions( get_theme_options() );
 		}
 	}
-	//var_dump(THEME_OPTIONS_ENABLED);exit;
-	if( defined( THEME_OPTIONS_ENABLED ) ){
+	
+	define( 'THEME_OPTIONS_ENABLED', $theme_options );
+	
+	if( THEME_OPTIONS_ENABLED ){
 		$themes = WebThemes::newInstance()->getListThemes();
 		foreach( $themes as $theme ){
 			osc_add_hook('theme_delete_'.$theme, 'lzto_theme_delete');
 		}
 	}
+	
 	return true;
 }
-
-
 
 function lzto_getOptionsByGroupName($group){
 	return Builder::newInstance()->getOptionsByGroupName($group);
@@ -137,27 +142,47 @@ function lzto_loadUploadFiles(){
 }
 
 /**
+ * Build options menu
+ */
+function lzto_prepareRowHtml( $fields, $parent, $group = null ){
+	foreach(  $fields as $par => $field ){
+		// we are in a group
+		if( is_array($field) ){
+			lzto_prepareRowHtml( $field, $par, $parent );
+		}
+		// this is a single field
+		else {
+			echo lzto_renderField( $field, $parent, $group );
+		}
+	}
+}
+
+/**
  * Reset options form
  */
 function lzto_resetOptions(){
 	Builder::newInstance()->resetOptions();
 }
-//var_dump(Country::newInstance()->listAll());exit;
+
 /**
  * Loads files
  */
 function lzto_admin_header(){
-	if( Params::getParam('page') == 'plugins' && Params::getParam('file') == 'lz_theme_options/view/settings.php' ){
-		$lzto_general_settings = lzto_hasOption('general_settings', 'theme_color');
-		if( !empty($lzto_general_settings)){ 
-			osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/square/'.$lzto_general_settings.'.css' );
-		} else {
-			osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/square/aero.css' );
-		}
+	if( ( OC_ADMIN && Params::getParam('page') == 'plugins' 
+			&& Params::getParam('file') == 'lz_theme_options/view/settings.php' )
+				|| !OC_ADMIN ){
+		osc_enqueue_style('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/css/ui-theme/jquery-ui.min.css' );
+		osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/polaris/polaris.css' );
 		osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.css' );
 		osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/themes/toggles-dark.css' );
-		osc_enqueue_style('lz_options', osc_plugin_url('lz_theme_options/assets').'assets/css/lz_options.css' );
 		osc_enqueue_style('colpick', osc_plugin_url('lz_theme_options/assets').'assets/css/colpick.css' );
+		osc_enqueue_style('lz_options', osc_plugin_url('lz_theme_options/assets').'assets/css/lz_options.css' );
+		if( !OC_ADMIN ){
+			osc_enqueue_style('lz_options_extra', osc_plugin_url('lz_theme_options/assets').'assets/css/extra.css' );
+		}
+		osc_enqueue_script('jquery');
+		osc_enqueue_script('jqueryui');
+		osc_enqueue_script('icheck');
 		osc_enqueue_script('toggles');
 		osc_enqueue_script('jquery-fineuploader');
 		osc_enqueue_script('colpick');
@@ -170,10 +195,10 @@ function lzto_admin_header(){
  */
 function lzto_admin_menu() {
 	echo '<h3><a href="#">' . __('Theme options', 'lzto') . '</a></h3>
-    <ul>
-        <li><a href="' . osc_admin_render_plugin_url(osc_plugin_folder(__FILE__) . '/view/settings.php') . '">&raquo; ' . __('Theme options', 'lzto') . '</a></li>
-        <li><a href="' . osc_admin_render_plugin_url(osc_plugin_folder(__FILE__) . '/view/conf.php') . '">&raquo; ' . __('Configuration', 'lzto') . '</a></li>
-    </ul>';
+		  <ul>
+		      <li><a href="' . osc_admin_render_plugin_url(osc_plugin_folder(__FILE__) . '/view/settings.php') . '">&raquo; ' . __('Theme options', 'lzto') . '</a></li>
+		  </ul>';
+		  // <li><a href="' . osc_admin_render_plugin_url(osc_plugin_folder(__FILE__) . '/view/conf.php') . '">&raquo; ' . __('Configuration', 'lzto') . '</a></li>	
 }
 
 /**
@@ -215,15 +240,24 @@ function lzto_uninstall(){
  */
 function lzto_theme_delete(){
 	$theme = Params::getParam('webtheme');
+	Preference::newInstance()->dao->where('s_section', 'lz_theme_options');
 	Preference::newInstance()->dao->like( 's_name', $theme );
 	Preference::newInstance()->dao->delete( Preference::newInstance()->getTableName() );
 	Session::newInstance()->_drop('ajax_files');
 }
 
-
-
-//osc_add_hook( 'init', 'lzto_init' );
-
+osc_add_hook( 'init', 'lzto_init', 1 );
+/*
+if( !OC_ADMIN ){
+	if( Params::existParam('hook') && strstr( Params::getParam('hook'), 'lzto_') ){
+		lzto_init();
+	} else {
+		osc_add_hook( 'before_html', 'lzto_init' );
+	}
+} else {
+	lzto_init();
+}
+*/
 osc_add_hook('plugin_categories_lz_theme_options/index.php', 'lzto_settingsPost' );
 
 osc_add_hook( 'ajax_lzto_upload_file', 'lzto_uploadFile' );
@@ -234,7 +268,6 @@ osc_add_hook( 'ajax_lzto_reset_form', 'lzto_resetOptions' );
 osc_add_hook('admin_header', 'lzto_admin_header');
 osc_add_hook('admin_menu', 'lzto_admin_menu');
 
-osc_register_plugin( osc_plugin_path( __FILE__ ), '' ); //lzto_install
 osc_add_hook( osc_plugin_path( __FILE__ ) . '_uninstall', 'lzto_uninstall' );
 
 osc_add_hook('add_admin_toolbar_menus', 'lzto_admin_toolbar_menus');
@@ -247,9 +280,10 @@ osc_register_plugin( osc_plugin_path( __FILE__ ), '' );
 if( OSCLASS_VERSION < 3.3 ){
 	osc_register_script('jquery-fineuploader', osc_plugin_url('lz_theme_options/assets').'assets/js/fineuploader/jquery.fineuploader.min.js' );
 }
+osc_register_script('jquery', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery.js' );
+osc_register_script('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery-ui.min.js' );
 osc_register_script('colpick', osc_plugin_url('lz_theme_options/assets').'assets/js/colpick.js' );
 osc_register_script('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/jquery.icheck.min.js' );
 osc_register_script('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.min.js');
 osc_register_script('lz_theme_options', osc_plugin_url('lz_theme_options/assets').'assets/js/lz_theme_options.js' );
 
-lzto_init();

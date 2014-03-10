@@ -42,6 +42,7 @@ class SlideRange extends Text
     	if( !isset($this->attributes['step']) || empty($this->attributes['step']) ){
     		$this->attributes['type'] = 5;
     	}
+    	//var_dump($value);exit;
     	$field  = sprintf('<div class="sliderange_field" data-step="%s">', $this->attributes['step'] );
     	switch( $this->attributes['type'] ){
     		case "min":

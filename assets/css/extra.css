@@ -1,0 +1,348 @@
+/************************************************
+MESSAGES
+*************************************************/
+.flashmessage {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 94%;
+    background: #fcf8e3;
+    border: solid 1px #fbeed5;
+    border-top: 0;
+    padding: 20px 3%;
+    min-height: 42px;
+    color: #c09853;
+    display: none;
+	z-index: 100;
+}
+
+.flashmessage-info {
+    background: #d9edf7;
+    border: solid 1px #bce8f1;
+    color: #3a87ad;
+}
+
+.flashmessage-error,.flashmessage-error td {
+    background: #f2dede;
+    border: solid 1px #eed3d7;
+    color: #b94a48;
+}
+
+.flashmessage-ok {
+    background: #dff0d8;
+    border: solid 1px #d6e9c6;
+    color: #468847;
+}
+
+.flashmessage-warning {
+    background: #fcf8e3;
+    border: solid 1px #fbeed5;
+    color: #c09853;
+}
+
+.flashmessage-inline {
+    display: inline-block;
+    padding: 0 10px;
+    min-height: 0;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+.flashmessage-inline p {
+    margin: 5px 0;
+}
+
+#error_list {
+    border-top: 0;
+    padding: 15px;
+    display: none;
+    background: #f2dede;
+    border: solid 1px #eed3d7;
+    color: #b94a48;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+
+
+/**********************************************
+BTNS
+***********************************************/
+.btn {
+    float: left;
+    background-color: #f3f3f3;
+    height: 22px;
+    font-size: 13px;
+    padding: 9px 10px 8px 10px;
+    border: solid 1px #ddd;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    text-decoration: none;
+    color: #616161;
+}
+
+.btn:hover {
+    background-color: #ddd;
+    border-color: #bababa;
+    text-decoration: none;
+}
+
+.btn-black {
+    background-color: #383838;
+    border: solid 1px #616161;
+}
+
+.btn-black:hover {
+    background-color: #1e1e1e;
+}
+
+.btn-dim {
+    background-color: #616161;
+    border-color: #616161;
+}
+
+.btn-dim:hover {
+    background-color: #383838;
+    border-color: #383838;
+}
+
+.btn-green,a.btn-green {
+    background-color: #aec416;
+    border: solid 1px #a0b246;
+    color: #fff;
+}
+
+.btn-green:hover {
+    background-color: #c8cc1b;
+    border: solid 1px #a0b246;
+}
+
+.btn-text {
+    width: auto;
+}
+
+.btn-blue,a.btn-blue {
+    background-color: #00bed6;
+    border-color: #2f96b4;
+    color: #fff;
+}
+
+.btn-red,a.btn-red {
+    background-color: #da4f49;
+    border-color: #bd362f;
+    color: #fff;
+}
+
+.btn-blue:hover,a.btn-blue:hover {
+    background-color: #00b3c1;
+    border-color: #2f96b4;
+}
+
+.btn-red:hover,a.btn-red:hover {
+    background-color: #bd362f;
+    border-color: #bd362f;
+}
+
+.btn-orange,a.btn-orange {
+    background-color: #f89406;
+    border-color: #e27f07;
+    color: #fff;
+}
+
+.btn-orange:hover,a.btn-orange:hover {
+    background-color: #faa732;
+    border-color: #e27f07;
+}
+
+input.input-large {
+    width: 280px;
+}
+
+input.input-actions {
+    height: 24px;
+}
+
+input.btn,button.btn {
+    float: none;
+    width: auto;
+    height: 34px;
+    padding-bottom: 9px;
+    padding-top: 7px;
+    vertical-align: top;
+    background-image: url('../images/bnt-overlay.png');
+}
+
+input.input-has-select {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border-radius: 0 3px 3px 0;
+    -webkit-border-radius: 0 3px 3px 0;
+    -moz-border-radius: 0 3px 3px 0;
+    background-color: #f3f3f3;
+    border-left: 0;
+    margin-right: 5px;
+    margin-left: -5px;
+    *margin-top: -1px;
+}
+
+.btn-mini {
+    height: 16px;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 14px;
+    height: 24px;
+    padding-top: 4px;
+    padding-bottom: 5px;
+}
+
+input.btn-mini,button.btn-mini {
+    height: 28px;
+    padding-top: 6px;
+}
+
+.btn-submit {
+    border-color: #027173;
+    background-color: #00bed6;
+    color: #fff;
+    font-size: 13px;
+    padding-left: 13px;
+    padding-right: 13px;
+    text-shadow: 0 -1px 0 #026470;
+    filter: dropshadow(color=#026470,offx=0,offy=-1);
+}
+
+.btn-submit:hover {
+    background-color: #00b3c1;
+    border-color: #027173;
+}
+
+.flashmessage > a.ico-close {
+	float: right;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+/**********************************************
+SELECT BOXES
+***********************************************/
+.select-box {
+    z-index: 0;
+    position: relative;
+    display: inline-block;
+}
+.select-box-big .select-box-trigger {
+    height: 16px;
+    padding: 7px 45px 6px 12px;
+    font-size: 13px;
+}
+
+.select-box .select-box-label {
+    height: 16px;
+    overflow: hidden;
+    display: block;
+    line-height: 16px;
+    float: left;
+}
+
+.select-box-big .select-box-icon {
+    height: 29px;
+    border-left: solid 1px #ddd;
+}
+
+.select-box-extra .select-box-trigger {
+    height: 16px;
+    padding: 9px 45px 7px 12px;
+    font-size: 13px;
+}
+
+.select-box-extra .select-box-icon {
+    height: 32px;
+    border-left: solid 1px #ddd;
+}
+
+.select-box-input .select-box-trigger {
+    width: 50px;
+    border-radius: 4px 0 0 4px;
+    -webkit-border-radius: 4px 0 0 4px;
+    -moz-border-radius: 4px 0 0 4px;
+}
+
+.select-box-medium .select-box-trigger {
+    width: 75px;
+}
+
+div.select-box-medium select {
+    width: 134px;
+}
+
+.select-box-big .select-box-trigger {
+    width: 125px;
+}
+
+div.select-box-big select {
+    width: 184px;
+}
+
+div.select-box-input select {
+    width: 109px;
+}
+
+.select-box-trigger {
+    background-color: #f3f3f3;
+    border: solid 1px #ddd;
+    text-decoration: none;
+    height: 14px;
+    padding: 5px 45px 7px 10px;
+    font-size: 13px;
+    color: #474749;
+    overflow: hidden;
+    display: block;
+    background-image: linear-gradient(bottom,#ededed 0,#fff 100%);
+    background-image: -o-linear-gradient(bottom,#ededed 0,#fff 100%);
+    background-image: -moz-linear-gradient(bottom,#ededed 0,#fff 100%);
+    background-image: -webkit-linear-gradient(bottom,#ededed 0,#fff 100%);
+    background-image: -ms-linear-gradient(bottom,#ededed 0,#fff 100%);
+    background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0,#ededed),color-stop(1,#fff));
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    width: 163px;
+}
+
+.select-box a:hover {
+    text-decoration: none;
+}
+
+.select-box select {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 222px;
+    height: 30px;
+    -webkit-appearance: none;
+    z-index: 1003;
+}
+
+.select-box-icon {
+    z-index: 0;
+    position: absolute;
+    right: 13px;
+    top: 1px;
+    right: 0;
+    height: 27px;
+    width: 32px;
+    text-decoration: none;
+    display: block;
+}
+
+.select-box-icon .ico {
+    margin-top: 5px;
+    margin-left: 5px;
+}

@@ -18,7 +18,14 @@ class ColorSelector extends Options
         $field .= '<ul class="inline">';
         foreach ($this->options as $key => $val) {
             $attributes = $this->getAttributeString($val);
-            $field .= sprintf('<li class="color %s" %s><span style="background: %s;" data-value="%s"></span></li>', ((string) $key === (string) $value ? 'active' : ''), $attributes['string'], $attributes['val'], $key);
+            $accent = '';
+            if( strstr($attributes['val'], ',') ){
+            	$colors = explode( ',', $attributes['val'] );
+            	$attributes['val'] = $colors[0];
+            	$accent = sprintf('<span class="accent_color" style="background: %s;">', $colors[1] );
+            }
+
+            $field .= sprintf('<li class="color %s" %s><span style="background: %s;" data-value="%s">%s</span></li>', ((string) $key === (string) $value ? 'active' : ''), $attributes['string'], $attributes['val'], $key, $accent);
         }
         $field .= '</ul>';
         $field .= sprintf('<input type="hidden" name="%2$s[%3$s][%1$s]" id="%2$s_%3$s_%1$s" value="%4$s">', $name, $form_name, $group, $value);

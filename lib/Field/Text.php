@@ -12,7 +12,8 @@ class Text extends Field
             $content = '/.*/',
             $attribute_string = '',
             $class = '',
-            $required = true;
+            $required = true,
+    		$attributes;
     public $error = array(),
             $field_type = 'text';
 

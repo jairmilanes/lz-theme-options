@@ -9,8 +9,6 @@ require dirname(__FILE__)."/lib/Useful.php";
 require dirname(__FILE__)."/helpers/options.helper.php";
 require dirname(__FILE__)."/helpers/upload.helper.php";
 
-
-
 class Builder {
 
 	/**
@@ -55,24 +53,31 @@ class Builder {
 
 	/***********************************************************************
 	 * FIELDS SETUP FUNCTIONS
-	**********************************************************************/
+	 *********************************************************************/
 	public function setOptions( array $options ){
 		
 		$data    = osc_get_preference( osc_current_web_theme(), 'lz_theme_options' );
 		if( !empty($data)){
 			$data = unserialize($data);
 		}
-		//printR($data,true);
-		//Session::newInstance()->_set('ajax_files', null);
+		
 		$this->options = new OptionsHelper( $options, $data );
-
+		
+		if( empty( $data ) ){
+			$data = $this->options->getDefaults();
+			$data = array_filter($data);
+		}
+		
+		//printR( $data, true );
 		if( !empty( $data ) ){
-			$forms = $this->form->getAllInstances();
 			
-			//printR($forms,true);
+			$forms = Lib\LZForm::getInstance()->getAllInstances();
+
 			foreach( $forms as $parent => $form ){
+				
 				$name = $form->getName();
 				$group = $form->getGroup();
+
 				if( !empty($group) ){
 					if( isset( $data[$group][$parent] ) ){
 						$pars = array_filter( $data[$group][$parent] );
@@ -89,7 +94,6 @@ class Builder {
 					}
 				}
 			}
-			
 		}
 		return true;
 	}
@@ -142,7 +146,7 @@ class Builder {
 		$params = Params::getParam('lzto');
 		$forms = $this->form->getAllInstances();
 
-		//printR( $params );
+		//printR($params, true);
 		
 		if ( count( $forms ) > 0 ){
 			$data   = array();

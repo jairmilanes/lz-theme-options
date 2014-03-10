@@ -10,6 +10,25 @@ $(document).ready(function(){
     });
 	
 	/***************************************************************************
+	 * THEME OPTIONS TOGGLE
+	 **************************************************************************/
+	$('#lzto .menu .toggle_btn').on('click', function(e){
+		e.preventDefault();
+		if( $(this).hasClass('active') ){
+			$(this).removeClass('active');
+			$('#lzto .menu').css('width', '0%');
+			$('#lzto .menu > .inner').css('overflow', 'hidden');
+			$('#lzto .canvas').css({'width': '100%','margin-left': '0'});
+			$('#lzto .info').hide();
+		} else {
+			$(this).addClass('active');
+			$('#lzto .menu').css('width', '15%');
+			$('#lzto .menu > .inner').css('overflow', 'auto');
+			$('#lzto .canvas').css({'width': '85%','margin-left': '15%'});
+			$('#lzto .info').hide();
+		}
+	});
+	/***************************************************************************
 	 * THEME OPTIONS MENU
 	 **************************************************************************/
 	$('#lzto .menu ul > li > a').on('click', function(e){
@@ -78,7 +97,7 @@ $(document).ready(function(){
 				return false;
 			}
 			showMessage( 'ok', json.message );
-			reloadCanvas()
+			reloadCanvas();
 		},'json'); //
 	});
 	/***************************************************************************
@@ -164,6 +183,18 @@ $(document).ready(function(){
 		});
 	}
 	
+	/***************************************************************************
+	 * SELECTS
+	 **************************************************************************/
+	if( typeof selectUi !== 'function'){
+		$('select').each(function(){
+			selectUi($(this));
+		});
+	}
+	
+	
+	
+	
 	
 	/***************************************************************************
 	 * THEME OPTIONS DESCRIPTIONS
@@ -246,9 +277,33 @@ $(document).ready(function(){
 
 		  });
 	  }
+	
 	 
 });
+if( typeof selectUi !== 'function'){
 
+	function selectUi(thatSelect){
+		var uiSelect = $('<a href="#" class="select-box-trigger"></a>');
+		var uiSelectIcon = $('<span class="select-box-icon"><div class="ico ico-20 ico-drop-down"></div></span>');
+		var uiSelected = $('<span class="select-box-label">'+thatSelect.find("option:selected").text()+'</span>');
+	
+		thatSelect.css('filter', 'alpha(opacity=40)').css('opacity', '0');
+		thatSelect.wrap('<div class="select-box '+thatSelect.attr('class')+'" />');
+	
+	
+		uiSelect.append(uiSelected).append(uiSelectIcon);
+		thatSelect.parent().append(uiSelect);
+		uiSelect.click(function(){
+			return false;
+		});
+		thatSelect.change(function(){
+			uiSelected.text(thatSelect.find('option:selected').text());
+		});
+		thatSelect.on('remove', function() {
+			uiSelect.remove();
+		});
+	}
+}
 function reloadCanvas(){
 	parent.frames['preview_iframe'].window.location.reload(true);	
 }

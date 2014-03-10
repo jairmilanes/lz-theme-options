@@ -160,9 +160,7 @@ class LZForm
         }
 
         $field_name = Useful::slugify($field_name, '_');
-		
-        
-        
+
         if (isset($this->fields->$field_name) && !$overwrite) {
             return false;
         }
