@@ -13,16 +13,21 @@
  * Load
  */
 function lzto_init(){
+	fb('Lzto init started');
+	
 	$theme_options = false;
 
-	$theme = osc_current_web_theme();
-
+	$theme = osc_theme();
+	
 	if( function_exists('lz_demo_selected_theme') ){
 		$theme = lz_demo_selected_theme();
 	}
-
+	
 	$file = osc_themes_path().$theme.'/options.php';
 
+	fb('Lzto theme is '.$theme);
+	
+	fb('Lzto theme file is '.$file);
 	if( file_exists( $file ) ){
 		if( OC_ADMIN ){
 			if( Params::getParam('page') !== 'plugins' ){
@@ -41,10 +46,15 @@ function lzto_init(){
 		if( function_exists( 'get_theme_options' ) ){
 			require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
 			$theme_options = Builder::newInstance()->setOptions( get_theme_options() );
+			if( $theme_options ){
+				lzto_register_scripts();
+			}
 		}
 	}
 	
 	define( 'THEME_OPTIONS_ENABLED', $theme_options );
+	
+	fb('Lzto is enabled '.(( !THEME_OPTIONS_ENABLED )? 'no' : 'yes' ) );
 	
 	if( THEME_OPTIONS_ENABLED ){
 		$themes = WebThemes::newInstance()->getListThemes();
@@ -168,25 +178,27 @@ function lzto_resetOptions(){
  * Loads files
  */
 function lzto_admin_header(){
-	if( ( OC_ADMIN && Params::getParam('page') == 'plugins' 
-			&& Params::getParam('file') == 'lz_theme_options/view/settings.php' )
-				|| !OC_ADMIN ){
-		osc_enqueue_style('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/css/ui-theme/jquery-ui.min.css' );
-		osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/polaris/polaris.css' );
-		osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.css' );
-		osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/themes/toggles-dark.css' );
-		osc_enqueue_style('colpick', osc_plugin_url('lz_theme_options/assets').'assets/css/colpick.css' );
-		osc_enqueue_style('lz_options', osc_plugin_url('lz_theme_options/assets').'assets/css/lz_options.css' );
-		if( !OC_ADMIN ){
-			osc_enqueue_style('lz_options_extra', osc_plugin_url('lz_theme_options/assets').'assets/css/extra.css' );
+	if( THEME_OPTIONS_ENABLED ){
+		if( ( OC_ADMIN && Params::getParam('page') == 'plugins' 
+				&& Params::getParam('file') == 'lz_theme_options/view/settings.php' )
+					|| !OC_ADMIN ){
+			osc_enqueue_style('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/css/ui-theme/jquery-ui.min.css' );
+			osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/polaris/polaris.css' );
+			osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.css' );
+			osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/themes/toggles-dark.css' );
+			osc_enqueue_style('colpick', osc_plugin_url('lz_theme_options/assets').'assets/css/colpick.css' );
+			osc_enqueue_style('lz_options', osc_plugin_url('lz_theme_options/assets').'assets/css/lz_options.css' );
+			if( !OC_ADMIN ){
+				osc_enqueue_style('lz_options_extra', osc_plugin_url('lz_theme_options/assets').'assets/css/extra.css' );
+			}
+			osc_enqueue_script('jquery');
+			osc_enqueue_script('jqueryui');
+			osc_enqueue_script('icheck');
+			osc_enqueue_script('toggles');
+			osc_enqueue_script('jquery-fineuploader');
+			osc_enqueue_script('colpick');
+			osc_enqueue_script('lz_theme_options');
 		}
-		osc_enqueue_script('jquery');
-		osc_enqueue_script('jqueryui');
-		osc_enqueue_script('icheck');
-		osc_enqueue_script('toggles');
-		osc_enqueue_script('jquery-fineuploader');
-		osc_enqueue_script('colpick');
-		osc_enqueue_script('lz_theme_options');
 	}
 }
 
@@ -246,6 +258,15 @@ function lzto_theme_delete(){
 	Session::newInstance()->_drop('ajax_files');
 }
 
+function lzto_register_scripts(){
+	osc_register_script('jquery', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery.js' );
+	osc_register_script('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery-ui.min.js' );
+	osc_register_script('colpick', osc_plugin_url('lz_theme_options/assets').'assets/js/colpick.js' );
+	osc_register_script('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/jquery.icheck.min.js' );
+	osc_register_script('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.min.js');
+	osc_register_script('lz_theme_options', osc_plugin_url('lz_theme_options/assets').'assets/js/lz_theme_options.js' );
+}
+
 osc_add_hook( 'init', 'lzto_init', 1 );
 /*
 if( !OC_ADMIN ){
@@ -280,10 +301,5 @@ osc_register_plugin( osc_plugin_path( __FILE__ ), '' );
 if( OSCLASS_VERSION < 3.3 ){
 	osc_register_script('jquery-fineuploader', osc_plugin_url('lz_theme_options/assets').'assets/js/fineuploader/jquery.fineuploader.min.js' );
 }
-osc_register_script('jquery', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery.js' );
-osc_register_script('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery-ui.min.js' );
-osc_register_script('colpick', osc_plugin_url('lz_theme_options/assets').'assets/js/colpick.js' );
-osc_register_script('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/jquery.icheck.min.js' );
-osc_register_script('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.min.js');
-osc_register_script('lz_theme_options', osc_plugin_url('lz_theme_options/assets').'assets/js/lz_theme_options.js' );
+
 

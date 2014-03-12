@@ -7,7 +7,6 @@ use Lib\Useful;
 
 class Text extends Field
 {
-
     protected $label,
             $content = '/.*/',
             $attribute_string = '',

@@ -146,8 +146,6 @@ class Builder {
 		$params = Params::getParam('lzto');
 		$forms = $this->form->getAllInstances();
 
-		//printR($params, true);
-		
 		if ( count( $forms ) > 0 ){
 			$data   = array();
 			$errors = array();
@@ -179,7 +177,7 @@ class Builder {
 				$form_data = serialize( $data );
 				$status = osc_set_preference( osc_current_web_theme(), $form_data, 'lz_theme_options', 'STRING' );
 				$message = ( !$status )?
-				array('status' => false, 'errors' => _m('Could not sav to database.', 'lz_theme_options') ) :
+				array('status' => false, 'errors' => _m('Could not save to database.', 'lz_theme_options') ) :
 				array('status' => true, 'message' => _m('Theme options updated!', 'lz_theme_options') );
 
 				die( json_encode( $message ) );
