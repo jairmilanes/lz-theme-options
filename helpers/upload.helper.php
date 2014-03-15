@@ -1,6 +1,6 @@
 <?php
-define( 'LZO_UPLOAD_PATH', UPLOADS_PATH.'lz_theme_options/' );
-define( 'LZO_THUMB_PATH', LZO_UPLOAD_PATH.'thumbnails/' );
+
+
 class UploadHelper {
 
 	protected static $uploader;
@@ -25,15 +25,15 @@ class UploadHelper {
 		$uid        = Params::getParam('qquuid');
 		$files      = Session::newInstance()->_get('ajax_files');
 
-		self::$uploader = self::getUploader();
-
 		if( !empty($field_name) && !isset($files[$uid]) ){
 
+			self::$uploader = self::getUploader();
+			
 			$original   = pathinfo( self::$uploader->getOriginalName() );
 			$filename   = self::getUniqueFilename( $original['extension'] );
 
 			if( !file_exists( LZO_UPLOAD_PATH ) ){
-				mkdir( LZO_UPLOAD_PATH );
+				@mkdir( LZO_UPLOAD_PATH, 0777 );
 			}
 
 			$result = self::$uploader->handleUpload( LZO_UPLOAD_PATH.$filename );
@@ -53,8 +53,10 @@ class UploadHelper {
 	 */
 	protected function saveAndResize( $field_name, $group, $uid, $filename ){
 		self::delete( $field_name, $group );
+	
 		$saved = osc_set_preference( osc_current_web_theme().'_'.$group.'_'.$field_name, $uid.'||'.$filename, 'lz_theme_options_uploads', 'STRING' );
-		if( $saved ){
+
+		if( $saved !== false ){
 			$resize = ImageResizer::fromFile( LZO_UPLOAD_PATH.'/'.$filename );
 			$resize->resizeTo( self::$thumb_width, self::$thumb_height, true );
 			if( !file_exists( LZO_THUMB_PATH ) ){
@@ -111,7 +113,7 @@ class UploadHelper {
 				@unlink( LZO_UPLOAD_PATH.$filename );
 				@unlink( LZO_THUMB_PATH.$filename );
 			}
-		    //var_dump( osc_current_web_theme().'_'.$group.'_'.$field_name );exit;
+		    //var_dump(osc_current_web_theme().'_'.$group.'_'.$field_name);
 			osc_delete_preference( osc_current_web_theme().'_'.$group.'_'.$field_name, 'lz_theme_options_uploads');
 
 			if( isset( $files[$uid])){
@@ -128,12 +130,15 @@ class UploadHelper {
 	/**
 	 * get all uploads for the current template
 	 */
-	public static function getFiles( $upload_fields ){
+	public static function getFiles( $upload_fields = array() ){
 		Preference::newInstance()->dao->select();
 		Preference::newInstance()->dao->from( Preference::newInstance()->getTableName() );
 		Preference::newInstance()->dao->where( 's_section', 'lz_theme_options_uploads' );
+
 		$i = 0;
 		$results = array();
+		$files = array();
+		
 		if( count( $upload_fields ) > 0 ){
 			foreach( $upload_fields as $field ){
 				if( $i == 0 ){
@@ -143,14 +148,22 @@ class UploadHelper {
 				}
 				$i++;
 			}
-			$files = Preference::newInstance()->dao->get();
-			if( $files->numRows() > 0 ){
-				foreach( $files->resultArray() as $file ) {
-					$field = str_replace( osc_current_web_theme().'_', '', $file['s_name'] );
-					$results[$field] = $file;
-				}
+			
+		} else {
+			Preference::newInstance()->dao->like( 's_name', osc_current_web_theme().'_', 'after' );
+		}
+		
+		$files = Preference::newInstance()->dao->get();
+		
+		//var_dump(Preference::newInstance()->dao->lastQuery());exit;
+		
+		if( is_object($files) && $files->numRows() > 0 ){
+			foreach( $files->resultArray() as $file ) {
+				$field = str_replace( osc_current_web_theme().'_', '', $file['s_name'] );
+				$results[$field] = $file;
 			}
 		}
+		
 		return $results;
 	}
 
@@ -166,13 +179,16 @@ class UploadHelper {
 			$theme = lz_demo_selected_theme();
 		}
 
+		fb($theme.'_'.$group.'_'.$field_name, 'Selected upload');
 		$file = osc_get_preference( $theme.'_'.$group.'_'.$field_name, 'lz_theme_options_uploads' );
+
+		fb($file, 'Selected upload exists' );
 
 		if( !empty( $file ) ){
 			$f 				 = explode( '||', $file );
 			$uid 		     = $f[0];
 			$filename 		 = $f[1];
-			
+
 			if( file_exists(LZO_UPLOAD_PATH.$filename ) ){
 				$results['name'] = $filename;
 				$results['uuid'] = $uid;

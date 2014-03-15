@@ -1,6 +1,6 @@
 	<?php 
 	$lz_options = defined( 'THEME_OPTIONS_ENABLED' ) && THEME_OPTIONS_ENABLED === true;
-	$theme = ( Params::existParam('theme') )? '&theme='.Params::getParam('theme') : ''; ?>
+	$theme = ( Params::existParam('theme') )? '?theme='.Params::getParam('theme') : ''; ?>
 	<div id="lzto">
 		<div class="canvas <?php echo ( $lz_options !== false )? 'no-options' : 'options'; ?>">
 			<iframe id="preview_iframe" style="visibility:hidden;" onload="this.style.visibility = 'visible';" src="<?php echo osc_base_url(true).$theme;?>" width="100%" height="100%" ></iframe>
@@ -30,6 +30,39 @@
 								echo '<li>';
 							}
 						?>
+						<li>
+							<a href="#">Presets</a>
+							<div class="menu_form">';
+								<h3>Saved presets</h3>
+								<div class="form-group-container">
+									<div id="presets_box" class="form-group text">
+										<span class="description" data-field="custom_font_heading" data-description="<?php _e('Load a new preset, just click and confirm to load.','lz_theme_options');?>"></span>
+										<label for="lzto_fonts_settings_custom_font_heading" class=" text_field "><?php _e('Load a new preset', 'lz_theme_options'); ?></label>
+										<ul>
+											<?php 
+											$presets = lzto_load_presets();
+											if( count($presets) > 0 && !isset($presets['empty']) ){
+												foreach( $presets as $slug => $preset ){?>
+													<li>
+														<a href="<?php echo osc_ajax_hook_url('lzto_load_preset', array('&preset_name' => $slug ) )?>"><?php echo $preset['title']; ?></a>
+														<span class="delete_preset" data-url="<?php echo osc_ajax_hook_url('lzto_remove_preset', array('&preset_name' => $slug ))?>"><img src="<?php echo osc_plugin_url('lz_theme_options/assets/img').'img/close-icon15.png'?>" width="16"/></span>
+													</li>					
+												<?php } 
+											} else { ?>
+												<li><?php _e('There is no presets, click below to create your first one.'); ?></li>
+											<?php } ?>
+										</ul>
+									</div>
+									<div class="form-group text">
+										<span class="description" data-field="custom_font_heading" data-description="<?php _e('Use the this to create presets of configurations for your theme, later you can load this presets and start using them in seconds.','lz_theme_options');?>"></span>
+										<label for="lzto_preset" class="text_field preset-field"><a id="lzto_preset_create" href="<?php echo osc_ajax_hook_url('lzto_save_preset')?>" class="btn"><?php _e('Save a new preset', 'lz_theme_options'); ?></a></label>
+									</div>
+									<div id="preset_dialog" style="display: none" title="<?php _e('Name your preset', 'lz_theme_options' );?>">
+									  <p><?php _e('What is the name of your preset?', 'lz_theme_options');?></p>
+									</div>
+								</div>
+							</div>
+						</li>
 						</ul>
 					</div>
 					<div class="menu_action">
@@ -52,6 +85,7 @@
 	<script type="text/javascript">
 	var last_message_type = 'flashmessage-info';
 	$(document).ready(function(){
+		
 		<?php if(OC_ADMIN){ ?>
 		$('#full_screen_btn').on('click', function(e){
 			e.preventDefault();

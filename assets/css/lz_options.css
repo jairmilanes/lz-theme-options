@@ -482,6 +482,55 @@ LZTO
 	margin-right: 5px;	
 }
 
+#lzto #presets_box > ul {
+	list-style: circle;
+	color: #32C9D9;
+	padding-left: 30px;
+	padding-top: 15px;
+	padding-bottom: 20px;
+	padding-right: 20px;
+	background:#333
+}
+#lzto #presets_box > ul > li {
+	position: relative;
+}
+#lzto #presets_box > ul > li > a {
+	display: inline-block;
+	width: 90%;
+	margin-right: 10%;
+	height: 25px;
+	line-height: 25px;
+	color: #fff;
+	font-size: 13px;
+	position: relative;
+}
+#lzto #presets_box > ul > li > a:hover {
+	left: 2px;	
+	color: #32C9D9;
+}
+#lzto #presets_box > ul > li span.delete_preset {
+	display: inline-block;
+	height: 16px;
+	width: 16px;
+	position: absolute;
+	top: 4px;
+	right: 0;
+	cursor: pointer;
+	opacity: .6;
+}
+#lzto #presets_box > ul > li:hover span.delete_preset,
+#lzto #presets_box > ul > li span.delete_preset:hover {
+	width: 18px;
+	height: 18px;	
+	top: 3px;
+	right: -3;
+	opacity: 1;
+}
+#lzto #presets_box > ul > li span.delete_preset:hover img {
+	width: 18px;
+	height: 18px;	
+}
+ 
 #lzto .info {
 	position: absolute;
 	top: 0;

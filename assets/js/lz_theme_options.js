@@ -8,7 +8,46 @@ $(document).ready(function(){
 	$(window).resize(function(e) {
 		adjustContainerHeight();
     });
-	
+
+	if( $('#lzto_preset_create').length > 0 ){
+		
+		$('#lzto_preset_create').on('click', function(e){
+			e.preventDefault();
+			newDialog( 
+				'Name your preset',
+				'<p>What is the name of your preset?</p><input type="text" name="preset_name" id="preset_name" />',
+				{ "Create preset?": function() {
+					
+					  var $this = $(this);
+					  var preset_name = $('input#preset_name');
+					  
+					  $.post( $('#lzto_preset_create').attr('href'), { preset_name: preset_name.val() }, function(json){
+							if( !json ){
+								showMessage('error', 'Could not save preset!');
+								$this.dialog( "close" );
+								return false;
+							}
+							if( !json.status ){
+								showMessage('error', json.message);
+								$this.dialog( "close" );
+								return false;
+							}					
+							showMessage('ok', json.message);
+							if( json.presets ){
+								$('#presets_box > ul').html('');
+								refreshPresets(json.presets);
+							}
+							$this.dialog( "close" );
+							return true;					
+					  },'json');
+				},
+				Cancel: function() {
+				  $( this ).dialog( "close" );
+				}
+			});
+		});
+		init_presets();
+	}
 	/***************************************************************************
 	 * THEME OPTIONS TOGGLE
 	 **************************************************************************/
@@ -280,6 +319,110 @@ $(document).ready(function(){
 	
 	 
 });
+function newDialog( title, desc, actions ){
+	$("#preset_dialog").html(desc);
+	var box = $( "#preset_dialog" ).dialog({
+		  title: title,
+		  autoOpen: false,
+		  show: {
+			  effect: "drop",
+			  duration: 350
+		  },
+		  hide: {
+			  effect: "puff",
+			  duration: 350
+		  },
+		  modal: true,
+		  buttons: actions
+	});
+	return box.dialog( "open" );
+}
+function init_presets(){
+	$('#presets_box > ul > li > a').each( function(index, elem){
+		
+		$(elem).on('click', function(e){
+			e.preventDefault();
+			var url = $(this).attr('href');
+			newDialog( 
+				'Load preset!', 
+				'All the uploaded files will be overwriten by the ones in the new preset, do you wish to load this new preset?', {
+				'Load': function(){
+					var $this = $(this);
+					$.post( url, function(json){
+						if( !json ){
+							showMessage('error', 'Could not load preset!');
+							$this.dialog('close');
+							return false;
+						}
+						if( !json.status ){
+							showMessage('error', json.message);
+							$this.dialog('close');
+							return false;
+						}					
+						showMessage('ok', json.message+'<br/><strong>Be pacient we are reloading!</strong>' );
+						$this.dialog('close');
+						setTimeout(function(){
+							window.location.reload();
+						},1000);
+						return true;	
+					},'json');
+				},
+				'Cancel': function(){
+					$(this).dialog('close');
+				}
+			});
+		});
+		
+		$(elem).next('span.delete_preset').on('click', function(e){
+			e.preventDefault();
+			var url = $(this).data('url');
+			newDialog( 
+				'Delete preset!', 
+				'This action cant be undone, are you sure?', {
+					'Delete preset': function(){
+						var $this = $(this);
+						$.post( url, function(json){
+							if( !json ){
+								showMessage('error', 'Could not delete preset!');
+								return false;
+							}
+							if( !json.status ){
+								showMessage('error', json.message);
+								return false;
+							}					
+							showMessage('ok', json.message );
+							refreshPresets(json.presets);
+							$this.dialog('close');
+							return true;
+						},'json');
+					},
+					'Cancel': function(){
+						$(this).dialog('close');
+					}
+			});
+		});
+	});
+	
+}
+function refreshPresets(presets){
+	var img = '/oc-content/plugins/lz_theme_options/assets/img/close-icon15.png';
+	$('#presets_box > ul').html('');
+	$.each( presets, function(name, preset){
+		if( name == 'empty' ){
+			$('#presets_box > ul').append(
+				'<li>'+preset.title+'</li>'
+			);
+		} else {
+			$('#presets_box > ul').append(
+				'<li><a href="'+preset.load_url+'">'+preset.title+'</a>'+
+				'<span class="delete_preset" data-url="'+preset.delete_url+'"><img src="'+img+'" width="16"/></span></li>'
+			);
+		}
+	});
+	init_presets();
+}
+
+
 if( typeof selectUi !== 'function'){
 
 	function selectUi(thatSelect){
@@ -305,7 +448,12 @@ if( typeof selectUi !== 'function'){
 	}
 }
 function reloadCanvas(){
-	parent.frames['preview_iframe'].window.location.reload(true);	
+	var frame = parent.frames['preview_iframe'];
+	if( frame.length > 0 ){
+		frame.window.location.reload(true);	
+	} else {
+		$('iframe#preview_iframe').window.loaction.reload(true);
+	}
 }
 /***************************************************************************
  * THEME OPTIONS SETTINGS DEPENDENT FUNCTIONS

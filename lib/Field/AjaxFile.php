@@ -12,6 +12,8 @@ class AjaxFile extends Field
     private $type;
     private $required;
     private $max_size;
+    
+    private $max_files;
 
     private $height;
     private $width;
@@ -19,7 +21,6 @@ class AjaxFile extends Field
     private $min_height;
     private $min_width;
 
-    private $max_files;
     private $upload_path;
     private $multiple;
 
@@ -71,15 +72,16 @@ class AjaxFile extends Field
         $this->height 		= @$height;
         $this->min_width 	= @$min_width;
         $this->min_height   = @$min_height;
-
+        $this->max_files    = 1;
+		/*
         $upload_path 	 	= osc_content_path().'uploads/theme_options_uploads';
 		if( !file_exists($upload_path) ){
 			mkdir($upload_path);
 		}
-
+		*/
         $this->multiple 	= ( isset( $multiple ) )? true : false;
-        $this->upload_path  =   $upload_path;
-        $this->max_files 	= ( isset( $max_files ) && is_numeric( $max_files ) && $max_files > 0 ) ? $max_files : 1;
+        $this->upload_path  =   LZO_UPLOAD_PATH;
+        //$this->max_files 	= ( isset( $this->max_files ) && is_numeric( $this->max_files ) && $this->max_files > 0 ) ? $this->max_files : 1;
 
         if (is_array($type)) {
             $this->mime_types = $type;

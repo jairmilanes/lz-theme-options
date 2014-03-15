@@ -49,6 +49,156 @@ class Builder {
 		}
 		return self::$instance ;
 	}
+	
+	public function savePreset(){
+		
+		if( !osc_is_admin_user_logged_in() ){
+			return 2;
+		}
+		
+		$preset_name = Params::getParam('preset_name');
+		
+		$data    = osc_get_preference( osc_current_web_theme(), 'lz_theme_options' );
+		
+		if( !empty($data) ){
+			$data = unserialize($data);
+		}
+
+		if( !is_array($data) ){
+			$data = array();
+		} 
+		
+		$uploads = UploadHelper::getFiles();
+		
+		if( count( $uploads ) > 0 ){
+			$data['uploads'] = $uploads;
+		}
+
+		if( empty($data) ){
+			return 1;
+		}
+
+		$preset_json = json_encode($data);
+		
+		if( $this->zipPreset( $preset_json, LZO_UPLOAD_PATH, $preset_name )  ){
+			return 3;
+		}
+		return false;
+		
+	}
+	
+	public function loadPresets(){
+		$dir = new DirectoryIterator(LZO_PRESETS_PATH);
+		$files = array();
+		foreach( $dir as $file ){
+			if( !$file->isDot() && $file->isFile() ){
+				$name = $file->getFilename();
+				$parts = explode( '-', $name );
+				$preset_name = str_replace( '.zip', '', $parts[1] );
+				$files[$preset_name] = array(
+						'title'      => ucfirst( strtolower( str_replace('_', ' ', $preset_name ) ) ),
+						'load_url'	 => osc_ajax_hook_url( 'lzto_load_preset', array( '&preset_name' => $preset_name ) ),
+						'delete_url' => osc_ajax_hook_url( 'lzto_remove_preset', array( '&preset_name' => $preset_name ) )
+				);
+				//$files[$preset_name] = ucfirst( strtolower( str_replace('_', ' ', $preset_name ) ) );
+			}
+		}
+		if( count( $files ) > 0 ){
+			ksort($files);
+			return $files;
+		}
+		return array('empty' => array(
+			'title' => _m('There is no presets, click below to create one.', 'lz_theme_options')
+		));
+	}
+	
+	public function loadPreset(){
+		
+		if( !Params::existParam( 'preset_name' ) ){
+			return false;
+		}
+		$file = LZO_PRESETS_PATH.'preset-'.Params::getParam( 'preset_name' ).'.zip';
+		if( !file_exists( $file ) ){
+			return false;
+		}
+		
+		$zip = new ZipArchive();
+
+		if( $zip->open( $file ) ){
+			$temp_path = UPLOADS_PATH.'temp/lz_theme_options';
+
+			if( file_exists($temp_path)){
+				$this->rmdir_recurse($temp_path);
+			}
+			
+			@mkdir( $temp_path, 0777 );
+
+			if( $zip->extractTo( $temp_path ) ){
+				$zip->close();
+				
+				if( file_exists( $temp_path.'/preset.json' ) ){
+					$json = file_get_contents( $temp_path.'/preset.json' );
+					$data = json_decode( $json, true );
+
+					if( isset( $data['uploads'] ) ){
+						foreach( $data['uploads'] as $field => $file ){
+							osc_delete_preference( $file['s_name'], $file['s_section'] );
+							$saved = osc_set_preference( $file['s_name'], $file['s_value'], $file['s_section'], $file['e_type'] );
+						}
+						unset($data->uploads);
+					}
+					osc_delete_preference( osc_current_web_theme(), 'lz_theme_options' );
+					$data = osc_set_preference( osc_current_web_theme(), serialize($data), 'lz_theme_options' );
+					
+					if( false !== $data ){
+						
+						$path = substr(LZO_UPLOAD_PATH, 0, -1 );
+						if( file_exists($path) ){
+							rename($path, $path.'_old');
+						}
+						
+						if( rename( $temp_path, $path )){
+							@unlink( $path.'/preset.json' );
+						}
+						
+						if( file_exists($path.'_old') ){
+							$this->rmdir_recurse($path.'_old');
+						}
+						
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public function removePreset(){
+		$preset = Params::getParam('preset_name');
+		$file = LZO_PRESETS_PATH.'preset-'.$preset.'.zip';
+		if( file_exists($file)){
+			@unlink($file);
+			return $this->loadPresets();
+		}
+		return true;
+	}
+	
+	protected function rmdir_recurse($path) {
+	    $path = rtrim($path, '/').'/';
+	    if( file_exists($path) ){
+		    $handle = opendir($path);
+		    while(false !== ($file = readdir($handle))) {
+		        if($file != '.' and $file != '..' ) {
+		            $fullpath = $path.$file;
+		            if(is_dir($fullpath)) $this->rmdir_recurse($fullpath); else unlink($fullpath);
+		        }
+		    }
+		    closedir($handle);
+	    	return @rmdir($path);
+	    }
+	    return true;
+	}
+	
 
 
 	/***********************************************************************
@@ -59,6 +209,10 @@ class Builder {
 		$data    = osc_get_preference( osc_current_web_theme(), 'lz_theme_options' );
 		if( !empty($data)){
 			$data = unserialize($data);
+		}
+		
+		if( is_object($data)){
+			$data = json_decode(json_encode($data), true);
 		}
 		
 		$this->options = new OptionsHelper( $options, $data );
@@ -324,4 +478,105 @@ class Builder {
 
 	}
 
+	protected function zipPreset( $json, $source, $preset_name = null )
+	{
+		if( is_null($preset_name) ){
+			return false;
+		}
+		$preset_name = strtolower( implode('_', explode(' ', $preset_name) ) );
+		
+		//fb($json, 'LZTO json');
+		
+		if( !file_exists(LZO_PRESETS_PATH) ){
+			mkdir(LZO_PRESETS_PATH);
+		}
+		
+		$destination = LZO_PRESETS_PATH.'preset-'.$preset_name.'.zip';
+			
+		//fb($destination, 'LZTO destination');
+		
+		//fb(extension_loaded('zip'), 'LZTO zip ext loaded');
+		
+		//fb($destination, 'LZTO destination');
+		
+		if( file_exists( $source.'preset.json' ) ){
+			unlink($source.'preset.json');
+		}
+		
+	    if ( extension_loaded('zip') === true && file_put_contents($source.'preset.json', $json) )
+	    {
+	    	//fb($source.'preset.json', 'LZTO preset json saved');
+	        if (file_exists($source) === true)
+	        {
+	            $zip = new ZipArchive();
+				
+	            $open = $zip->open($destination, ZIPARCHIVE::CREATE);
+	            
+	            //fb($open, 'LZTO zip open');
+	            if ( $open === true)
+	            {
+	                $source = realpath($source);
+					
+	                //fb($source, 'LZTO real source path');
+	                if (is_dir($source) === true)
+	                {
+	                    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
+
+	                    //fb($files, 'LZTO files found');
+	                    $i =  0;
+	                    foreach ($files as $name => $file)
+	                    {
+	                    	//fb($name, 'LZTO dir name');
+	                    	$file =  $file->getRealPath();
+	                        $is_root = str_replace($source, '', $file );
+	                        
+	                        if( !empty($is_root) && strlen($source) < strlen($file) ){
+		                        //fb($file, 'LZTO file '.$i);
+		                       
+		                        //fb(is_dir($file), 'LZTO file is dir');
+		                        if (is_dir($file) === true)
+		                        {
+		                        	$dir = $is_root;
+		                        	//fb($dir, 'LZTO dir');
+		                        	if( empty($dir)){
+		                        		//fb($file, 'LZTO dir empty');
+		                        	} else {
+		                        		//fb(str_replace('\\','',$dir), 'LZTO dir ok');
+		                        		$rs = $zip->addEmptyDir( str_replace('\\','',$dir) );
+		                        	}
+		                           
+		                            //fb($rs, 'LZTO dir added');
+		                        }
+								
+		                        else if (is_file($file) === true)
+		                        {
+		                        	$new_file = str_replace($source.'\\', '', $file);
+		                        	//fb($new_file, 'LZTO add file');
+		                            //$rs = $zip->addFile( $file );
+		                            $rs = $zip->addFromString($new_file, file_get_contents($file));
+		                            //fb($rs, 'LZTO file added');
+		                        }
+		                        
+	                        }
+	                        $i++;
+	                    }
+	                }
+	
+	                else if (is_file($source) === true)
+	                {
+	                    $zip->addFromString(basename($source), file_get_contents($source));
+	                }
+	                
+	                $rs = $zip->close();
+	                
+	                //fb($rs, 'LZTO all good');
+	                return $rs;
+	            }
+	            
+	            
+	        }
+	    }
+	
+	    return false;
+	}
 }

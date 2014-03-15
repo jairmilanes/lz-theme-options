@@ -2,7 +2,7 @@
 /*
 	Plugin Name: Theme options
 	Plugin URI: http://www.jmilanes.com.br/
-	Description: Theme options plugin
+	Description: Theme options plugin, allows a developer to include theme options with ease.
 	Version: 1.0
 	Author: Jair Milanes Junior
 	Author URI: http://www.jmilanes.com.br/
@@ -13,21 +13,20 @@
  * Load
  */
 function lzto_init(){
-	fb('Lzto init started');
-	
+	//fb('Lzto init started');
+	//var_dump('loading');
 	$theme_options = false;
 
-	$theme = osc_theme();
+	$theme = osc_current_web_theme();
 	
 	if( function_exists('lz_demo_selected_theme') ){
 		$theme = lz_demo_selected_theme();
 	}
 	
 	$file = osc_themes_path().$theme.'/options.php';
-
-	fb('Lzto theme is '.$theme);
-	
-	fb('Lzto theme file is '.$file);
+	//fb('Lzto theme is '.$theme);
+	//var_dump($theme);
+	//fb('Lzto theme file is '.$file);
 	if( file_exists( $file ) ){
 		if( OC_ADMIN ){
 			if( Params::getParam('page') !== 'plugins' ){
@@ -45,6 +44,11 @@ function lzto_init(){
 		
 		if( function_exists( 'get_theme_options' ) ){
 			require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
+			
+			define( 'LZO_UPLOAD_PATH', UPLOADS_PATH.'lz_theme_options/' );
+			define( 'LZO_THUMB_PATH', LZO_UPLOAD_PATH.'thumbnails/' );
+			define( 'LZO_PRESETS_PATH', UPLOADS_PATH.'presets/' );
+			
 			$theme_options = Builder::newInstance()->setOptions( get_theme_options() );
 			if( $theme_options ){
 				lzto_register_scripts();
@@ -53,9 +57,7 @@ function lzto_init(){
 	}
 	
 	define( 'THEME_OPTIONS_ENABLED', $theme_options );
-	
-	fb('Lzto is enabled '.(( !THEME_OPTIONS_ENABLED )? 'no' : 'yes' ) );
-	
+
 	if( THEME_OPTIONS_ENABLED ){
 		$themes = WebThemes::newInstance()->getListThemes();
 		foreach( $themes as $theme ){
@@ -66,6 +68,50 @@ function lzto_init(){
 	return true;
 }
 
+
+function lzto_save_preset(){
+	$return = Builder::newInstance()->savePreset();
+	if( false !== $return ){	
+		switch($return){
+			case 1;
+				die(json_encode(array('status' => false, 'message' => 'No options found in the database, try changing some options and saving the preset again.')));
+				break;
+			case 2;
+				die(json_encode(array('status' => false, 'message' => 'Admin user not logged in, cant create preset.')));
+				break;
+			case 3;
+				die(json_encode(array('status' => true, 'message' => 'Preset saved.', 'presets' => lzto_load_presets())));
+				break;
+		}
+	}
+	die(json_encode(array('status' => false, 'message' => 'Failed to save the zip arquive.')));
+}
+
+function lzto_load_preset(){
+	$return = Builder::newInstance()->loadPreset();
+	if( false !== $return ){
+		die(json_encode(array('status' => true, 'message' => 'Preset loaded success!.')));
+	}
+	die(json_encode(array('status' => false, 'message' => 'Could not load preset.' )));
+}
+
+function lzto_load_presets(){
+	return Builder::newInstance()->loadPresets();
+}
+
+function lzto_remove_preset(){
+	$return = Builder::newInstance()->removePreset();
+	if( false !== $return ){
+		die(json_encode(array('status' => true, 'message' => 'Preset removed!.', 'presets' => $return)));
+	}
+	die(json_encode(array('status' => false, 'message' => 'Could not remove preset.' )));
+}
+
+
+/**
+ * Get theme optios by it´s group name
+ * @param string $group Name of the group
+ */
 function lzto_getOptionsByGroupName($group){
 	return Builder::newInstance()->getOptionsByGroupName($group);
 }
@@ -117,6 +163,10 @@ function lzto_renderField( $field, $parent, $group = null ){
 	return Builder::newInstance()->renderField( $field, $parent, $group );
 }
 
+/**
+ * Returns the specifyed group title
+ * @param string $group_slug
+ */
 function lzto_getGroupTitle( $group_slug ){
 	return Builder::newInstance()->getGroupName( $group_slug );
 }
@@ -124,7 +174,7 @@ function lzto_getGroupTitle( $group_slug ){
 /**
  * Process the admin panel settings post
  */
-function lzto_settingsPost($settings){
+function lzto_settingsPost(){
 	if( THEME_OPTIONS_ENABLED && Params::existParam('lzto') ){
 		Builder::newInstance()->save();
 	}
@@ -182,7 +232,9 @@ function lzto_admin_header(){
 		if( ( OC_ADMIN && Params::getParam('page') == 'plugins' 
 				&& Params::getParam('file') == 'lz_theme_options/view/settings.php' )
 					|| !OC_ADMIN ){
-			osc_enqueue_style('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/css/ui-theme/jquery-ui.min.css' );
+			
+			
+			//osc_enqueue_style('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/css/ui-theme/jquery-ui.min.css' );
 			osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/polaris/polaris.css' );
 			osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.css' );
 			osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/themes/toggles-dark.css' );
@@ -258,6 +310,9 @@ function lzto_theme_delete(){
 	Session::newInstance()->_drop('ajax_files');
 }
 
+/**
+ * Registers necessary scripts
+ */
 function lzto_register_scripts(){
 	osc_register_script('jquery', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery.js' );
 	osc_register_script('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery-ui.min.js' );
@@ -267,20 +322,15 @@ function lzto_register_scripts(){
 	osc_register_script('lz_theme_options', osc_plugin_url('lz_theme_options/assets').'assets/js/lz_theme_options.js' );
 }
 
+/*************************************************************
+ * HOOKS
+ ************************************************************/
 osc_add_hook( 'init', 'lzto_init', 1 );
-/*
-if( !OC_ADMIN ){
-	if( Params::existParam('hook') && strstr( Params::getParam('hook'), 'lzto_') ){
-		lzto_init();
-	} else {
-		osc_add_hook( 'before_html', 'lzto_init' );
-	}
-} else {
-	lzto_init();
-}
-*/
 osc_add_hook('plugin_categories_lz_theme_options/index.php', 'lzto_settingsPost' );
 
+osc_add_hook( 'ajax_lzto_save_preset', 'lzto_save_preset' );
+osc_add_hook( 'ajax_lzto_load_preset', 'lzto_load_preset' );
+osc_add_hook( 'ajax_lzto_remove_preset', 'lzto_remove_preset' );
 osc_add_hook( 'ajax_lzto_upload_file', 'lzto_uploadFile' );
 osc_add_hook( 'ajax_lzto_delete_upload_file', 'lzto_deleteUploadFile' );
 osc_add_hook( 'ajax_lzto_load_upload_files', 'lzto_loadUploadFiles' );
@@ -288,18 +338,11 @@ osc_add_hook( 'ajax_lzto_reset_form', 'lzto_resetOptions' );
 
 osc_add_hook('admin_header', 'lzto_admin_header');
 osc_add_hook('admin_menu', 'lzto_admin_menu');
-
 osc_add_hook( osc_plugin_path( __FILE__ ) . '_uninstall', 'lzto_uninstall' );
-
 osc_add_hook('add_admin_toolbar_menus', 'lzto_admin_toolbar_menus');
-
+osc_register_plugin( osc_plugin_path( __FILE__ ), '' );
 // @todo implement config page
 //osc_add_hook( osc_plugin_path( __FILE__ ) . '_configure', 'lzto_conf' );
-
-osc_register_plugin( osc_plugin_path( __FILE__ ), '' );
-
 if( OSCLASS_VERSION < 3.3 ){
 	osc_register_script('jquery-fineuploader', osc_plugin_url('lz_theme_options/assets').'assets/js/fineuploader/jquery.fineuploader.min.js' );
 }
-
-
