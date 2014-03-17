@@ -88,6 +88,10 @@ class Builder {
 	}
 	
 	public function loadPresets(){
+		if( !file_exists(LZO_PRESETS_PATH) ){
+			mkdir(substr(LZO_PRESETS_PATH, 0, -1));
+		}
+		
 		$dir = new DirectoryIterator(LZO_PRESETS_PATH);
 		$files = array();
 		foreach( $dir as $file ){
