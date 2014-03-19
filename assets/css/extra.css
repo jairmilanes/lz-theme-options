@@ -170,8 +170,8 @@ input.input-actions {
 input.btn,button.btn {
     float: none;
     width: auto;
-    height: 34px;
-    padding-bottom: 9px;
+    /*height: 34px;
+    padding-bottom: 9px;*/
     padding-top: 7px;
     vertical-align: top;
     background-image: url('../images/bnt-overlay.png');

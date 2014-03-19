@@ -1,4 +1,5 @@
 <?php
+
 require dirname(__FILE__)."/lib/Field.php";
 require dirname(__FILE__)."/lib/Field/BaseOptions.php";
 require dirname(__FILE__)."/lib/Field/Options.php";
@@ -8,6 +9,7 @@ require dirname(__FILE__)."/lib/LZForm.php";
 require dirname(__FILE__)."/lib/Useful.php";
 require dirname(__FILE__)."/helpers/options.helper.php";
 require dirname(__FILE__)."/helpers/upload.helper.php";
+require dirname(__FILE__)."/model/OSCLztoModel.php";
 
 class Builder {
 
@@ -28,11 +30,13 @@ class Builder {
 	protected $groups = array();
 	protected $default_values;
 	protected $ajax_upload_fields = array();
+	protected $log_file;
 
 	public function __construct(){
 		$this->form =  Lib\LZForm::getInstance('lzto', osc_admin_base_url(true), true, 'POST' );
 		$this->fields = array();
 		$this->default_values = array();
+		$this->log_file = osc_plugins_path(__FILE__).'lz_theme_options/logs/error.log';
 	}
 
 	/**
@@ -79,6 +83,9 @@ class Builder {
 		}
 
 		$preset_json = json_encode($data);
+		
+		chmod( LZO_UPLOAD_PATH , 0755);
+		
 		
 		if( $this->zipPreset( $preset_json, LZO_UPLOAD_PATH, $preset_name )  ){
 			return 3;
@@ -210,6 +217,12 @@ class Builder {
 	 *********************************************************************/
 	public function setOptions( array $options ){
 		
+		if( defined(DEMO) ){
+			
+			
+			
+		}
+		
 		$data    = osc_get_preference( osc_current_web_theme(), 'lz_theme_options' );
 		if( !empty($data)){
 			$data = unserialize($data);
@@ -254,6 +267,14 @@ class Builder {
 			}
 		}
 		return true;
+	}
+	
+	protected function getUserSettings(){
+		
+		$ip = $_SERVER['REMOTE_ADDR'];
+		if( !empty($ip) ){
+			
+		}
 	}
 
 	/**
@@ -482,83 +503,80 @@ class Builder {
 
 	}
 
-	protected function zipPreset( $json, $source, $preset_name = null )
+protected function zipPreset( $json, $source, $preset_name = null )
 	{
 		if( is_null($preset_name) ){
 			return false;
 		}
 		$preset_name = strtolower( implode('_', explode(' ', $preset_name) ) );
+
+		$this->log('PRESET NAME '.$preset_name);
 		
-		//fb($json, 'LZTO json');
-		
+		$this->log('PRESETS PATH EXISTS '.file_exists(LZO_PRESETS_PATH));
 		if( !file_exists(LZO_PRESETS_PATH) ){
 			mkdir(LZO_PRESETS_PATH);
 		}
 		
 		$destination = LZO_PRESETS_PATH.'preset-'.$preset_name.'.zip';
-			
-		//fb($destination, 'LZTO destination');
+		$this->log('DESTINATION PATH '.$destination);
 		
-		//fb(extension_loaded('zip'), 'LZTO zip ext loaded');
-		
-		//fb($destination, 'LZTO destination');
-		
+		$this->log('JSON PATH '.$source.'preset.json');
+		$this->log('JSON EXISTS "'.file_exists( $source.'preset.json' ).'"');
 		if( file_exists( $source.'preset.json' ) ){
 			unlink($source.'preset.json');
 		}
 		
-	    if ( extension_loaded('zip') === true && file_put_contents($source.'preset.json', $json) )
+		$this->log('EXTENTION CHECK "'.(extension_loaded('zip') === true).'"');
+		$file_put_contents = file_put_contents($source.'preset.json', $json);
+		$this->log('PUT CONTENTS CHECK "'.($file_put_contents).'"');
+	    if ( extension_loaded('zip') === true &&  $file_put_contents )
 	    {
-	    	//fb($source.'preset.json', 'LZTO preset json saved');
 	        if (file_exists($source) === true)
 	        {
 	            $zip = new ZipArchive();
 				
 	            $open = $zip->open($destination, ZIPARCHIVE::CREATE);
+	            $this->log('ZIP CREATED "'.($open).'"');
 	            
-	            //fb($open, 'LZTO zip open');
 	            if ( $open === true)
 	            {
 	                $source = realpath($source);
-					
-	                //fb($source, 'LZTO real source path');
+	                $this->log('REAL SOURCE PATH "'.($source).'"');
+	                
+	                
 	                if (is_dir($source) === true)
 	                {
-	                    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
-
-	                    //fb($files, 'LZTO files found');
+	                    $files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST );
+;
 	                    $i =  0;
 	                    foreach ($files as $name => $file)
 	                    {
-	                    	//fb($name, 'LZTO dir name');
 	                    	$file =  $file->getRealPath();
 	                        $is_root = str_replace($source, '', $file );
 	                        
 	                        if( !empty($is_root) && strlen($source) < strlen($file) ){
-		                        //fb($file, 'LZTO file '.$i);
-		                       
-		                        //fb(is_dir($file), 'LZTO file is dir');
+								$this->log('CURRENT FILE = '.$file);
+								$this->log('FILE EXISTS FILE = '.file_exists($file));
 		                        if (is_dir($file) === true)
 		                        {
 		                        	$dir = $is_root;
-		                        	//fb($dir, 'LZTO dir');
 		                        	if( empty($dir)){
-		                        		//fb($file, 'LZTO dir empty');
 		                        	} else {
-		                        		//fb(str_replace('\\','',$dir), 'LZTO dir ok');
-		                        		$rs = $zip->addEmptyDir( str_replace('\\','',$dir) );
+		                        		$d = str_replace(DIRECTORY_SEPARATOR,'',$dir);
+		                        		$this->log('EMPTY DIR = '.$d);
+		                        		$rs = $zip->addEmptyDir( $d );
 		                        	}
-		                           
-		                            //fb($rs, 'LZTO dir added');
 		                        }
 								
 		                        else if (is_file($file) === true)
 		                        {
-		                        	$new_file = str_replace($source.'\\', '', $file);
-		                        	//fb($new_file, 'LZTO add file');
-		                            //$rs = $zip->addFile( $file );
-		                            $rs = $zip->addFromString($new_file, file_get_contents($file));
-		                            //fb($rs, 'LZTO file added');
+		                        	
+		                        	$new_file = str_replace($source.DIRECTORY_SEPARATOR, '', $file);
+		                        	$content = file_get_contents($file);
+		                        	$this->log('FILE NAME = '.$new_file);
+		                        	$this->log('FILE SIZE = '.strlen($content));
+		                            $rs = $zip->addFromString($new_file, $content );
+		                            $this->log('FILE ADDED = '.$rs);
 		                        }
 		                        
 	                        }
@@ -572,15 +590,20 @@ class Builder {
 	                }
 	                
 	                $rs = $zip->close();
-	                
-	                //fb($rs, 'LZTO all good');
+	                $this->log('ZIP CLOSED = '.$rs);
 	                return $rs;
 	            }
-	            
-	            
 	        }
 	    }
 	
 	    return false;
+	}
+	
+	protected function log( $msg )
+	{
+		$fd = fopen( $this->log_file, "a+" );
+		$str = "[" . date("Y/m/d h:i:s", mktime()) . "] " . $msg;
+		fwrite($fd, $str . "\r\n\r\n");
+		fclose($fd);
 	}
 }

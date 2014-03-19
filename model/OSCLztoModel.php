@@ -14,6 +14,9 @@ class OSCLztoModel extends DAO {
 
 	
 	public function __construct(){
+		$this->setTableName('t_lzto_user_settings');
+		$this->setPrimaryKey('s_ip');
+		$this->setFields(array('s_ip','s_settings'));
 		parent::__construct();
 	}
 	
@@ -32,7 +35,45 @@ class OSCLztoModel extends DAO {
 		return self::$instance ;
 	}
 	
-	public function save($settings){
-		return osc_set_preference('lxto_theme_settings', serialize($settings) );
+	public function saveSettings($settings){
+		return osc_set_preference('lzto_theme_settings', serialize($settings) );
+	}
+	
+	public function updateUserSettings( $ip, $settings ){
+		
+		if( !isset($settings['ip'])){
+			return false;
+		}
+		if( !isset($settings['s_settings'])){
+			return false;
+		}
+		return $this->dao->replace( $this->getTableName(), $settings );
+		
+	}
+	
+	public function saveUserSettings( $ip, $settings  ){
+		return $this->dao->insert( $this->getTableName(), $settings );
+	}
+	
+	public function getUserSettings($ip){
+		
+		$this->select('s_settings');
+		$this->dao->from($this->getTableName());
+		$this->dao->where('s_ip', $ip );
+		
+		$rs = $this->dao->get();
+		
+		if( !empty($rs) ){
+			return $rs->resultArray[0];
+		}
+		return false;
+	}
+	
+	public function install(){
+		
+	}
+	
+	public function unistall(){
+		
 	}
 }

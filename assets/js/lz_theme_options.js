@@ -18,6 +18,8 @@ $(document).ready(function(){
 				'<p>What is the name of your preset?</p><input type="text" name="preset_name" id="preset_name" />',
 				{ "Create preset?": function() {
 					
+					  showDialogLoading($(this));
+				
 					  var $this = $(this);
 					  var preset_name = $('input#preset_name');
 					  
@@ -37,6 +39,7 @@ $(document).ready(function(){
 								$('#presets_box > ul').html('');
 								refreshPresets(json.presets);
 							}
+							hideDialogLoading($(this));
 							$this.dialog( "close" );
 							return true;					
 					  },'json');
@@ -51,6 +54,7 @@ $(document).ready(function(){
 	/***************************************************************************
 	 * THEME OPTIONS TOGGLE
 	 **************************************************************************/
+	var last_menu_width = 0;
 	$('#lzto .menu .toggle_btn').on('click', function(e){
 		e.preventDefault();
 		if( $(this).hasClass('active') ){
@@ -58,15 +62,18 @@ $(document).ready(function(){
 			$('#lzto .menu').css('width', '0%');
 			$('#lzto .menu > .inner').css('overflow', 'hidden');
 			$('#lzto .canvas').css({'width': '100%','margin-left': '0'});
+			if( $('#lzto .menu_form.active').length > 0 ){
+				$('#lzto .menu .close_btn').trigger('click');	
+			}
 			$('#lzto .info').hide();
 		} else {
 			$(this).addClass('active');
-			$('#lzto .menu').css('width', '15%');
+			$('#lzto .menu').css('width', '' );
 			$('#lzto .menu > .inner').css('overflow', 'auto');
-			$('#lzto .canvas').css({'width': '85%','margin-left': '15%'});
 			$('#lzto .info').hide();
 		}
 	});
+	$('#lzto .menu .toggle_btn').trigger('click');
 	/***************************************************************************
 	 * THEME OPTIONS MENU
 	 **************************************************************************/
@@ -74,7 +81,6 @@ $(document).ready(function(){
 		e.preventDefault();
 		$(this).parent().find('div').eq(0).toggleClass('active');
 		$(this).parents('.menu').find('.close_btn').eq(0).toggleClass('active');
-
 		$('#lzto .menu .close_btn').off('click').on('click', function(e){
 			e.preventDefault();
 			$(this).parent().find('div.menu_form.active').removeClass('active');
@@ -113,6 +119,7 @@ $(document).ready(function(){
 	 **************************************************************************/
 	 $('#lzto .form').submit( function(e){
 		e.preventDefault();
+		showOptionsLoader();
 		var self = $(this);
 		var url  = $(this).attr('action');
 		var data = $(this).serialize();
@@ -179,19 +186,15 @@ $(document).ready(function(){
 	 * THEME OPTIONS DESCRIPTIONS
 	 **************************************************************************/
 	$('#lzto .description').each( function(index, elem){
-		$(elem).off('click').on('click', function(e){			
-			
+		$(elem).off('click').on('click', function(e){		
 			if( $(elem).data('field') !== last_description ){
-			
 				$('#lzto .info').find('.inner').html('');
 				$('#lzto .info').addClass('active').find('.inner').html( $(elem).data('description') );
 				last_description = $(elem).data('field');
-			
 			} else {
 				$('#lzto .info').removeClass('active').find('.inner').html('');
 				last_description = '';
 			}
-			
 		});
 	});
 	
@@ -319,6 +322,25 @@ $(document).ready(function(){
 	
 	 
 });
+
+
+function showDialogLoading( $dialog ){
+	 $dialog.append('<img class="loading" src="/oc-content/plugins/lz_theme_options/assets/img/loader32.gif" width="32" />');
+	 $('*', $dialog).fadeOut('fast');
+	 $dialog.find('img.loading').fadeIn('fast');
+}
+function hideDialogLoading( $dialog ){
+	$dialog.find('img.loading').fadeOut('fast', function(){
+		$(this).remove();	
+	});
+	$('*', $dialog).fadeIn('fast');
+}
+function showOptionsLoader(){
+	 $('#lzto .options_loader').addClass('active');	
+}
+function hideOptionsLoader(){
+	 $('#lzto .options_loader').removeClass('active');	
+}
 function newDialog( title, desc, actions ){
 	$("#preset_dialog").html(desc);
 	var box = $( "#preset_dialog" ).dialog({
@@ -449,11 +471,26 @@ if( typeof selectUi !== 'function'){
 }
 function reloadCanvas(){
 	var frame = parent.frames['preview_iframe'];
-	if( frame.length > 0 ){
-		frame.window.location.reload(true);	
-	} else {
-		$('iframe#preview_iframe').window.loaction.reload(true);
+	var type = 1;
+	if( !( frame && frame.length > 0 ) ){
+		frame = $('iframe#preview_iframe');
+		type = 2;
 	}
+	console.log(frame);
+	if( frame ){
+		$(frame).on('load', function(){
+			hideOptionsLoader();
+		});
+	}
+	switch(type){
+		case 1:
+			frame.window.location.reload(true);	
+			break;
+		case 2:
+			$(frame).attr('src', $('iframe#preview_iframe').attr('src') );
+			break;
+	}
+	return true;
 }
 /***************************************************************************
  * THEME OPTIONS SETTINGS DEPENDENT FUNCTIONS
@@ -578,7 +615,7 @@ function adjustContainerHeight(){
     var footer_height =     parseInt($('#footer').outerHeight(true));
 	//console.log('FOOTER height = '+footer_height); 
     
-    var newHeight = windowHeight - header_height - sub_header_height - footer_height;
+    var newHeight = windowHeight - header_height; //sub_header_height footer_height
    // console.log('NEW height = '+newHeight);
     $('#lzto').height(newHeight);
 }

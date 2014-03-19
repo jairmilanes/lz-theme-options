@@ -4,12 +4,18 @@
 	<div id="lzto">
 		<div class="canvas <?php echo ( $lz_options !== false )? 'no-options' : 'options'; ?>">
 			<iframe id="preview_iframe" style="visibility:hidden;" onload="this.style.visibility = 'visible';" src="<?php echo osc_base_url(true).$theme;?>" width="100%" height="100%" ></iframe>
+			<div class="options_loader">
+				<div class="overlay"></div>
+				<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/loader.GIF'?>"/>
+			</div>
 		</div>
 		<?php if( $lz_options ){  ?>
 			<div class="menu">
 				<div class="inner">
 				<?php echo lzto_openForm();?>
+					<?php  if( OC_ADMIN ){ ?>
 					<h2><?php _e('LZ Theme options','lzto')?></h2>
+					<?php  } ?>
 					<div class="menu_container">
 						<input type="hidden" name="page" value="plugins" />
 						<input type="hidden" name="action" value="configure_post" />

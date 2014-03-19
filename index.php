@@ -9,6 +9,7 @@
 	Short Name: lzto
 	Plugin update URI: lzto
 */
+
 /**
  * Load
  */
@@ -68,7 +69,6 @@ function lzto_init(){
 	return true;
 }
 
-
 function lzto_save_preset(){
 	$return = Builder::newInstance()->savePreset();
 	if( false !== $return ){	
@@ -109,7 +109,7 @@ function lzto_remove_preset(){
 
 
 /**
- * Get theme optios by it´s group name
+ * Get theme optios by itï¿½s group name
  * @param string $group Name of the group
  */
 function lzto_getOptionsByGroupName($group){
@@ -322,6 +322,9 @@ function lzto_register_scripts(){
 	osc_register_script('lz_theme_options', osc_plugin_url('lz_theme_options/assets').'assets/js/lz_theme_options.js' );
 }
 
+function lzto_db_reset(){
+	echo 'End LZTO';
+}
 /*************************************************************
  * HOOKS
  ************************************************************/
@@ -341,6 +344,10 @@ osc_add_hook('admin_menu', 'lzto_admin_menu');
 osc_add_hook( osc_plugin_path( __FILE__ ) . '_uninstall', 'lzto_uninstall' );
 osc_add_hook('add_admin_toolbar_menus', 'lzto_admin_toolbar_menus');
 osc_register_plugin( osc_plugin_path( __FILE__ ), '' );
+
+osc_add_hook('lz_demo_reset_complete', 'lzto_db_reset');
+
+
 // @todo implement config page
 //osc_add_hook( osc_plugin_path( __FILE__ ) . '_configure', 'lzto_conf' );
 if( OSCLASS_VERSION < 3.3 ){
