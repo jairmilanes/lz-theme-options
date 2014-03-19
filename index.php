@@ -329,8 +329,9 @@ function lzto_db_reset(){
  * HOOKS
  ************************************************************/
 osc_add_hook( 'init', 'lzto_init', 1 );
-osc_add_hook('plugin_categories_lz_theme_options/index.php', 'lzto_settingsPost' );
 
+osc_add_hook( 'plugin_categories_lz_theme_options/index.php', 'lzto_settingsPost' );
+osc_add_hook( 'ajax_lzto_post', 'lzto_settingsPost' );
 osc_add_hook( 'ajax_lzto_save_preset', 'lzto_save_preset' );
 osc_add_hook( 'ajax_lzto_load_preset', 'lzto_load_preset' );
 osc_add_hook( 'ajax_lzto_remove_preset', 'lzto_remove_preset' );

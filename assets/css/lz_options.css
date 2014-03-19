@@ -471,7 +471,7 @@ LZTO
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	background: #444;
+	background: #222;
 	overflow: hidden;	
 }
 #lzto .menu .menu_action > input[type="submit"] {

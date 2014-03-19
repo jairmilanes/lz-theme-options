@@ -14,10 +14,11 @@ class OSCLztoModel extends DAO {
 
 	
 	public function __construct(){
+		parent::__construct();
 		$this->setTableName('t_lzto_user_settings');
 		$this->setPrimaryKey('s_ip');
-		$this->setFields(array('s_ip','s_settings'));
-		parent::__construct();
+		$this->setFields(array('s_ip', 's_name', 's_settings'));
+		
 	}
 	
 	/**
@@ -51,20 +52,32 @@ class OSCLztoModel extends DAO {
 		
 	}
 	
-	public function saveUserSettings( $ip, $settings  ){
+	public function saveUserSettings( $ip, $name, $settings  ){
+		if( !filter_var( $ip, FILTER_VALIDATE_IP ) ){
+			return false;
+		}
+		if( !filter_var( $name, FILTER_SANITIZE_STRING ) ){
+			return false;
+		}
+		if( !is_array($settings) ){
+			return false;
+		}
+		$values = array(
+			's_ip' => "INET_ATON('$ip')",
+			's_name' => str_replace(' ', '_', strtolower($name)),
+			's_settings' => serialize($settings)
+				
+		);
 		return $this->dao->insert( $this->getTableName(), $settings );
 	}
 	
-	public function getUserSettings($ip){
-		
-		$this->select('s_settings');
-		$this->dao->from($this->getTableName());
-		$this->dao->where('s_ip', $ip );
-		
+	public function getUserSettings($ip ){
+		$this->dao->from( $this->getTableName() );
+		$this->dao->select('s_settings');
+		$this->dao->where( "INET_NTOA(s_ip) = '$ip'" );
 		$rs = $this->dao->get();
-		
 		if( !empty($rs) ){
-			return $rs->resultArray[0];
+			return $rs->resultArray;
 		}
 		return false;
 	}

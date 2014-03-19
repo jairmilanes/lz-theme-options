@@ -17,8 +17,14 @@
 					<h2><?php _e('LZ Theme options','lzto')?></h2>
 					<?php  } ?>
 					<div class="menu_container">
-						<input type="hidden" name="page" value="plugins" />
-						<input type="hidden" name="action" value="configure_post" />
+						<?php if( osc_is_admin_user_logged_in() ){ ?>
+							<input type="hidden" name="page" value="plugins" />
+							<input type="hidden" name="action" value="configure_post" />
+						<?php } else { ?>
+							<input type="hidden" name="page" value="ajax" />
+							<input type="hidden" name="action" value="runhook" />
+							<input type="hidden" name="hook" value="lzto_post" />
+						<?php } ?>
 			        	<input type="hidden" name="plugin" value="lz_theme_options/index.php" />
 			        	<input type="hidden" name="plugin_short_name" value="lz_theme_options" />
 						<ul>
@@ -61,7 +67,9 @@
 									</div>
 									<div class="form-group text">
 										<span class="description" data-field="custom_font_heading" data-description="<?php _e('Use the this to create presets of configurations for your theme, later you can load this presets and start using them in seconds.','lz_theme_options');?>"></span>
-										<label for="lzto_preset" class="text_field preset-field"><a id="lzto_preset_create" href="<?php echo osc_ajax_hook_url('lzto_save_preset')?>" class="btn"><?php _e('Save a new preset', 'lz_theme_options'); ?></a></label>
+										<?php  if( OC_ADMIN ){ ?>
+											<label for="lzto_preset" class="text_field preset-field"><a id="lzto_preset_create" href="<?php echo osc_ajax_hook_url('lzto_save_preset')?>" class="btn"><?php _e('Save a new preset', 'lz_theme_options'); ?></a></label>
+										<?php } ?>
 									</div>
 									<div id="preset_dialog" style="display: none" title="<?php _e('Name your preset', 'lz_theme_options' );?>">
 									  <p><?php _e('What is the name of your preset?', 'lz_theme_options');?></p>

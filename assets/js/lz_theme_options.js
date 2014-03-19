@@ -470,17 +470,21 @@ if( typeof selectUi !== 'function'){
 	}
 }
 function reloadCanvas(){
-	var frame = parent.frames['preview_iframe'];
+	var frame = $('iframe#preview_iframe')
+	/*
 	var type = 1;
 	if( !( frame && frame.length > 0 ) ){
 		frame = $('iframe#preview_iframe');
 		type = 2;
 	}
-	console.log(frame);
+	*/
+	$(frame).on('load', function(){
+		hideOptionsLoader();
+	}).attr('src', $('iframe#preview_iframe').attr('src') );
+	//console.log($(frame));
+	/*
 	if( frame ){
-		$(frame).on('load', function(){
-			hideOptionsLoader();
-		});
+		
 	}
 	switch(type){
 		case 1:
@@ -489,7 +493,7 @@ function reloadCanvas(){
 		case 2:
 			$(frame).attr('src', $('iframe#preview_iframe').attr('src') );
 			break;
-	}
+	};*/
 	return true;
 }
 /***************************************************************************
@@ -518,9 +522,14 @@ function lzto_init( settings ){
 				template: settings.upload_template,
 				fileTemplate: settings.upload_file_template
 					
+			}).on('submit', function(){
+				showOptionsLoader();
 			}).on('delete', function(event, id, name, json){
+				showOptionsLoader();
+			}).on('deleteComplete', function(event, id, name, json){
 				reloadCanvas();
 			}).on('complete', function(event, id, name, json){
+				showOptionsLoader();
 				if( json.thumbnailUrl ){
 					self.find('.thumb')
 							.find('img')
@@ -540,7 +549,6 @@ function lzto_init( settings ){
 				},2000);
 				
 				reloadCanvas();
-				
 			}).on('progress',function( id, name, uploadedBytes, totalBytes ){
 				var per = parseInt( ( ( uploadedBytes / totalBytes ) * 100 ) );
 				self.find('.qq-progress-bar').css({ width: per+'%' });

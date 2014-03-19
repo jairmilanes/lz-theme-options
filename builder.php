@@ -33,7 +33,12 @@ class Builder {
 	protected $log_file;
 
 	public function __construct(){
-		$this->form =  Lib\LZForm::getInstance('lzto', osc_admin_base_url(true), true, 'POST' );
+		if( OC_ADMIN ){
+			$url = osc_admin_base_url(true);
+		} else {
+			$url = osc_base_url(true);
+		}
+		$this->form =  Lib\LZForm::getInstance('lzto', $url, true, 'POST' );
 		$this->fields = array();
 		$this->default_values = array();
 		$this->log_file = osc_plugins_path(__FILE__).'lz_theme_options/logs/error.log';
@@ -216,11 +221,9 @@ class Builder {
 	 * FIELDS SETUP FUNCTIONS
 	 *********************************************************************/
 	public function setOptions( array $options ){
-		
-		if( defined(DEMO) ){
-			
-			
-			
+
+		if( defined('DEMO') ){
+			$this->getUserSettings();
 		}
 		
 		$data    = osc_get_preference( osc_current_web_theme(), 'lz_theme_options' );
@@ -270,12 +273,16 @@ class Builder {
 	}
 	
 	protected function getUserSettings(){
-		
 		$ip = $_SERVER['REMOTE_ADDR'];
 		if( !empty($ip) ){
 			
+			$rs = OSCLztoModel::newInstance()->getUserSettings($ip);
+			
+	
+			var_dump($rs);exit;
 		}
 	}
+	
 
 	/**
 	 * Gets a new form instance
