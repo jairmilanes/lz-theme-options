@@ -7,7 +7,7 @@ class UploadHelper {
 
 	protected static $thumb_width  = 250;
 	protected static $thumb_height = 150;
-
+	
 	protected static function getUploader(){
 		if( !class_exists('AjaxUploader') ){
 			require_once(LIB_PATH."AjaxUploader.php");
@@ -32,15 +32,25 @@ class UploadHelper {
 			$original   = pathinfo( self::$uploader->getOriginalName() );
 			$filename   = self::getUniqueFilename( $original['extension'] );
 
-			if( !file_exists( LZO_UPLOAD_PATH ) ){
-				@mkdir( LZO_UPLOAD_PATH, 0777 );
+			$path 		= LZO_UPLOAD_PATH;
+			$thumb_path = LZO_THUMB_PATH;
+			$thumb_url  = sprintf( 'lz_theme_options/thumbnails/%s', $filename);
+			
+			if( defined('DEMO') ){
+				$path 		= LZO_DEMO_USER_PATH;
+				$thumb_path = LZO_DEMO_USER_THUMB_PATH;
+				$thumb_url  = sprintf( 'lz_theme_demo_users/%s/thumbnails/%s', DEMO_USER_IP, $filename);
 			}
-
-			$result = self::$uploader->handleUpload( LZO_UPLOAD_PATH.$filename );
-
+			
+			if( !file_exists( $path ) ){
+				@mkdir( $path, 0777 );
+			}
+			//var_dump($path.$filename);
+			$result = self::$uploader->handleUpload( $path.$filename );
+			//var_dump($result);
 			if( isset( $result['success'] ) && $result['success'] == true && self::saveAndResize( $field_name, $group, $uid, $filename ) ){
 				$result['success'] = true;
-				$result['thumbnailUrl'] = osc_uploads_url( 'lz_theme_options/thumbnails/'.$filename );
+				$result['thumbnailUrl'] = osc_uploads_url( $thumb_url );
 				$result['uploadName'] = $filename;
 				return $result;
 			}
@@ -52,18 +62,59 @@ class UploadHelper {
 	 * Saves the new file while it creates a thumbnail
 	 */
 	protected function saveAndResize( $field_name, $group, $uid, $filename ){
-		self::delete( $field_name, $group );
-	
-		$saved = osc_set_preference( osc_current_web_theme().'_'.$group.'_'.$field_name, $uid.'||'.$filename, 'lz_theme_options_uploads', 'STRING' );
-
+		
+		$path 		= LZO_UPLOAD_PATH;
+		$thumb_path = LZO_THUMB_PATH; 
+		
+		$pref_name = osc_current_web_theme().'_'.$group.'_'.$field_name;
+		
+		if( defined('DEMO')){
+			$current_file = OSCLztoModel::newInstance()->getUserFileByName(DEMO_USER_IP, $pref_name);
+			$path 		= LZO_DEMO_USER_PATH;
+			$thumb_path = LZO_DEMO_USER_THUMB_PATH;
+			$saved = OSCLztoModel::newInstance()->updateUserSettings( 
+						DEMO_USER_IP,
+						array( 's_ip' => DEMO_USER_IP, 
+							   's_name' => $pref_name, 
+							   's_settings' => $uid.'||'.$filename
+						)
+			);
+		} else {
+			$current_file = osc_get_preference($pref_name,'lz_theme_options_uploads');
+			$saved = osc_set_preference( $pref_name, $uid.'||'.$filename, 'lz_theme_options_uploads', 'STRING' );
+		}
+		
+		
+		
 		if( $saved !== false ){
-			$resize = ImageResizer::fromFile( LZO_UPLOAD_PATH.'/'.$filename );
-			$resize->resizeTo( self::$thumb_width, self::$thumb_height, true );
-			if( !file_exists( LZO_THUMB_PATH ) ){
-				mkdir( LZO_THUMB_PATH );
+			
+			if(!empty($current_file)){
+				$current_file = explode('||', $current_file );
+				
+				if( file_exists($path.$current_file[1])){
+					@unlink($path.$current_file[1]);
+				}
+				if( file_exists($thumb_path.$current_file[1])){
+					@unlink($thumb_path.$current_file[1]);
+					
+				}
+				$session_files = Session::newInstance()->_get('ajax_files');
+				if( isset( $session_files[$current_file[0]])){
+					unset($session_files[$current_file[0]]);
+					Session::newInstance()->_set('ajax_files', $session_files);
+				}
 			}
+			
+			
+			if( !file_exists( $thumb_path ) ){
+				@mkdir( $thumb_path, 0777, true );
+			}
+			
+			$resize = ImageResizer::fromFile( $path.$filename );
+			$resize->resizeTo( self::$thumb_width, self::$thumb_height, true );
+
 			try {
-				$resize->saveToFile( LZO_THUMB_PATH.$filename );
+				$resize->saveToFile( $thumb_path.$filename );
 			} catch( Exception $e){
 				return false;
 			}
@@ -71,51 +122,59 @@ class UploadHelper {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Gets a unique name for a new upload file
 	 */
 	protected static function getUniqueFileName($ext){
 		return uniqid("qqfile_").".".$ext;
 	}
-
-	/**
-	 * Delete previus uploaded files
-	 */
-	public static function deleteFile(){
-		$filename = Params::getParam('field_name');
-		$group    = Params::getParam('group');
-		$uuid     = Params::getParam('qquuid');
-		$success  = self::delete( $filename, $group, $uuid );
-		return array( 'success' => $success, 'deletedFile' => $filename );
-	}
-
+	
 	/**
 	 * Completly deletes the file from the database and filesystem
 	 */
-	protected static function delete($field_name, $group, $uuid = null ){
+	public static function delete($field_name, $group, $uuid = null ){
 		try {
+			$path = LZO_UPLOAD_PATH;
+			$thumb_path = LZO_THUMB_PATH;
+			
 			$files = Session::newInstance()->_get('ajax_files');
 			if( empty($uuid)){
-				$db_file = osc_get_preference( osc_current_web_theme().'_'.$group.'_'.$field_name, 'lz_theme_options_uploads');
+
+				if( defined('DEMO') ){
+					$db_file = OSCLztoModel::newInstance()->getUserFileByName( DEMO_USER_IP, osc_current_web_theme().'_'.$group.'_'.$field_name);
+					$path 		= LZO_DEMO_USER_PATH;
+					$thumb_path = LZO_DEMO_USER_THUMB_PATH;
+				} else {
+					$db_file = osc_get_preference( osc_current_web_theme().'_'.$group.'_'.$field_name, 'lz_theme_options_uploads');
+				}
+				
 				if( !empty($db_file) ){
 					$f = explode('||', $db_file );
 					$uid = $f[0];
 					$filename = $f[1];
 				}
 			} else {
+				if( defined('DEMO') ){
+					$path 		= LZO_DEMO_USER_PATH;
+					$thumb_path = LZO_DEMO_USER_THUMB_PATH;
+				}
 				if( isset($files[$uuid]) ){
 					$filename = $files[$uuid];
 				}
 			}
 
-			if( file_exists( LZO_UPLOAD_PATH.$filename ) ){
-				@unlink( LZO_UPLOAD_PATH.$filename );
-				@unlink( LZO_THUMB_PATH.$filename );
+			if( file_exists( $path.$filename ) ){
+				@unlink( $path.$filename );
+				@unlink( $thumb_path.$filename );
 			}
-		    //var_dump(osc_current_web_theme().'_'.$group.'_'.$field_name);
-			osc_delete_preference( osc_current_web_theme().'_'.$group.'_'.$field_name, 'lz_theme_options_uploads');
-
+			
+			if( defined('DEMO') ){
+				OSCLztoModel::newInstance()->deleteUserFileByName(DEMO_USER_IP, osc_current_web_theme().'_'.$group.'_'.$field_name );
+			} else {
+				osc_delete_preference( osc_current_web_theme().'_'.$group.'_'.$field_name, 'lz_theme_options_uploads');
+			}
+			
 			if( isset( $files[$uid])){
 				unset($files[$uid]);
 				Session::newInstance()->_set('ajax_files', $files);
@@ -126,11 +185,30 @@ class UploadHelper {
 		}
 		return true;
 	}
+	
+	/*
+	public function cleanUpFile($user_file){
+		
+		$file = explode('||', $user_file);
+		
+		if( file_exists(LZO_UPLOAD_PATH.$file[1]) ){
+			@unlink(LZO_DEMO_USER_PATH.$file[1]);
+		}
+		else if( file_exists(LZO_DEMO_USER_THUMB_PATH.$file[1]) ){
+			@unlink(LZO_DEMO_USER_THUMB_PATH.$file[1]);
+		}
+		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options\'');
+		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options_uploads\'');
+		
+		
+	}
+	*/
 
 	/**
 	 * get all uploads for the current template
 	 */
 	public static function getFiles( $upload_fields = array() ){
+		
 		Preference::newInstance()->dao->select();
 		Preference::newInstance()->dao->from( Preference::newInstance()->getTableName() );
 		Preference::newInstance()->dao->where( 's_section', 'lz_theme_options_uploads' );
@@ -151,20 +229,28 @@ class UploadHelper {
 			
 		} else {
 			Preference::newInstance()->dao->like( 's_name', osc_current_web_theme().'_', 'after' );
-		}
-		
+		}	
 		$files = Preference::newInstance()->dao->get();
-		
-		//var_dump(Preference::newInstance()->dao->lastQuery());exit;
-		
+	
 		if( is_object($files) && $files->numRows() > 0 ){
 			foreach( $files->resultArray() as $file ) {
 				$field = str_replace( osc_current_web_theme().'_', '', $file['s_name'] );
 				$results[$field] = $file;
 			}
 		}
-		
 		return $results;
+	}
+	
+	public function getUserFiles(){
+		$user_files = OSCLztoModel::newInstance()->getUserUploads( DEMO_USER_IP );
+		if( false !== $user_files ){
+			$files = array();
+			foreach( $user_files as $file ){
+				$files[$file['s_name']] = $file['s_settings'];
+			}
+			return $files;
+		}
+		return array();
 	}
 
 	/**
@@ -178,25 +264,38 @@ class UploadHelper {
 		if( function_exists('lz_demo_selected_theme') ){
 			$theme = lz_demo_selected_theme();
 		}
-
-		fb($theme.'_'.$group.'_'.$field_name, 'Selected upload');
-		$file = osc_get_preference( $theme.'_'.$group.'_'.$field_name, 'lz_theme_options_uploads' );
-
-		fb($file, 'Selected upload exists' );
+		
+		if( defined( 'DEMO' ) ){
+			$path = LZO_DEMO_USER_PATH;
+			$thumb_path = LZO_DEMO_USER_THUMB_PATH;
+			$url = 'lz_theme_demo_users/'.DEMO_USER_IP.'/';
+			$thumb_url = 'lz_theme_demo_users/'.DEMO_USER_IP.'/thumbnails/';
+			$file = OSCLztoModel::newInstance()->getUserFileByName(DEMO_USER_IP, $theme.'_'.$group.'_'.$field_name );
+		} else {
+			$path = LZO_UPLOAD_PATH;
+			$thumb_path = LZO_THUMB_PATH;
+			$url = 'lz_theme_options/';
+			$thumb_url = 'lz_theme_options/thumbnails/';
+			$file = osc_get_preference( $theme.'_'.$group.'_'.$field_name, 'lz_theme_options_uploads' );
+		}
 
 		if( !empty( $file ) ){
 			$f 				 = explode( '||', $file );
 			$uid 		     = $f[0];
 			$filename 		 = $f[1];
 
-			if( file_exists(LZO_UPLOAD_PATH.$filename ) ){
+			if( file_exists($path.$filename ) ){
 				$results['name'] = $filename;
 				$results['uuid'] = $uid;
-				$results['size'] = self::human_filesize( filesize( LZO_UPLOAD_PATH.$filename ) );
-				$results['url']  = osc_uploads_url( 'lz_theme_options/'.$filename );
-				$results['thumbnailUrl'] = osc_uploads_url( 'lz_theme_options/thumbnails/'.$filename );
+				$results['size'] = self::human_filesize( filesize( $path.$filename ) );
+				$results['url']  = osc_uploads_url( $url.$filename );
+				$results['thumbnailUrl'] = osc_uploads_url( $thumb_url.$filename );
 			} else {
-				self::delete($field_name, $group);
+				if( defined('DEMO') ){
+					OSCLztoModel::newInstance()->deleteUserFileByName(DEMO_USER_IP, $theme.'_'.$group.'_'.$field_name );
+				} else {
+					osc_delete_preference( $theme.'_'.$group.'_'.$field_name, 'lz_theme_options_uploads' );
+				}
 			}
 		}
 		return $results;

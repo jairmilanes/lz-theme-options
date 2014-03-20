@@ -58,7 +58,7 @@ class Builder {
 		}
 		return self::$instance ;
 	}
-	
+
 	public function savePreset(){
 		
 		if( !osc_is_admin_user_logged_in() ){
@@ -214,19 +214,21 @@ class Builder {
 	    }
 	    return true;
 	}
-	
 
 
 	/***********************************************************************
 	 * FIELDS SETUP FUNCTIONS
 	 *********************************************************************/
 	public function setOptions( array $options ){
-
+		$data = null;
 		if( defined('DEMO') ){
-			$this->getUserSettings();
+			$data = $this->getUserSettings();
 		}
 		
-		$data    = osc_get_preference( osc_current_web_theme(), 'lz_theme_options' );
+		if( empty($data) ){
+			$data    = osc_get_preference( osc_current_web_theme(), 'lz_theme_options' );
+		}
+		
 		if( !empty($data)){
 			$data = unserialize($data);
 		}
@@ -242,7 +244,6 @@ class Builder {
 			$data = array_filter($data);
 		}
 		
-		//printR( $data, true );
 		if( !empty( $data ) ){
 			
 			$forms = Lib\LZForm::getInstance()->getAllInstances();
@@ -273,16 +274,21 @@ class Builder {
 	}
 	
 	protected function getUserSettings(){
-		$ip = $_SERVER['REMOTE_ADDR'];
-		if( !empty($ip) ){
-			
-			$rs = OSCLztoModel::newInstance()->getUserSettings($ip);
-			
-	
-			var_dump($rs);exit;
+		$rs = OSCLztoModel::newInstance()->getUserSettings(DEMO_USER_IP);
+		if( !empty($rs) ){
+			return $rs;
 		}
-	}
-	
+
+		if( defined('DEMO') ){
+			$settings = osc_get_preference(osc_current_web_theme(), 'lz_theme_options');
+			$files    = UploadHelper::getFiles();
+			$user_settings = OSCLztoModel::newInstance()->createUserSettings( DEMO_USER_IP, $settings, $files );
+			if( false !== $user_settings ){
+				return $user_settings;
+			}
+		}
+		return false;
+	}	
 
 	/**
 	 * Gets a new form instance
@@ -361,7 +367,13 @@ class Builder {
 
 			if( count($errors) == 0 ){
 				$form_data = serialize( $data );
-				$status = osc_set_preference( osc_current_web_theme(), $form_data, 'lz_theme_options', 'STRING' );
+				
+				if(defined('DEMO')){
+					$status = OSCLztoModel::newInstance()->updateUserSettings( DEMO_USER_IP, array('s_ip' => DEMO_USER_IP, 's_name' => osc_current_web_theme(), 's_settings' => $form_data) );
+				} else {
+					$status = osc_set_preference( osc_current_web_theme(), $form_data, 'lz_theme_options', 'STRING' );
+				}
+
 				$message = ( !$status )?
 				array('status' => false, 'errors' => _m('Could not save to database.', 'lz_theme_options') ) :
 				array('status' => true, 'message' => _m('Theme options updated!', 'lz_theme_options') );
@@ -374,6 +386,8 @@ class Builder {
 		die( json_encode( array('status' => false, 'errors' => _m('No forms found.', 'lz_theme_options') ) ) );
 	}
 
+	
+	
 	/**
 	 * Validates form post values
 	 */
@@ -434,8 +448,11 @@ class Builder {
 	 * Delete previus uploaded files
 	 */
 	public function deleteUpload(){
-		$result = UploadHelper::deleteFile();
-		die( json_encode( $result ) );
+		$filename = Params::getParam('field_name');
+		$group    = Params::getParam('group');
+		$uuid     = Params::getParam('qquuid');
+		$success  = UploadHelper::delete( $filename, $group, $uuid );
+		die( json_encode( array( 'success' => $success, 'deletedFile' => $filename ) ) );
 	}
 
 	/**
@@ -503,14 +520,14 @@ class Builder {
 	 * SYSTEM FUNCTIONS
 	**********************************************************************/
 	public function install(){
-
+		return OSCLztoModel::newInstance()->install();
 	}
 
 	public function uninstall(){
-
+		return OSCLztoModel::newInstance()->uninstall();
 	}
 
-protected function zipPreset( $json, $source, $preset_name = null )
+	protected function zipPreset( $json, $source, $preset_name = null )
 	{
 		if( is_null($preset_name) ){
 			return false;

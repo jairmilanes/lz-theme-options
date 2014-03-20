@@ -1,11 +1,11 @@
 <?php 
 /*
-	Plugin Name: Theme options
-	Plugin URI: http://www.jmilanes.com.br/
+	Plugin Name: LZThemeOptions
+	Plugin URI: http://www.layoutz.com.br/
 	Description: Theme options plugin, allows a developer to include theme options with ease.
 	Version: 1.0
 	Author: Jair Milanes Junior
-	Author URI: http://www.jmilanes.com.br/
+	Author URI: http://www.layoutz.com.br/
 	Short Name: lzto
 	Plugin update URI: lzto
 */
@@ -14,8 +14,7 @@
  * Load
  */
 function lzto_init(){
-	//fb('Lzto init started');
-	//var_dump('loading');
+
 	$theme_options = false;
 
 	$theme = osc_current_web_theme();
@@ -25,9 +24,7 @@ function lzto_init(){
 	}
 	
 	$file = osc_themes_path().$theme.'/options.php';
-	//fb('Lzto theme is '.$theme);
-	//var_dump($theme);
-	//fb('Lzto theme file is '.$file);
+
 	if( file_exists( $file ) ){
 		if( OC_ADMIN ){
 			if( Params::getParam('page') !== 'plugins' ){
@@ -49,6 +46,21 @@ function lzto_init(){
 			define( 'LZO_UPLOAD_PATH', UPLOADS_PATH.'lz_theme_options/' );
 			define( 'LZO_THUMB_PATH', LZO_UPLOAD_PATH.'thumbnails/' );
 			define( 'LZO_PRESETS_PATH', UPLOADS_PATH.'presets/' );
+			
+			if( defined('DEMO') ){
+				$ip = filter_var( $_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP );
+				define('DEMO_USER_IP', ip2long($ip) );
+				define('LZO_DEMO_USER_PATH', UPLOADS_PATH.'lz_theme_demo_users/'.DEMO_USER_IP.'/' );
+				define('LZO_DEMO_USER_THUMB_PATH', LZO_DEMO_USER_PATH.'thumbnails/' );
+				
+				if( !file_exists(LZO_DEMO_USER_PATH) ){
+					@mkdir( LZO_DEMO_USER_PATH, 0777 );
+				}
+				
+				if( !file_exists(LZO_DEMO_USER_THUMB_PATH) ){
+					@mkdir( LZO_DEMO_USER_THUMB_PATH, 0777 );
+				}
+			}
 			
 			$theme_options = Builder::newInstance()->setOptions( get_theme_options() );
 			if( $theme_options ){
@@ -106,7 +118,6 @@ function lzto_remove_preset(){
 	}
 	die(json_encode(array('status' => false, 'message' => 'Could not remove preset.' )));
 }
-
 
 /**
  * Get theme optios by it�s group name
@@ -293,10 +304,21 @@ function lzto_admin_toolbar_menus(){
 /**
  * Install
  */
+
+function lzto_install(){
+	if( !class_exists('Builder')){
+		require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
+	}
+	return Builder::newInstance()->install();
+}
+/**
+ * Uninstall
+ */
 function lzto_uninstall(){
-	Preference::newInstance()->delete( array( 's_section' => 'lz_theme_options' ) );
-	Preference::newInstance()->delete( array( 's_section' => 'lz_theme_options_uploads' ) );
-	Session::newInstance()->_drop('ajax_files');
+	if( !class_exists('Builder')){
+		require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
+	}
+	return Builder::newInstance()->uninstall();
 }
 
 /**
@@ -339,18 +361,18 @@ osc_add_hook( 'ajax_lzto_upload_file', 'lzto_uploadFile' );
 osc_add_hook( 'ajax_lzto_delete_upload_file', 'lzto_deleteUploadFile' );
 osc_add_hook( 'ajax_lzto_load_upload_files', 'lzto_loadUploadFiles' );
 osc_add_hook( 'ajax_lzto_reset_form', 'lzto_resetOptions' );
+osc_add_hook( 'admin_header', 'lzto_admin_header');
+osc_add_hook( 'admin_menu', 'lzto_admin_menu');
 
-osc_add_hook('admin_header', 'lzto_admin_header');
-osc_add_hook('admin_menu', 'lzto_admin_menu');
+osc_register_plugin( osc_plugin_path( __FILE__ ), 'lzto_install' );
 osc_add_hook( osc_plugin_path( __FILE__ ) . '_uninstall', 'lzto_uninstall' );
-osc_add_hook('add_admin_toolbar_menus', 'lzto_admin_toolbar_menus');
-osc_register_plugin( osc_plugin_path( __FILE__ ), '' );
-
-osc_add_hook('lz_demo_reset_complete', 'lzto_db_reset');
+osc_add_hook( 'add_admin_toolbar_menus', 'lzto_admin_toolbar_menus');
 
 
-// @todo implement config page
-//osc_add_hook( osc_plugin_path( __FILE__ ) . '_configure', 'lzto_conf' );
+osc_add_hook( 'lz_demo_reset_complete', 'lzto_db_reset');
+
+//osc_add_hook('cron_hourly', )
+
 if( OSCLASS_VERSION < 3.3 ){
 	osc_register_script('jquery-fineuploader', osc_plugin_url('lz_theme_options/assets').'assets/js/fineuploader/jquery.fineuploader.min.js' );
 }

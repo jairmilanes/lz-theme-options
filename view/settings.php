@@ -17,7 +17,7 @@
 					<h2><?php _e('LZ Theme options','lzto')?></h2>
 					<?php  } ?>
 					<div class="menu_container">
-						<?php if( osc_is_admin_user_logged_in() ){ ?>
+						<?php if( OC_ADMIN ){ ?>
 							<input type="hidden" name="page" value="plugins" />
 							<input type="hidden" name="action" value="configure_post" />
 						<?php } else { ?>
@@ -25,23 +25,23 @@
 							<input type="hidden" name="action" value="runhook" />
 							<input type="hidden" name="hook" value="lzto_post" />
 						<?php } ?>
-			        	<input type="hidden" name="plugin" value="lz_theme_options/index.php" />
-			        	<input type="hidden" name="plugin_short_name" value="lz_theme_options" />
+			        		<input type="hidden" name="plugin" value="lz_theme_options/index.php" />
+			        		<input type="hidden" name="plugin_short_name" value="lz_theme_options" />
 						<ul>
-						<?php
-							$fields = lzto_getFields();
-							foreach(  $fields as $grandpa => $field ){
-								echo '<li>';
-								echo '	<a href="#" >'.ucfirst( strtolower( lzto_getGroupTitle( $grandpa ) ) ).'<span></span></a>';
-								echo '	<div class="menu_form">';
-								echo '		<h3>'.lzto_getGroupTitle( $grandpa ).'</h3>';
-								echo '      <div class="form-group-container">';
-												lzto_prepareRowHtml( $field, $grandpa );
-								echo '      </div>';
-								echo '	</div>';
-								echo '<li>';
-							}
-						?>
+							<?php
+								$fields = lzto_getFields();
+								foreach(  $fields as $grandpa => $field ){
+									echo '<li>';
+									echo '	<a href="#" >'.ucfirst( strtolower( lzto_getGroupTitle( $grandpa ) ) ).'<span></span></a>';
+									echo '	<div class="menu_form">';
+									echo '		<h3>'.lzto_getGroupTitle( $grandpa ).'</h3>';
+									echo '      <div class="form-group-container">';
+													lzto_prepareRowHtml( $field, $grandpa );
+									echo '      </div>';
+									echo '	</div>';
+									echo '<li>';
+								}
+							?>
 						<li>
 							<a href="#">Presets</a>
 							<div class="menu_form">';
@@ -65,12 +65,12 @@
 											<?php } ?>
 										</ul>
 									</div>
+									<?php  if( OC_ADMIN ){ ?>
 									<div class="form-group text">
 										<span class="description" data-field="custom_font_heading" data-description="<?php _e('Use the this to create presets of configurations for your theme, later you can load this presets and start using them in seconds.','lz_theme_options');?>"></span>
-										<?php  if( OC_ADMIN ){ ?>
 											<label for="lzto_preset" class="text_field preset-field"><a id="lzto_preset_create" href="<?php echo osc_ajax_hook_url('lzto_save_preset')?>" class="btn"><?php _e('Save a new preset', 'lz_theme_options'); ?></a></label>
-										<?php } ?>
 									</div>
+									<?php } ?>
 									<div id="preset_dialog" style="display: none" title="<?php _e('Name your preset', 'lz_theme_options' );?>">
 									  <p><?php _e('What is the name of your preset?', 'lz_theme_options');?></p>
 									</div>
