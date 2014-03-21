@@ -458,7 +458,6 @@ LZTO
 #lzto .menu_form fieldset:hover legend {
 	color: #fff ;
 }
-
 #lzto .menu_form .error {
 	border-color: #F00;
 }
@@ -466,22 +465,87 @@ LZTO
 	font-size: 11px; text-align: right; color: #F00; margin: 0; margin-top: 4px;
 }
 #lzto .menu .menu_action {
-	height: 45px;
-	width: 100%;
+	height: 135px;
+	width: 55px;
 	position: absolute;
-	bottom: 0;
+	bottom: 5%;
+	right: 0;
+	opacity: 0;	
+	visibility: hidden;
+	overflow: hidden;
+}
+#lzto .menu .menu_action .side_btn {
+	width: 45px;
+	height: 45px;
+	position: absolute;
 	left: 0;
-	background: #222;
-	overflow: hidden;	
+	padding: 0;
+	margin: 0;
+	border: none;
+	color: #fff;
+	-webkit-transition: all 50ms linear;
+    -moz-transition: all 50ms linear;
+    -o-transition: all 50ms linear;
+    -ms-transition: all 50ms linear;
+    transition: all 50ms linear;
+	cursor: pointer;
+	z-index: 0;
 }
-#lzto .menu .menu_action > input[type="submit"] {
-	float: right;	
-	margin: 5px 5px 0 0;
+#lzto .menu .menu_action .side_btn > img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	margin: 0;
 }
-#lzto .menu .menu_action > input[type="reset"] {
-	float: left;	
-	margin: 5px 0 0 5px;
+#lzto .menu .menu_action .submit {
+	top: 40px;
+	background: #76A543;
 }
+#lzto .menu .menu_action .reset {
+	top: 5px;
+	width: 35px;
+	height: 35px;
+	background: #444;
+}
+#lzto .menu .menu_action .full_screen {
+	top: 85px;
+	width: 35px;
+	height: 35px;
+	background: #444;
+}
+
+
+#lzto .menu.open .menu_action {
+	right: -55px;
+	opacity: 1;	
+	visibility: visible;
+}
+#lzto .menu.open .menu_action .side_btn:hover {
+	color: #fff;
+	width: 55px;
+	height: 55px;
+	z-index: 1;	
+}
+#lzto .menu.open .menu_action .side_btn.submit:hover {
+	top: 40px;
+	background: #76A543;
+}
+#lzto .menu.open .menu_action .side_btn.reset:hover {
+	top: 0px;
+	width: 40px;
+	height: 40px;
+	background: #4280B3;
+}
+#lzto .menu.open .menu_action .side_btn.full_screen:hover {
+	width: 40px;
+	height: 40px;
+	background: #D9534F;
+}
+
+
+
+/*
+
 #lzto .menu .menu_action > a {
 	display: block;
 	float: left;
@@ -498,6 +562,10 @@ LZTO
 	margin-top: 9px;
 	margin-right: 5px;	
 }
+
+*/
+
+
 
 #lzto #presets_box > ul {
 	list-style: circle;

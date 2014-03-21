@@ -59,6 +59,7 @@ $(document).ready(function(){
 		e.preventDefault();
 		if( $(this).hasClass('active') ){
 			$(this).removeClass('active');
+			$(this).parent().removeClass('open');
 			$('#lzto .menu').css('width', '0%');
 			$('#lzto .menu > .inner').css('overflow', 'hidden');
 			$('#lzto .canvas').css({'width': '100%','margin-left': '0'});
@@ -68,7 +69,7 @@ $(document).ready(function(){
 			$('#lzto .info').hide();
 		} else {
 			$(this).addClass('active');
-			$('#lzto .menu').css('width', '' );
+			$('#lzto .menu').addClass('open').css('width', '' );
 			$('#lzto .menu > .inner').css('overflow', 'auto');
 			$('#lzto .info').hide();
 		}
@@ -233,11 +234,7 @@ $(document).ready(function(){
 			selectUi($(this));
 		});
 	}
-	
-	
-	
-	
-	
+
 	/***************************************************************************
 	 * THEME OPTIONS DESCRIPTIONS
 	 **************************************************************************/
@@ -256,10 +253,8 @@ $(document).ready(function(){
 		});
 		parent.find('legend').trigger('click');
 	 });
-	 
-	 
-	 
-	  if( $('.sliderange_field').length > 0 ){
+
+     if( $('.sliderange_field').length > 0 ){
 		  $('.sliderange_field').each( function(index, elem){
 			  var slider = $(elem).find('.slider');
 			  var type = slider.data('type');
@@ -318,7 +313,20 @@ $(document).ready(function(){
 			  slider.slider(options);
 
 		  });
-	  }
+	 }
+	
+	 var menu_timeout;
+	 
+	 $('#lzto .menu').on('mouseover', function(){
+		 window.clearTimeout(menu_timeout);
+	 });
+	
+	 $('#lzto .menu').on('mouseleave', function(){
+		 menu_timeout = setTimeout(function(){
+			 $('#lzto .menu .toggle_btn').trigger('click');
+	 	 },3000);
+	 });
+	 
 	
 	 
 });

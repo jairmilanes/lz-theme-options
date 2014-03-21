@@ -80,11 +80,19 @@
 						</ul>
 					</div>
 					<div class="menu_action">
-						<input type="reset" value="reset" class="btn" data-url="<?php echo osc_ajax_hook_url( 'lzto_reset_form' ); ?>" data-confirm="<?php _e('Do you realy wish to reset all your options to it\'s default values ?','lz_theme_options')?>"/>
+						<a href="#" class="side_btn reset" onclick="$('#lzto .form').trigger('reset');">
+							<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/reload-icon.png';?>"/>
+						</a>
+						<?php /*<input type="reset" value="reset" class="side_btn" data-url="<?php echo osc_ajax_hook_url( 'lzto_reset_form' ); ?>" data-confirm="<?php _e('Do you realy wish to reset all your options to it\'s default values ?','lz_theme_options')?>"/>*/?>
 						<?php if(OC_ADMIN){ ?>
-						<a href="#" id="full_screen_btn"><img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/expand_icon_green.png';?>" width="24"/> <span>Full screen</span></a>
+						<a href="#" class="side_btn full_screen">
+							<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/resize-icon.png';?>"/>
+						</a>
 						<?php }?>
-						<input type="submit" value="save" class="btn btn-submit"/>
+						<a href="#" class="side_btn submit" onclick="$('#lzto .form').trigger('submit');">
+							<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/check-icon.png';?>"/>
+						</a>
+						<?php /*<input type="submit" value="save" class="side_btn"/> */?>
 					</div>
 					<?php echo lzto_closeForm();?>
 				</div>
@@ -101,7 +109,7 @@
 	$(document).ready(function(){
 		
 		<?php if(OC_ADMIN){ ?>
-		$('#full_screen_btn').on('click', function(e){
+		$('#lzto .full_screen').on('click', function(e){
 			e.preventDefault();
 			var adjust;
 			if( !$('#lzto').hasClass('full_screen') ){
@@ -123,7 +131,7 @@
 				$('#sidebar').addClass('full_screen');
 				$('#content').addClass('full_screen');
 				$('#footer').addClass('full_screen');
-				$(this).html('<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/expand_icon_gray.png';?>" width="24"/> <span>Exit full screen</span>');
+				$(this).html('<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/resize-hover-icon.png';?>"/>');
 	
 			} else {
 				var i = 0;
@@ -144,7 +152,7 @@
 				$('#sidebar').removeClass('full_screen');
 				$('#content').removeClass('full_screen');
 				$('#footer').removeClass('full_screen');
-				$(this).html('<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/expand_icon_green.png';?>" width="24"> Full screen');	
+				$(this).html('<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/resize-icon.png';?>"/>');	
 			}
 			adjust();
 		});
