@@ -1,5 +1,4 @@
 <?php
-
 require dirname(__FILE__)."/lib/Field.php";
 require dirname(__FILE__)."/lib/Field/BaseOptions.php";
 require dirname(__FILE__)."/lib/Field/Options.php";
@@ -10,6 +9,13 @@ require dirname(__FILE__)."/lib/Useful.php";
 require dirname(__FILE__)."/helpers/options.helper.php";
 require dirname(__FILE__)."/helpers/upload.helper.php";
 require dirname(__FILE__)."/model/OSCLztoModel.php";
+/**
+ * Class Builder 
+ * 
+ * @author Jair Milanes Junior
+ * @version 1.0
+ *
+ */
 
 class Builder {
 
@@ -18,20 +24,38 @@ class Builder {
 	 * It is used as a singleton
 	 *
 	 * @access private
-	 * @since 3.0
+	 * @since 1.0
 	 * @var ModelProducts
 	 */
 	private static $instance;
-
+	
+	/**
+	 * It is a instance of our form object
+	 * 
+	 * @access protected
+	 * @since 1.0
+	 */
 	protected $form;
+	
+	/**
+	 * Instance of the options object
+	 * 
+	 * @access protected
+	 * @since 1.0
+	 */
 	protected $options;
-	protected $values;
-	protected $forms = array();
-	protected $groups = array();
-	protected $default_values;
-	protected $ajax_upload_fields = array();
+	
+	/**
+	 * Log file path
+	 * 
+	 * @access protected
+	 * @since 1.0
+	 */
 	protected $log_file;
 
+	/**
+	 * Class construct
+	 */
 	public function __construct(){
 		if( OC_ADMIN ){
 			$url = osc_admin_base_url(true);
@@ -39,8 +63,7 @@ class Builder {
 			$url = osc_base_url(true);
 		}
 		$this->form =  Lib\LZForm::getInstance('lzto', $url, true, 'POST' );
-		$this->fields = array();
-		$this->default_values = array();
+
 		$this->log_file = osc_plugins_path(__FILE__).'lz_theme_options/logs/error.log';
 	}
 
@@ -59,9 +82,17 @@ class Builder {
 		return self::$instance ;
 	}
 
+	/**
+	 * Creates and saves a new preset
+	 * 
+	 * @return number|boolean Return 1 if no data to copy from, 2 if 
+	 * admin is not logged in, 3 if all went well and falseif fails 
+	 * to create the new zip file  
+	 */
 	public function savePreset(){
 		
 		if( !osc_is_admin_user_logged_in() ){
+			//$this->log('Trying to save a preset with no admin logged in');
 			return 2;
 		}
 		
@@ -84,6 +115,7 @@ class Builder {
 		}
 
 		if( empty($data) ){
+			//$this->log('No data to create a preset, save options at least one time before creating a preset.');
 			return 1;
 		}
 
@@ -93,12 +125,20 @@ class Builder {
 		
 		
 		if( $this->zipPreset( $preset_json, LZO_UPLOAD_PATH, $preset_name )  ){
+			//$this->log('New preset created, name: '.$preset_name.'.');
 			return 3;
 		}
+		//$this->log('Failed to save a new preset, name: '.$preset_name.'.');
 		return false;
 		
 	}
 	
+	/**
+	 * Get all existing presets
+	 * 
+	 * @return array  Returns a array containing the files or a 
+	 * array with a key empty if no files were found
+	 */
 	public function loadPresets(){
 		if( !file_exists(LZO_PRESETS_PATH) ){
 			mkdir(substr(LZO_PRESETS_PATH, 0, -1));
@@ -128,6 +168,11 @@ class Builder {
 		));
 	}
 	
+	/**
+	 * Loads a specific preset
+	 * 
+	 * @return boolean True if load with success false otherwise
+	 */
 	public function loadPreset(){
 		
 		if( !Params::existParam( 'preset_name' ) ){
@@ -189,6 +234,11 @@ class Builder {
 		return false;
 	}
 	
+	/**
+	 * Completly removes a preset
+	 * 
+	 * @return boolean True if success false otherwise
+	 */
 	public function removePreset(){
 		$preset = Params::getParam('preset_name');
 		$file = LZO_PRESETS_PATH.'preset-'.$preset.'.zip';
@@ -199,6 +249,12 @@ class Builder {
 		return true;
 	}
 	
+	/**
+	 * Helper method to remove the ontents of a dir but not the dir it´s self
+	 * 
+	 * @param string $path
+	 * @return boolean True on success false otherwise
+	 */
 	protected function rmdir_recurse($path) {
 	    $path = rtrim($path, '/').'/';
 	    if( file_exists($path) ){
@@ -219,6 +275,13 @@ class Builder {
 	/***********************************************************************
 	 * FIELDS SETUP FUNCTIONS
 	 *********************************************************************/
+	
+	/**
+	 * Loads and prepares the available theme options
+	 * 
+	 * @param array $options Array containing the theme options
+	 * @return boolean True on success false otherwise
+	 */
 	public function setOptions( array $options ){
 		$data = null;
 		if( defined('DEMO') ){
@@ -273,6 +336,11 @@ class Builder {
 		return true;
 	}
 	
+	/**
+	 * Grabs a specific user saved settings in case we are in a demo site
+	 * 
+	 * @return string|boolean Returns de s_setting string or false if feils to grab it.
+	 */
 	protected function getUserSettings(){
 		$rs = OSCLztoModel::newInstance()->getUserSettings(DEMO_USER_IP);
 		if( !empty($rs) ){
@@ -313,15 +381,34 @@ class Builder {
 		return $this->options->getOption( $field, $group );
 	}
 
-	public function getGroupName( $group ){
-		return $this->options->getGroupName( $group );
+	/**
+	 * Returns a specific group name given its slug
+	 * 
+	 * @param string $group Group slug
+	 * @return Ambigous <string, multitype:>
+	 */
+	public function getGroupName( $group_slug ){
+		return $this->options->getGroupName( $group_slug );
 	}
 
-	public function getOptionsByGroupName( $parent ){
-		return $this->options->getOptionsByGroupName($parent);
+	/**
+	 * Get all the options for a specific group given the group slug
+	 * 
+	 * @param string $group_slug Slug of the disired group
+	 * @return array|false Group fields or false if it fails
+	 */
+	public function getOptionsByGroupName( $group_slug ){
+		return $this->options->getOptionsByGroupName($group_slug);
 	}
 
-	public function hasOption( $form, $field ){
+	/**
+	 * Get a field value if it exists
+	 * 
+	 * @param string $group_slug Slug of the group
+	 * @param string $field Name of the field
+	 * @return mixed|boolean Returns the fields value and false otherwise
+	 */
+	public function hasOption( $group_slug, $field ){
 		$val = Lib\LZForm::getInstance($form)->getFieldValue($field);
 		return ( !empty( $val )? $val : false );
 	}
@@ -386,8 +473,6 @@ class Builder {
 		die( json_encode( array('status' => false, 'errors' => _m('No forms found.', 'lz_theme_options') ) ) );
 	}
 
-	
-	
 	/**
 	 * Validates form post values
 	 */
@@ -398,44 +483,23 @@ class Builder {
 	/**
 	 * Resets the form to it's default values
 	 */
-	public function resetOptions(){
-		if( count( $this->default_values ) > 0 ){
-
-			$data = array();
-			$data[ $this->form->getName() ] = $this->default_values;
-
-			$isValid = $this->form->validate( $data, true );
-
-			if( $isValid ){
-
-				$data = serialize( $isValid );
-				$status = osc_set_preference( osc_current_web_theme(), $data, 'lz_theme_options', 'STRING' );
-
-				$message = ( !$status )?
-				array('status' => false, 'errors' => _m('A error ocurred, could not save options.','lz_theme_options') ) :
-				array('status' => true, 'message' => _m('Theme options reset completed succecifully!','lz_theme_options') );
-
-				die( json_encode( $message ) );
-
+	public function resetOptions(){		
+		$ip = ( defined('DEMO') )? DEMO_USER_IP : null;
+		$rs = OSCLztoModel::newInstance()->resetDb($ip);
+		
+		if( $rs ){
+			$path = ( defined('DEMO') )? LZO_DEMO_USER_PATH : LZO_UPLOAD_PATH;
+			if( file_exists($path)){
+				osc_deleteDir($path);
 			}
-
-			$message = array('status' => false, 'message' => _m('Ops! Default velues are not valid!','lz_theme_options') );
-			die( json_encode( $message ) );
-
-		} else {
-
-			$this->default_values = array();
-			osc_delete_preference( osc_current_web_theme(), 'lz_theme_options' );
-			$message = array('status' => true, 'message' => _m('Theme options reset completed succecifully!','lz_theme_options') );
-			die( json_encode( $message ) );
-
+			return true;
 		}
+		return false;
 	}
 
 	/*********************************************************************
 	 * AJAX UPLOADING CRUD FUNCTIONS
 	**********************************************************************/
-
 	/**
 	 * Saves new uploaded files
 	 */
@@ -459,7 +523,7 @@ class Builder {
 	 * get all uploads for the current template
 	 */
 	public function getAllUploadFiles(){
-		return UploadHelper::getFiles( $this->ajax_upload_fields );
+		return UploadHelper::getFiles();
 	}
 
 	/**
@@ -484,7 +548,6 @@ class Builder {
 	/**********************************************************************
 	 * RENDERING FUNCTIONS
 	**********************************************************************/
-
 	/**
 	 * Render the form fields given it�s name
 	 *
@@ -519,21 +582,40 @@ class Builder {
 	/**********************************************************************
 	 * SYSTEM FUNCTIONS
 	**********************************************************************/
+	/**
+	 * Install LZTO
+	 */
 	public function install(){
 		return OSCLztoModel::newInstance()->install();
 	}
 
+	/**
+	 * Uninstall LZTO
+	 */
 	public function uninstall(){
 		return OSCLztoModel::newInstance()->uninstall();
 	}
 
+	
+	/**********************************************************************
+	 * PRESET RELATED
+	**********************************************************************/
+	
+	/**
+	 * Getters the uploaded content and zip the new preset on the
+	 * destination dir
+	 * 
+	 * @param strng $json Path to the json config file
+	 * @param string $source Path to the source dir
+	 * @param string $preset_name Name of the new preset
+	 * @return boolean True|False 
+	 */
 	protected function zipPreset( $json, $source, $preset_name = null )
 	{
 		if( is_null($preset_name) ){
 			return false;
 		}
 		$preset_name = strtolower( implode('_', explode(' ', $preset_name) ) );
-
 		$this->log('PRESET NAME '.$preset_name);
 		
 		$this->log('PRESETS PATH EXISTS '.file_exists(LZO_PRESETS_PATH));
@@ -623,6 +705,10 @@ class Builder {
 	    return false;
 	}
 	
+	/**
+	 * Log to error.log
+	 * @param unknown $msg
+	 */
 	protected function log( $msg )
 	{
 		$fd = fopen( $this->log_file, "a+" );

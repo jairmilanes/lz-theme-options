@@ -9,12 +9,11 @@
 	Short Name: lzto
 	Plugin update URI: lzto
 */
-
+define('ENABLE_FRONTEND_OPTIONS_PANEL', false);
 /**
  * Load
  */
 function lzto_init(){
-
 	$theme_options = false;
 
 	$theme = osc_current_web_theme();
@@ -40,7 +39,8 @@ function lzto_init(){
 		$settings = array();
 		require $file;
 		
-		if( function_exists( 'get_theme_options' ) ){
+		$options_method = osc_current_web_theme().'_get_theme_options';
+		if( function_exists( $options_method ) ){
 			require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
 			
 			define( 'LZO_UPLOAD_PATH', UPLOADS_PATH.'lz_theme_options/' );
@@ -62,7 +62,7 @@ function lzto_init(){
 				}
 			}
 			
-			$theme_options = Builder::newInstance()->setOptions( get_theme_options() );
+			$theme_options = Builder::newInstance()->setOptions( $options_method() );
 			if( $theme_options ){
 				lzto_register_scripts();
 			}
@@ -81,6 +81,11 @@ function lzto_init(){
 	return true;
 }
 
+/**
+ * Saves a new preset
+ * 
+ * @todo Move to a preset helper
+ */
 function lzto_save_preset(){
 	$return = Builder::newInstance()->savePreset();
 	if( false !== $return ){	
@@ -99,6 +104,11 @@ function lzto_save_preset(){
 	die(json_encode(array('status' => false, 'message' => 'Failed to save the zip arquive.')));
 }
 
+/**
+ * Loads a existing preset
+ * 
+ * @todo Move tho a preset helper
+ */
 function lzto_load_preset(){
 	$return = Builder::newInstance()->loadPreset();
 	if( false !== $return ){
@@ -107,10 +117,20 @@ function lzto_load_preset(){
 	die(json_encode(array('status' => false, 'message' => 'Could not load preset.' )));
 }
 
+/**
+ * Get all existing presets
+ * 
+ * @todo Move tho a preset helper
+ */
 function lzto_load_presets(){
 	return Builder::newInstance()->loadPresets();
 }
 
+/**
+ * Remove a existing preset
+ * 
+ * @todo Move tho a preset helper
+ */
 function lzto_remove_preset(){
 	$return = Builder::newInstance()->removePreset();
 	if( false !== $return ){
@@ -232,7 +252,11 @@ function lzto_prepareRowHtml( $fields, $parent, $group = null ){
  * Reset options form
  */
 function lzto_resetOptions(){
-	Builder::newInstance()->resetOptions();
+	$rs = Builder::newInstance()->resetOptions();
+	if( $rs ){
+		die(json_encode(array('status' => true, 'message' => _m('Reset sucessefuly completed!') )));
+	}
+	die(json_encode(array('status' => false, 'message' => _m('Problem during reset operation.') )));
 }
 
 /**
@@ -243,8 +267,6 @@ function lzto_admin_header(){
 		if( ( OC_ADMIN && Params::getParam('page') == 'plugins' 
 				&& Params::getParam('file') == 'lz_theme_options/view/settings.php' )
 					|| !OC_ADMIN ){
-			
-			
 			//osc_enqueue_style('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/css/ui-theme/jquery-ui.min.css' );
 			osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/polaris/polaris.css' );
 			osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.css' );

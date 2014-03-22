@@ -9,46 +9,47 @@ $(document).ready(function(){
 		adjustContainerHeight();
     });
 
-	if( $('#lzto_preset_create').length > 0 ){
-		
-		$('#lzto_preset_create').on('click', function(e){
-			e.preventDefault();
-			newDialog( 
-				'Name your preset',
-				'<p>What is the name of your preset?</p><input type="text" name="preset_name" id="preset_name" />',
-				{ "Create preset?": function() {
+	if( $('#presets_box').length > 0 ){
+		if( $('#lzto_preset_create').length > 0 ){
+			$('#lzto_preset_create').on('click', function(e){
+				e.preventDefault();
+				newDialog( 
+					'Name your preset',
+					'<p>What is the name of your preset?</p><input type="text" name="preset_name" id="preset_name" />',
+					{ "Create preset?": function() {
+						
+						  showDialogLoading($(this));
 					
-					  showDialogLoading($(this));
-				
-					  var $this = $(this);
-					  var preset_name = $('input#preset_name');
-					  
-					  $.post( $('#lzto_preset_create').attr('href'), { preset_name: preset_name.val() }, function(json){
-							if( !json ){
-								showMessage('error', 'Could not save preset!');
+						  var $this = $(this);
+						  var preset_name = $('input#preset_name');
+						  
+						  $.post( $('#lzto_preset_create').attr('href'), { preset_name: preset_name.val() }, function(json){
+								if( !json ){
+									showMessage('error', 'Could not save preset!');
+									$this.dialog( "close" );
+									return false;
+								}
+								if( !json.status ){
+									showMessage('error', json.message);
+									$this.dialog( "close" );
+									return false;
+								}					
+								showMessage('ok', json.message);
+								if( json.presets ){
+									$('#presets_box > ul').html('');
+									refreshPresets(json.presets);
+								}
+								hideDialogLoading($(this));
 								$this.dialog( "close" );
-								return false;
-							}
-							if( !json.status ){
-								showMessage('error', json.message);
-								$this.dialog( "close" );
-								return false;
-							}					
-							showMessage('ok', json.message);
-							if( json.presets ){
-								$('#presets_box > ul').html('');
-								refreshPresets(json.presets);
-							}
-							hideDialogLoading($(this));
-							$this.dialog( "close" );
-							return true;					
-					  },'json');
-				},
-				Cancel: function() {
-				  $( this ).dialog( "close" );
-				}
+								return true;					
+						  },'json');
+					},
+					Cancel: function() {
+					  $( this ).dialog( "close" );
+					}
+				});
 			});
-		});
+		}
 		init_presets();
 	}
 	/***************************************************************************
@@ -166,7 +167,7 @@ $(document).ready(function(){
 	/***************************************************************************
 	 * THEME OPTIONS FORM RESET
 	 **************************************************************************/
-	$('#lzto input[type="reset"]').off('click').on('click', function(e){
+	$('#lzto .reset').off('click').on('click', function(e){
 		e.preventDefault();
 		if( confirm( $(this).data('confirm') ) ){
 			var url = $(this).data('url');

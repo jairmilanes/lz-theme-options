@@ -8,15 +8,19 @@ class OSCLztoModel extends DAO {
 	 *
 	 * @access private
 	 * @since 3.0
-	 * @var ModelProducts
+	 * @var $instance
 	 */
 	private static $instance ;
 
+	/**
+	 * 
+	 * @var $log_file
+	 */
 	protected $log_file;
 	
 	public function __construct(){
 		parent::__construct();
-		$this->log_file = osc_plugins_path(__FILE__).'logs/database.log';
+		$this->log_file = osc_plugins_path(__FILE__).'lz_theme_options/logs/database.log';
 		$this->setTableName('t_lzto_user_settings');
 		$this->setPrimaryKey('s_ip');
 		$this->setFields(array('s_ip', 's_name', 's_settings'));
@@ -37,6 +41,7 @@ class OSCLztoModel extends DAO {
 		}
 		return self::$instance ;
 	}
+	
 	
 	public function saveSettings($settings){
 		return osc_set_preference('lzto_theme_settings', serialize($settings) );
@@ -100,7 +105,7 @@ class OSCLztoModel extends DAO {
 			$this->log('DEMO USER CREATED IP( '.long2ip(DEMO_USER_IP).' )' ); 
 			return $settings;
 		}
-		$this->log('FAILED TO CREATE DEMO - IP( '.long2ip(DEMO_USER_IP).' ) ERROR ( '.$this->dao->errorDesc().' )' );
+		$this->log('FAILED TO CREATE DEMO - IP( '.long2ip(DEMO_USER_IP).' ) ERROR ( '.$this->dao->errorDesc.' )' );
 		return false;
 	}
 	
@@ -128,6 +133,10 @@ class OSCLztoModel extends DAO {
 
 		$rs = $this->dao->query($sql);
 		return ( $rs )? true : false;
+	}
+	
+	public function deleteUserSettings($ip){
+		return $this->dao->delete($this->getTableName(), sprintf('s_ip = %s', $ip));
 	}
 	
 	public function getUserSettings($ip){
@@ -200,6 +209,16 @@ class OSCLztoModel extends DAO {
 	
 	public function deleteUserFileByName($ip, $name){
 		return $this->dao->delete( $this->getTableName(), sprintf("s_ip = %s AND s_name = '%s'", $ip, $name ) );
+	}
+	
+	public function resetDb( $ip = null ){
+		if( defined('DEMO')){
+			return $this->deleteUserSettings($ip);
+		} else {
+			Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options\'');
+			Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options_uploads\'');
+			return true;
+		}
 	}
 	
 	

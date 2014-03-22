@@ -1,4 +1,4 @@
-	<?php 
+<?php 
 	$lz_options = defined( 'THEME_OPTIONS_ENABLED' ) && THEME_OPTIONS_ENABLED === true;
 	$theme = ( Params::existParam('theme') )? '?theme='.Params::getParam('theme') : ''; ?>
 	<div id="lzto">
@@ -80,7 +80,7 @@
 						</ul>
 					</div>
 					<div class="menu_action">
-						<a href="#" class="side_btn reset" onclick="$('#lzto .form').trigger('reset');">
+						<a href="#" class="side_btn reset" onclick="$('#lzto .form').trigger('reset');" data-url="<?php echo osc_ajax_hook_url( 'lzto_reset_form' ); ?>" data-confirm="<?php _e('Do you realy wish to reset all your options to it\'s default values ?','lz_theme_options')?>">
 							<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/reload-icon.png';?>"/>
 						</a>
 						<?php /*<input type="reset" value="reset" class="side_btn" data-url="<?php echo osc_ajax_hook_url( 'lzto_reset_form' ); ?>" data-confirm="<?php _e('Do you realy wish to reset all your options to it\'s default values ?','lz_theme_options')?>"/>*/?>
