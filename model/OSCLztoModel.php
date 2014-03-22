@@ -237,7 +237,7 @@ class OSCLztoModel extends DAO {
 	public function uninstall(){
 		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options\'');
 		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options_uploads\'');
-		$this->dao->query(sprintf('DROP TABLE %s', $this->getTableName() ));
+		$this->dao->query(sprintf('DROP TABLE IF EXISTS %s', $this->getTableName() ));
 		$error_num = $this->dao->getErrorLevel() ;
 		if( $error_num > 0 ) {
 			throw new Exception($this->dao->getErrorLevel().' - '.$this->dao->getErrorDesc());

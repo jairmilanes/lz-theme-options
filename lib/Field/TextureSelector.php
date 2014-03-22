@@ -9,7 +9,7 @@ class TextureSelector extends Options
     public function __construct($label, array $attributes = array())
     {
         parent::__construct($label, $attributes);
-        $this->size = ( !isset( $attributes['option_size'] ))? 'small' : $attributes['option_size'];
+        $this->size = ( !isset( $attributes['option_size'] ))? 'small' : $attributes['option_size']; 
     }
 
     public function returnField($form_name, $name, $value = '', $group = '')

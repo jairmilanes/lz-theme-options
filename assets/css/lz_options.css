@@ -465,7 +465,7 @@ LZTO
 	font-size: 11px; text-align: right; color: #F00; margin: 0; margin-top: 4px;
 }
 #lzto .menu .menu_action {
-	height: 135px;
+	height: 195px;
 	width: 55px;
 	position: absolute;
 	bottom: 5%;
@@ -497,18 +497,24 @@ LZTO
 	height: 100%;
 	margin: 0;
 }
-#lzto .menu .menu_action .submit {
-	top: 40px;
-	background: #76A543;
-}
-#lzto .menu .menu_action .reset {
+#lzto .menu .menu_action .preset {
 	top: 5px;
 	width: 35px;
 	height: 35px;
 	background: #444;
 }
+#lzto .menu .menu_action .reset {
+	top: 40px;
+	width: 35px;
+	height: 35px;
+	background: #444;
+}
+#lzto .menu .menu_action .submit {
+	top: 75px;
+	background: #76A543;
+}
 #lzto .menu .menu_action .full_screen {
-	top: 85px;
+	top: 117px;
 	width: 35px;
 	height: 35px;
 	background: #444;
@@ -526,15 +532,21 @@ LZTO
 	height: 55px;
 	z-index: 1;	
 }
-#lzto .menu.open .menu_action .side_btn.submit:hover {
-	top: 40px;
-	background: #76A543;
-}
-#lzto .menu.open .menu_action .side_btn.reset:hover {
-	top: 0px;
+#lzto .menu.open .menu_action .side_btn.preset:hover {
+	top: 2px;
 	width: 40px;
 	height: 40px;
 	background: #4280B3;
+}
+#lzto .menu.open .menu_action .side_btn.reset:hover {
+	top: 38px;
+	width: 40px;
+	height: 40px;
+	background: #4280B3;
+}
+#lzto .menu.open .menu_action .side_btn.submit:hover {
+	top: 70px;
+	background: #76A543;
 }
 #lzto .menu.open .menu_action .side_btn.full_screen:hover {
 	width: 40px;

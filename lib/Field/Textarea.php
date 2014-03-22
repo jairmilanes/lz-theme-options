@@ -16,7 +16,7 @@ class Textarea extends Text
         }
     }
 
-    public function returnField($form_name, $name, $value = '', $group = '')
+    public function returnField($form_name, $name, $value = '', $group = '') 
     {
         $this->attributeString();
 

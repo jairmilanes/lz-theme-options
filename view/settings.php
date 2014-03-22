@@ -68,7 +68,11 @@
 									<?php  if( OC_ADMIN ){ ?>
 									<div class="form-group text">
 										<span class="description" data-field="custom_font_heading" data-description="<?php _e('Use the this to create presets of configurations for your theme, later you can load this presets and start using them in seconds.','lz_theme_options');?>"></span>
-											<label for="lzto_preset" class="text_field preset-field"><a id="lzto_preset_create" href="<?php echo osc_ajax_hook_url('lzto_save_preset')?>" class="btn"><?php _e('Save a new preset', 'lz_theme_options'); ?></a></label>
+										<label for="lzto_preset" class="text_field preset-field">
+											<a id="lzto_preset_create" href="<?php echo osc_ajax_hook_url('lzto_save_preset')?>" class="btn">
+												<?php _e('Save a new preset', 'lz_theme_options'); ?>
+											</a>
+										</label>
 									</div>
 									<?php } ?>
 									<div id="preset_dialog" style="display: none" title="<?php _e('Name your preset', 'lz_theme_options' );?>">
@@ -80,6 +84,11 @@
 						</ul>
 					</div>
 					<div class="menu_action">
+						<?php  if( OC_ADMIN ){ ?>
+							<a id="lzto_preset_create" class="side_btn preset" href="<?php echo osc_ajax_hook_url('lzto_save_preset')?>">
+								<?php _e('Save a new preset', 'lz_theme_options'); ?>
+							</a>
+						<?php } ?>
 						<a href="#" class="side_btn reset" onclick="$('#lzto .form').trigger('reset');" data-url="<?php echo osc_ajax_hook_url( 'lzto_reset_form' ); ?>" data-confirm="<?php _e('Do you realy wish to reset all your options to it\'s default values ?','lz_theme_options')?>">
 							<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/reload-icon.png';?>"/>
 						</a>
