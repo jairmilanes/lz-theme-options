@@ -8,6 +8,22 @@ $(document).ready(function(){
 	$(window).resize(function(e) {
 		adjustContainerHeight();
     });
+	
+	/*	
+	var menu_timeout;
+
+	 $('#lzto .menu').on('mouseleave', function(){
+		 menu_timeout = setTimeout(function(){
+			 if( $('#lzto .menu.open').length ){
+			 	$('#lzto .menu .toggle_btn').trigger('click');
+			 }
+	 	 },3000);
+	 });
+	 
+	 $('#lzto .menu').on('mouseover', function(){
+		 window.clearTimeout(menu_timeout);
+	 });
+	 */
 
 	if( $('#presets_box').length > 0 ){
 		if( $('#lzto_preset_create').length > 0 ){
@@ -73,6 +89,7 @@ $(document).ready(function(){
 			$('#lzto .menu').addClass('open').css('width', '' );
 			$('#lzto .menu > .inner').css('overflow', 'auto');
 			$('#lzto .info').hide();
+			//window.clearTimeout(menu_timeout);
 		}
 	});
 	$('#lzto .menu .toggle_btn').trigger('click');
@@ -93,7 +110,9 @@ $(document).ready(function(){
 			}
 		});
 	});
-
+	$('#lzto .menu_form .form-group-container').perfectScrollbar({
+		suppressScrollX: true
+	});
 	
 	/***************************************************************************
 	 * THEME OPTIONS COLORPICKERS
@@ -175,7 +194,7 @@ $(document).ready(function(){
 				if( !json.status ){
 					showMessage( 'error', json.message );	
 				} else {
-					showMessage( 'success', json.message );	
+					showMessage( 'ok', json.message );	
 					setTimeout(function(){
 						location.reload(true);
 					},1000);
@@ -187,7 +206,7 @@ $(document).ready(function(){
 	/***************************************************************************
 	 * THEME OPTIONS DESCRIPTIONS
 	 **************************************************************************/
-	$('#lzto .description').each( function(index, elem){
+	$('#lzto .menu .description').each( function(index, elem){
 		$(elem).off('click').on('click', function(e){		
 			if( $(elem).data('field') !== last_description ){
 				$('#lzto .info').find('.inner').html('');
@@ -203,18 +222,20 @@ $(document).ready(function(){
 	/***************************************************************************
 	 * THEME OPTIONS SWICHS
 	 **************************************************************************/
+	
+	
 	if( $('#lzto input.toggleSwitch').length > 0 ){
 		$('#lzto input.toggleSwitch').each( function(index, elem){
 			$(elem).parent().addClass('toggle-dark');
 			var id = 'switch_'+$(elem).attr( 'id' );
 			var template = '<div id="'+id+'" data-checkbox="'+$(elem).attr( 'id' )+'"></div>';
 			$(elem).before( template );
-			$(elem).css( 'display','none' ).parent().find('label').css( 'display','none' );
+			$(elem).css( 'display','none' );//.parent().find('label').css( 'display','none' );
 			var data = { 
 				checkbox: $(elem),
-				width:    120, // width used if not set in css
-   				height:   30, // height if not set in css
-    			type:     'select',
+				width:    ( ( $(elem).parent().width() / 100 ) * 28 ), // width used if not set in css
+   				height:   25, // height if not set in css
+    			
 				on:       $(elem).is(':checked'),
 				text: {
 				  on: 'ON', // text for the ON position
@@ -276,10 +297,15 @@ $(document).ready(function(){
 						  max: smax,
 						  value: val_max,
 						  step: step,
-						  slide: function( event, ui ) {
-							 $('input#'+slider.attr('id')+"_max").val(ui.value);
-						  }
+						  selection: 'none',
+						  slide: function( ev, ui ) {
+								 $('input#'+slider.attr('id')+"_max").val(ui.value);
+							}
 					  };
+					/*
+				    var slide_ev = function( ev ) {
+							 $('input#'+slider.attr('id')+"_max").val(ev.value);
+						}; */
 						break; 
 					case "max":
 					var options = {
@@ -288,46 +314,45 @@ $(document).ready(function(){
 						  max: smax,
 						  value: val_min,
 						  step: step,
-						  slide: function( event, ui ) {
+						  slide: function( ev, ui ) {
 							 $('input#'+slider.attr('id')+"_min").val( ui.value );
-						  }
+					 	 }
 					  };
+					  /*
+					 var slide_ev = function( ev ) {
+							 $('input#'+slider.attr('id')+"_min").val( ev.value );
+					  };*/
 						break;
 					default:
 					var options = {
 						  range: true,
 						  min: smin,
 						  max: smax,
-						  values: [
+						  value: [
 						  	val_min,
 							val_max
 						  ],
 						  step: step,
-						  slide: function( event, ui ) {
-							  console.log(ui);
+						  slide: function( ev, ui ) {
 							 $('input#'+slider.attr('id')+"_min").val(ui.values[ 0 ]);
 							 $('input#'+slider.attr('id')+"_max").val(ui.values[ 1 ]);
-						  }
+					  	  }
 					  };
+					  /*
+					  var slide_ev = function( ev ) {
+							 $('input#'+slider.attr('id')+"_min").val(ev.values[ 0 ]);
+							 $('input#'+slider.attr('id')+"_max").val(ev.values[ 1 ]);
+					  }; */
 						break; 
 			  }
-			  slider.slider(options);
-
+			  
+				slider.slider(options);
+			  
 		  });
 	 }
 	
-	 var menu_timeout;
-	 
-	 $('#lzto .menu').on('mouseover', function(){
-		 window.clearTimeout(menu_timeout);
-	 });
 	
-	 $('#lzto .menu').on('mouseleave', function(){
-		 menu_timeout = setTimeout(function(){
-			 $('#lzto .menu .toggle_btn').trigger('click');
-	 	 },3000);
-	 });
-	 
+	  $('#lzto .menu_action a').tooltip({placement: 'right'});
 	
 	 
 });

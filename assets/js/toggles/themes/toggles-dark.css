@@ -30,12 +30,12 @@
   font-size: 11px;
 }
 .toggle-dark .toggle-slide .toggle-on, .toggle-dark .toggle-select .toggle-inner .active {
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #1A70BE), color-stop(100%, #31A2E1));
-  background: -webkit-linear-gradient(top, #00B7C7 0%, #32C9D9 100%);
-  background: -moz-linear-gradient(top, #00B7C7 0%, #32C9D9 100%);
-  background: -ms-linear-gradient(top, #00B7C7 0%, #32C9D9 100%);
-  background: -o-linear-gradient(top, #00B7C7 0%, #32C9D9 100%);
-  background: linear-gradient(top, #00B7C7 0%, #32C9D9 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #32C9D9), color-stop(100%, #027173));
+  background: -webkit-linear-gradient(top, #32C9D9 0%, #027173 100%);
+  background: -moz-linear-gradient(top, #32C9D9 0%, #027173 100%);
+  background: -ms-linear-gradient(top, #32C9D9 0%, #027173 100%);
+  background: -o-linear-gradient(top, #32C9D9 0%, #027173 100%);
+  background: linear-gradient(top, #32C9D9 0%, #027173 100%);
 }
 .toggle-dark .toggle-slide .toggle-off, .toggle-dark .toggle-select .toggle-on {
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #242529), color-stop(100%, #34363B));

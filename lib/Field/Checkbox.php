@@ -16,14 +16,11 @@ class Checkbox extends MultipleOptions
         foreach ($this->options as $key => $val) {
         	    	
             $attributes = $this->getAttributeString($val);
-
-            $field .= sprintf('<input type="checkbox" name="%6$s[%7$s][%1$s][]" id="%6$s_%7$s_%3$s" value="%2$s" %4$s class="%8$s"/>' .
-                    '<label for="%6$s_%7$s_%3$s">%5$s</label>', 
+            $field .= sprintf('<input type="checkbox" name="%5$s[%6$s][%1$s][]" id="%5$s_%6$s_%3$s" value="%2$s" %4$s class="%7$s"/>', 
             		$name, 
             		$key, 
             		Useful::slugify($name) . '_' . Useful::slugify($key), 
             		(is_array($value) && in_array((string) $key, $value) ? 'checked="checked"' : '') . $attributes['string'], 
-            		$attributes['val'], 
             		$form_name, 
             		$group,
 					$this->attributes['class'] );
@@ -33,7 +30,7 @@ class Checkbox extends MultipleOptions
 
         return array(
             'messages' => !empty($this->custom_error) && !empty($this->error) ? $this->custom_error : $this->error,
-            'label' => $this->label == false ? false : sprintf('<label class="%s">%s</p>', $class, $this->label),
+            'label' => $this->label == false ? false : sprintf('<label class="%s">%s</label>', $class, $this->label),
             'field' => $field,
             'html' => $this->html
         );

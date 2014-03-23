@@ -267,19 +267,26 @@ function lzto_admin_header(){
 		if( ( OC_ADMIN && Params::getParam('page') == 'plugins' 
 				&& Params::getParam('file') == 'lz_theme_options/view/settings.php' )
 					|| !OC_ADMIN ){
-			//osc_enqueue_style('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/css/ui-theme/jquery-ui.min.css' );
-			osc_enqueue_style('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/skins/polaris/polaris.css' );
-			osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.css' );
+			if( !OC_ADMIN ){
+				osc_enqueue_style('jquery-ui', osc_plugin_url('lz_theme_options/assets').'assets/css/ui-theme/jquery-ui.custom.min.css' );
+			}
+			//osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.css' );
 			osc_enqueue_style('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/themes/toggles-dark.css' );
+			//osc_enqueue_style('slider', osc_plugin_url('lz_theme_options/assets').'assets/css/slider.css' );
+			osc_enqueue_style('perfect_scroll', osc_plugin_url('lz_theme_options/assets').'assets/css/perfect-scrollbar.css' );
 			osc_enqueue_style('colpick', osc_plugin_url('lz_theme_options/assets').'assets/css/colpick.css' );
 			osc_enqueue_style('lz_options', osc_plugin_url('lz_theme_options/assets').'assets/css/lz_options.css' );
 			if( !OC_ADMIN ){
 				osc_enqueue_style('lz_options_extra', osc_plugin_url('lz_theme_options/assets').'assets/css/extra.css' );
 			}
 			osc_enqueue_script('jquery');
-			osc_enqueue_script('jqueryui');
+			if( !OC_ADMIN ){
+				osc_enqueue_script('jqueryui');
+			}
 			osc_enqueue_script('icheck');
 			osc_enqueue_script('toggles');
+			osc_enqueue_script('perfect_scroll');
+			
 			osc_enqueue_script('jquery-fineuploader');
 			osc_enqueue_script('colpick');
 			osc_enqueue_script('lz_theme_options');
@@ -359,10 +366,13 @@ function lzto_theme_delete(){
  */
 function lzto_register_scripts(){
 	osc_register_script('jquery', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery.js' );
-	osc_register_script('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery-ui.min.js' );
+	if( !OC_ADMIN ){
+		osc_register_script('jqueryui', osc_plugin_url('lz_theme_options/assets').'assets/js/jquery-ui.min.js' );
+	}
 	osc_register_script('colpick', osc_plugin_url('lz_theme_options/assets').'assets/js/colpick.js' );
 	osc_register_script('icheck', osc_plugin_url('lz_theme_options/assets').'assets/js/icheck/jquery.icheck.min.js' );
 	osc_register_script('toggles', osc_plugin_url('lz_theme_options/assets').'assets/js/toggles/toggles.min.js');
+	osc_register_script('perfect_scroll', osc_plugin_url('lz_theme_options/assets').'assets/js/perfect-scrollbar.js');
 	osc_register_script('lz_theme_options', osc_plugin_url('lz_theme_options/assets').'assets/js/lz_theme_options.js' );
 }
 

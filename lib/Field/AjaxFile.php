@@ -109,8 +109,7 @@ class AjaxFile extends Field
         return array(
             'messages' => !empty($this->custom_error) && !empty($this->error) ? $this->custom_error : $this->error,
             'label' => $this->label == false ? false : sprintf('<label for="%s_%s_%s"%s>%s</label>', $form_name, $group, $name, $class, $this->label),
-            'field' => sprintf(
-            		'<div class="upload_button" id="'.$name.'" data-name="'.$name.'" data-group="'.$group.'"></div>' ),
+            'field' => '<div class="upload_button" id="'.$name.'" data-name="'.$name.'" data-group="'.$group.'"></div>',
             'html' => $this->html
         );
     }

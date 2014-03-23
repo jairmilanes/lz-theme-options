@@ -47,7 +47,7 @@ $.fn['toggles'] = function(options) {
   };
 
   // this is the actual toggle function which does the toggling
-    var doToggle = function(slide, width, height, state) {
+  var doToggle = function(slide, width, height, state) {
     var active = slide.toggleClass('active').hasClass('active');
 
     if (state === active) return;
@@ -56,10 +56,10 @@ $.fn['toggles'] = function(options) {
 
     slide.find('.toggle-off').toggleClass('active');
     slide.find('.toggle-on').toggleClass('active');
-	
+
     // toggle the checkbox, if there is one
-    opts['checkbox'].prop('checked', true );
-	
+    opts['checkbox'].prop('checked',active);
+
     if (selectType) return;
 
     var margin = active ? 0 : -width + height;
@@ -148,7 +148,7 @@ $.fn['toggles'] = function(options) {
       if (e) e.stopPropagation();
 
       doToggle(slide,width,height);
-      toggle.trigger('toggle',active);
+      toggle.trigger('toggle',!active);
     });
 
     // setup events for toggling on or off

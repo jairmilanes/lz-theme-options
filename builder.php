@@ -63,8 +63,11 @@ class Builder {
 			$url = osc_base_url(true);
 		}
 		$this->form =  Lib\LZForm::getInstance('lzto', $url, true, 'POST' );
-
-		$this->log_file = osc_plugins_path(__FILE__).'lz_theme_options/logs/error.log';
+		$path = osc_plugins_path(__FILE__).'lz_theme_options/logs';
+		if( !file_exists($path) ){
+			@mkdir($path, 0777);
+		}
+		$this->log_file = $path.'/error.log';
 	}
 
 	/**
@@ -147,10 +150,11 @@ class Builder {
 		$dir = new DirectoryIterator(LZO_PRESETS_PATH);
 		$files = array();
 		foreach( $dir as $file ){
-			if( !$file->isDot() && $file->isFile() ){
+			if( $file->isFile() ){
 				$name = $file->getFilename();
 				$parts = explode( '-', $name );
 				$preset_name = str_replace( '.zip', '', $parts[1] );
+				
 				$files[$preset_name] = array(
 						'title'      => ucfirst( strtolower( str_replace('_', ' ', $preset_name ) ) ),
 						'load_url'	 => osc_ajax_hook_url( 'lzto_load_preset', array( '&preset_name' => $preset_name ) ),
@@ -307,6 +311,8 @@ class Builder {
 			$data = array_filter($data);
 		}
 		
+		
+		
 		if( !empty( $data ) ){
 			
 			$forms = Lib\LZForm::getInstance()->getAllInstances();
@@ -409,7 +415,7 @@ class Builder {
 	 * @return mixed|boolean Returns the fields value and false otherwise
 	 */
 	public function hasOption( $group_slug, $field ){
-		$val = Lib\LZForm::getInstance($form)->getFieldValue($field);
+		$val = Lib\LZForm::getInstance($group_slug)->getFieldValue($field);
 		return ( !empty( $val )? $val : false );
 	}
 	
@@ -425,6 +431,8 @@ class Builder {
 		$params = Params::getParam('lzto');
 		$forms = $this->form->getAllInstances();
 
+		
+		
 		if ( count( $forms ) > 0 ){
 			$data   = array();
 			$errors = array();
@@ -453,7 +461,10 @@ class Builder {
 			}
 
 			if( count($errors) == 0 ){
+				
+				
 				$form_data = serialize( $data );
+				
 				
 				if(defined('DEMO')){
 					$status = OSCLztoModel::newInstance()->updateUserSettings( DEMO_USER_IP, array('s_ip' => DEMO_USER_IP, 's_name' => osc_current_web_theme(), 's_settings' => $form_data) );
@@ -616,25 +627,25 @@ class Builder {
 			return false;
 		}
 		$preset_name = strtolower( implode('_', explode(' ', $preset_name) ) );
-		$this->log('PRESET NAME '.$preset_name);
+		//$this->log('PRESET NAME '.$preset_name);
 		
-		$this->log('PRESETS PATH EXISTS '.file_exists(LZO_PRESETS_PATH));
+		//$this->log('PRESETS PATH EXISTS '.file_exists(LZO_PRESETS_PATH));
 		if( !file_exists(LZO_PRESETS_PATH) ){
 			mkdir(LZO_PRESETS_PATH);
 		}
 		
 		$destination = LZO_PRESETS_PATH.'preset-'.$preset_name.'.zip';
-		$this->log('DESTINATION PATH '.$destination);
+		//$this->log('DESTINATION PATH '.$destination);
 		
-		$this->log('JSON PATH '.$source.'preset.json');
-		$this->log('JSON EXISTS "'.file_exists( $source.'preset.json' ).'"');
+		//$this->log('JSON PATH '.$source.'preset.json');
+		//$this->log('JSON EXISTS "'.file_exists( $source.'preset.json' ).'"');
 		if( file_exists( $source.'preset.json' ) ){
 			unlink($source.'preset.json');
 		}
 		
-		$this->log('EXTENTION CHECK "'.(extension_loaded('zip') === true).'"');
+		//$this->log('EXTENTION CHECK "'.(extension_loaded('zip') === true).'"');
 		$file_put_contents = file_put_contents($source.'preset.json', $json);
-		$this->log('PUT CONTENTS CHECK "'.($file_put_contents).'"');
+		//$this->log('PUT CONTENTS CHECK "'.($file_put_contents).'"');
 	    if ( extension_loaded('zip') === true &&  $file_put_contents )
 	    {
 	        if (file_exists($source) === true)

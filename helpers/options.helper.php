@@ -31,6 +31,7 @@ class OptionsHelper {
 		if( empty($this->db_data) ){
 			$this->db_data = $this->default_values;
 		}
+		
 		return true;
 	}
 
