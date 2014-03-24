@@ -1,6 +1,9 @@
 <?php 
 	$lz_options = defined( 'THEME_OPTIONS_ENABLED' ) && THEME_OPTIONS_ENABLED === true;
-	$theme = ( Params::existParam('theme') )? '?theme='.Params::getParam('theme') : ''; ?>
+	$theme = ( Params::existParam('theme') )? '?theme='.Params::getParam('theme') : '';
+	if( OC_ADMIN ){
+		$theme .= '&oc-admin=1';
+	}?>
 	<div id="lzto" class="<?php echo ( (!OC_ADMIN)? 'use_bootstrap' : '' ); ?>">
 		<div class="canvas <?php echo ( $lz_options !== false )? 'no-options' : 'options'; ?>">
 			<iframe id="preview_iframe" style="visibility:hidden;" onload="this.style.visibility = 'visible';" src="<?php echo osc_base_url(true).$theme;?>" width="100%" height="100%" ></iframe>
@@ -44,6 +47,8 @@
 									echo '<li>';
 								}
 							?>
+							
+						<?php if(OC_ADMIN){ ?>
 						<li>
 							<a href="#">Presets</a>
 							<div class="menu_form">';
@@ -68,16 +73,7 @@
 												<?php } ?>
 											</ul>
 										</div>
-										<?php  if( OC_ADMIN ){ ?>
-										<div class="form-group text">
-											<span class="description" data-field="custom_font_heading" data-description="<?php _e('Use the this to create presets of configurations for your theme, later you can load this presets and start using them in seconds.','lz_theme_options');?>"></span>
-											<label for="lzto_preset" class="text_field preset-field">
-												<a id="lzto_preset_create" href="<?php echo osc_ajax_hook_url('lzto_save_preset')?>" class="btn">
-													<?php _e('Save a new preset', 'lz_theme_options'); ?>
-												</a>
-											</label>
-										</div>
-										<?php } ?>
+										
 										<div id="preset_dialog" style="display: none" title="<?php _e('Name your preset', 'lz_theme_options' );?>">
 										  <p><?php _e('What is the name of your preset?', 'lz_theme_options');?></p>
 										</div>
@@ -85,6 +81,7 @@
 								</div>
 							</div>
 						</li>
+						<?php } ?>
 						</ul>
 					</div>
 					<div class="menu_action">

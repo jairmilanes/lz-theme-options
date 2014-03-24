@@ -124,9 +124,8 @@ class Builder {
 
 		$preset_json = json_encode($data);
 		
-		chmod( LZO_UPLOAD_PATH , 0755);
-		
-		
+		//chmod( LZO_UPLOAD_PATH , 0755);
+
 		if( $this->zipPreset( $preset_json, LZO_UPLOAD_PATH, $preset_name )  ){
 			//$this->log('New preset created, name: '.$preset_name.'.');
 			return 3;

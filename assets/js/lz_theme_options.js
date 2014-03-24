@@ -10,7 +10,10 @@ $(document).ready(function(){
     });
 	
 	 $('#lzto .menu_action a, #lzto .toggle_btn').tooltip({
-		 position: { my: "left+15 center", at: "right center" }
+		 position: { my: "left+15 center", at: "right center" },
+		 show: {
+          delay: 800
+        }
 	 });
 	  
 	 $('#lzto .toggle_btn').on('tooltipopen', function( event, ui ) {
