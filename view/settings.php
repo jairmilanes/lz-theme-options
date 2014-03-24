@@ -109,7 +109,7 @@
 					</div>
 					<?php echo lzto_closeForm();?>
 				</div>
-				<div class="toggle_btn active"></div>
+				<div class="toggle_btn active" data-close_title="<?php _e('Close options?', 'lz_theme_options');?>" data-open_title="<?php _e('Change options?', 'lz_theme_options');?>" title="<?php _e('Change options?', 'lz_theme_options');?>"></div>
 		        <div class="close_btn"></div>
 		        
 			</div>
