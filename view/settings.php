@@ -2,7 +2,8 @@
 	$lz_options = defined( 'THEME_OPTIONS_ENABLED' ) && THEME_OPTIONS_ENABLED === true;
 	$theme = ( Params::existParam('theme') )? '?theme='.Params::getParam('theme') : '';
 	if( OC_ADMIN ){
-		$theme .= '&oc-admin=1';
+		$prefix = ( empty($theme)? '?' : '&' );
+		$theme .= $prefix.'oc-admin=1';
 	}?>
 	<div id="lzto" class="<?php echo ( (!OC_ADMIN)? 'use_bootstrap' : '' ); ?>">
 		<div class="canvas <?php echo ( $lz_options !== false )? 'no-options' : 'options'; ?>">
