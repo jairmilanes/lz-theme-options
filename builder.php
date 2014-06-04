@@ -1,14 +1,15 @@
 <?php
+require dirname(__FILE__)."/lib/LZForm.php";
+require dirname(__FILE__)."/helpers/options.helper.php";
+require dirname(__FILE__)."/helpers/upload.helper.php";
+require dirname(__FILE__)."/model/OSCLztoModel.php";
+require dirname(__FILE__)."/lib/Useful.php";
 require dirname(__FILE__)."/lib/Field.php";
 require dirname(__FILE__)."/lib/Field/BaseOptions.php";
 require dirname(__FILE__)."/lib/Field/Options.php";
 require dirname(__FILE__)."/lib/Field/MultipleOptions.php";
 require dirname(__FILE__)."/lib/Field/Text.php";
-require dirname(__FILE__)."/lib/LZForm.php";
-require dirname(__FILE__)."/lib/Useful.php";
-require dirname(__FILE__)."/helpers/options.helper.php";
-require dirname(__FILE__)."/helpers/upload.helper.php";
-require dirname(__FILE__)."/model/OSCLztoModel.php";
+
 /**
  * Class Builder 
  * 
@@ -20,7 +21,7 @@ require dirname(__FILE__)."/model/OSCLztoModel.php";
 class Builder {
 
 	/**
-	 * It references to self object: ModelProducts.
+	 * It references to self object: Builder.
 	 * It is used as a singleton
 	 *
 	 * @access private
@@ -71,12 +72,12 @@ class Builder {
 	}
 
 	/**
-	 * It creates a new ModelProducts object class ir if it has been created
+	 * It creates a new Builder object class ir if it has been created
 	 * before, it return the previous object
 	 *
 	 * @access public
 	 * @since 3.0
-	 * @return ModelProducts
+	 * @return Builder
 	 */
 	public static function newInstance(){
 		if( !self::$instance instanceof self ) {
@@ -287,6 +288,7 @@ class Builder {
 	 */
 	public function setOptions( array $options ){
 		$data = null;
+
 		if( defined('DEMO') ){
 			$data = $this->getUserSettings();
 		}
@@ -302,16 +304,14 @@ class Builder {
 		if( is_object($data)){
 			$data = json_decode(json_encode($data), true);
 		}
-		
+
 		$this->options = new OptionsHelper( $options, $data );
 		
 		if( empty( $data ) ){
 			$data = $this->options->getDefaults();
 			$data = array_filter($data);
 		}
-		
-		
-		
+
 		if( !empty( $data ) ){
 			
 			$forms = Lib\LZForm::getInstance()->getAllInstances();

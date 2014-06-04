@@ -595,8 +595,6 @@ FORM;
     }
     
     public function getFieldValue( $field ){
-    	
-    	
     	return ( isset( $this->data[$field] ) )? $this->data[$field] : '';
     }
 

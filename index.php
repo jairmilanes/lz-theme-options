@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
 	Plugin Name: LZThemeOptions
 	Plugin URI: http://www.layoutz.com.br/
@@ -35,11 +35,12 @@ function lzto_init(){
 			if( Params::getParam('action') == 'renderplugin' && !strstr( Params::getParam('file'),'lz_theme_options/view/settings' ) ){
 				return;
 			}
-		} 
+		}
 		$settings = array();
 		require $file;
 		
 		$options_method = osc_current_web_theme().'_get_theme_options';
+		
 		if( function_exists( $options_method ) ){
 			require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
 			
@@ -63,6 +64,7 @@ function lzto_init(){
 			}
 			
 			$theme_options = Builder::newInstance()->setOptions( $options_method() );
+			
 			if( $theme_options ){
 				lzto_register_scripts();
 			}
@@ -83,12 +85,12 @@ function lzto_init(){
 
 /**
  * Saves a new preset
- * 
+ *
  * @todo Move to a preset helper
  */
 function lzto_save_preset(){
 	$return = Builder::newInstance()->savePreset();
-	if( false !== $return ){	
+	if( false !== $return ){
 		switch($return){
 			case 1;
 				die(json_encode(array('status' => false, 'message' => 'No options found in the database, try changing some options and saving the preset again.')));
@@ -106,7 +108,7 @@ function lzto_save_preset(){
 
 /**
  * Loads a existing preset
- * 
+ *
  * @todo Move tho a preset helper
  */
 function lzto_load_preset(){
@@ -119,7 +121,7 @@ function lzto_load_preset(){
 
 /**
  * Get all existing presets
- * 
+ *
  * @todo Move tho a preset helper
  */
 function lzto_load_presets(){
@@ -128,7 +130,7 @@ function lzto_load_presets(){
 
 /**
  * Remove a existing preset
- * 
+ *
  * @todo Move tho a preset helper
  */
 function lzto_remove_preset(){
@@ -264,7 +266,7 @@ function lzto_resetOptions(){
  */
 function lzto_admin_header(){
 	if( THEME_OPTIONS_ENABLED ){
-		if( ( OC_ADMIN && Params::getParam('page') == 'plugins' 
+		if( ( OC_ADMIN && Params::getParam('page') == 'plugins'
 				&& Params::getParam('file') == 'lz_theme_options/view/settings.php' )
 					|| !OC_ADMIN ){
 			if( !OC_ADMIN ){
@@ -302,8 +304,57 @@ function lzto_admin_menu() {
 		  <ul>
 		      <li><a href="' . osc_admin_render_plugin_url(osc_plugin_folder(__FILE__) . '/view/settings.php') . '">&raquo; ' . __('Theme options', 'lzto') . '</a></li>
 		  </ul>';
-		  // <li><a href="' . osc_admin_render_plugin_url(osc_plugin_folder(__FILE__) . '/view/conf.php') . '">&raquo; ' . __('Configuration', 'lzto') . '</a></li>	
 }
+
+function lzto_admin_menu_init(){
+	osc_add_admin_menu_page(
+		__('Theme Options', 'lzto'),
+		osc_admin_render_plugin_url(osc_plugin_folder(__FILE__) . '/view/settings.php'),
+		'lz_theme_options',
+		'administrator'
+	);
+	/*
+	osc_add_admin_submenu_page(
+		'lz',
+		__('Theme Options', 'lzto'),
+		osc_admin_render_plugin_url(osc_plugin_folder(__FILE__) . '/view/settings.php'),
+		'lz_theme_options',
+		'administrator'
+	);
+	*/
+}
+
+/**
+ * Creates a link on the admin toolbar menu
+ */
+function lzto_admin_toolbar_menus(){
+	//if( defined( 'THEME_OPTIONS_ENABLED' ) && true === THEME_OPTIONS_ENABLED ){
+		osc_admin_menu_appearance( __('LZ Theme options', 'lz_theme_options'), osc_admin_render_plugin_url( osc_plugin_path( dirname(__FILE__) ) . '/view/settings.php'), 'lz_theme_options');
+	//}
+}
+
+function lzto_admin_menu_icon() { ?>
+	<style>
+	    .ico-lz_theme_options {
+	        background-image: url('<?php echo osc_base_url();?>oc-content/plugins/<?php echo osc_plugin_folder(__FILE__);?>assets/img/admin_panel_icon.png') !important;
+	        background-position:0px 0px;
+	    }
+	    .ico-lz_theme_options,
+	    .current .ico-lz_theme_options{
+	        background-position:0px -48px;
+	    }
+	
+	    body.compact .ico-lz_theme_options{
+	        background-position:-48px -48px;
+	    }
+	    body.compact .ico-lz_theme_options:hover,
+	    body.compact .current .ico-lz_theme_options{
+	        background-position:-48px 0px;
+	    }
+	</style>
+<?php }
+    osc_add_hook('admin_page_header','lzto_admin_menu_icon',9);
+
 
 /**
  * Loads plugins configurations
@@ -321,14 +372,6 @@ if( !function_exists('osc_uploads_url') ){
 	}
 }
 
-/**
- * Creates a link on the admin toolbar menu
- */
-function lzto_admin_toolbar_menus(){
-	if( defined( 'THEME_OPTIONS_ENABLED' ) && true === THEME_OPTIONS_ENABLED ){
-		osc_admin_menu_appearance( __('LZ Theme options', 'lz_theme_options'), osc_admin_render_plugin_url( osc_plugin_path( dirname(__FILE__) ) . '/view/settings.php'), 'lz_theme_options');
-	}
-}
 
 /**
  * Install
@@ -384,21 +427,24 @@ function lzto_db_reset(){
  ************************************************************/
 osc_add_hook( 'init', 'lzto_init', 1 );
 
-osc_add_hook( 'plugin_categories_lz_theme_options/index.php', 'lzto_settingsPost' );
-osc_add_hook( 'ajax_lzto_post', 'lzto_settingsPost' );
-osc_add_hook( 'ajax_lzto_save_preset', 'lzto_save_preset' );
-osc_add_hook( 'ajax_lzto_load_preset', 'lzto_load_preset' );
-osc_add_hook( 'ajax_lzto_remove_preset', 'lzto_remove_preset' );
-osc_add_hook( 'ajax_lzto_upload_file', 'lzto_uploadFile' );
-osc_add_hook( 'ajax_lzto_delete_upload_file', 'lzto_deleteUploadFile' );
-osc_add_hook( 'ajax_lzto_load_upload_files', 'lzto_loadUploadFiles' );
-osc_add_hook( 'ajax_lzto_reset_form', 'lzto_resetOptions' );
-osc_add_hook( 'admin_header', 'lzto_admin_header');
-osc_add_hook( 'admin_menu', 'lzto_admin_menu');
+osc_add_hook( 'plugin_categories_lz_theme_options/index.php', 	'lzto_settingsPost' );
+osc_add_hook( 'ajax_lzto_post', 								'lzto_settingsPost' );
+osc_add_hook( 'ajax_lzto_save_preset', 							'lzto_save_preset' );
+osc_add_hook( 'ajax_lzto_load_preset', 							'lzto_load_preset' );
+osc_add_hook( 'ajax_lzto_remove_preset', 						'lzto_remove_preset' );
+osc_add_hook( 'ajax_lzto_upload_file', 							'lzto_uploadFile' );
+osc_add_hook( 'ajax_lzto_delete_upload_file', 					'lzto_deleteUploadFile' );
+osc_add_hook( 'ajax_lzto_load_upload_files', 					'lzto_loadUploadFiles' );
+osc_add_hook( 'ajax_lzto_reset_form', 							'lzto_resetOptions' );
+osc_add_hook( 'admin_header', 									'lzto_admin_header');
+
+osc_add_hook( 'admin_menu', 									'lzto_admin_menu');
+osc_add_hook( 'admin_menu_init', 								'lzto_admin_menu_init');
+osc_add_hook( 'add_admin_toolbar_menus', 						'lzto_admin_toolbar_menus');
 
 osc_register_plugin( osc_plugin_path( __FILE__ ), 'lzto_install' );
 osc_add_hook( osc_plugin_path( __FILE__ ) . '_uninstall', 'lzto_uninstall' );
-osc_add_hook( 'add_admin_toolbar_menus', 'lzto_admin_toolbar_menus');
+
 
 
 osc_add_hook( 'lz_demo_reset_complete', 'lzto_db_reset');
