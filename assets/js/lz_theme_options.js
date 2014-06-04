@@ -130,7 +130,8 @@ $(document).ready(function(){
 		});
 	});
 	$('#lzto .menu_form .form-group-container').perfectScrollbar({
-		suppressScrollX: true
+		suppressScrollX: true,
+		useKeyboard: false
 	});
 	
 	/***************************************************************************
