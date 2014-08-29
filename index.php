@@ -42,7 +42,7 @@ function lzto_init(){
 		$options_method = osc_current_web_theme().'_get_theme_options';
 		
 		if( function_exists( $options_method ) ){
-			require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
+			require_once osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
 			
 			define( 'LZO_UPLOAD_PATH', UPLOADS_PATH.'lz_theme_options/' );
 			define( 'LZO_THUMB_PATH', LZO_UPLOAD_PATH.'thumbnails/' );
@@ -265,7 +265,8 @@ function lzto_resetOptions(){
  * Loads files
  */
 function lzto_admin_header(){
-	if( THEME_OPTIONS_ENABLED ){
+	
+	if( osc_plugin_is_enabled('lz_theme_options/index.php') ){
 		if( ( OC_ADMIN && Params::getParam('page') == 'plugins'
 				&& Params::getParam('file') == 'lz_theme_options/view/settings.php' )
 					|| !OC_ADMIN ){
@@ -425,7 +426,7 @@ function lzto_db_reset(){
 /*************************************************************
  * HOOKS
  ************************************************************/
-osc_add_hook( 'init', 'lzto_init', 1 );
+osc_add_hook( 'init', 'lzto_init', 0 );
 
 osc_add_hook( 'plugin_categories_lz_theme_options/index.php', 	'lzto_settingsPost' );
 osc_add_hook( 'ajax_lzto_post', 								'lzto_settingsPost' );
