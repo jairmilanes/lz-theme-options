@@ -423,6 +423,10 @@ function lzto_register_scripts(){
 function lzto_db_reset(){
 	echo 'End LZTO';
 }
+
+function lzto_is_ready(){
+    return defined('THEME_OPTIONS_ENABLED') && THEME_OPTIONS_ENABLED;
+}
 /*************************************************************
  * HOOKS
  ************************************************************/
