@@ -399,7 +399,8 @@ class OptionsHelper {
 				'max_length' 	=> @$data['max_length'],
 				'min_length' 	=> @$data['min_length'],
 				'value'			=> @$data['value'],
-				'placeholder'	=> @$data['placeholder']
+				'placeholder'	=> @$data['placeholder'],
+                'filter'        => (isset($data['filter'])? (bool)$data['filter'] : true )
 		));
 	}
 	

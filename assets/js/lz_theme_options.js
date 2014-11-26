@@ -27,7 +27,7 @@ $(document).ready(function(){
 	 });
 	  
 	
-	
+	/*
 	var menu_timeout;
 
 	 $('#lzto .menu').on('mouseleave', function(){
@@ -35,13 +35,13 @@ $(document).ready(function(){
 			 if( $('#lzto .menu.open').length ){
 			 	$('#lzto .menu .toggle_btn').trigger('click');
 			 }
-	 	 },5000);
+	 	 },10000);
 	 });
 	 
 	 $('#lzto .menu').on('mouseover', function(){
 		 window.clearTimeout(menu_timeout);
 	 });
-	 
+	 */
 
 	if( $('#presets_box').length > 0 ){
 		if( $('#lzto_preset_create').length > 0 ){
@@ -101,15 +101,12 @@ $(document).ready(function(){
 			if( $('#lzto .menu_form.active').length > 0 ){
 				$('#lzto .menu .close_btn').trigger('click');	
 			}
-			
-			$('#lzto .info').hide();
 		} else {
 			$(this).addClass('active');
 			$('#lzto .menu').addClass('open').css('width', '' );
 			$('#lzto .menu > .inner').css('overflow', 'auto');
-			$('#lzto .info').hide();
-			//window.clearTimeout(menu_timeout);
 		}
+        $('#lzto .info').removeClass('active').find('.inner').html('');
 	});
 	$('#lzto .menu .toggle_btn').trigger('click');
 	/***************************************************************************
@@ -226,18 +223,16 @@ $(document).ready(function(){
 	/***************************************************************************
 	 * THEME OPTIONS DESCRIPTIONS
 	 **************************************************************************/
-	$('#lzto .menu .description').each( function(index, elem){
-		$(elem).off('click').on('click', function(e){		
-			if( $(elem).data('field') !== last_description ){
-				$('#lzto .info').find('.inner').html('');
-				$('#lzto .info').addClass('active').find('.inner').html( $(elem).data('description') );
-				last_description = $(elem).data('field');
-			} else {
-				$('#lzto .info').removeClass('active').find('.inner').html('');
-				last_description = '';
-			}
-		});
-	});
+    $('#lzto .menu .description').off('click').on('click', function(e){
+        if( $(this).data('field') !== last_description ){
+            $('#lzto .info').find('.inner').html('');
+            $('#lzto .info').addClass('active').find('.inner').html('<p>'+$(this).data('description')+'</p>');
+            last_description = $(this).data('field');
+        } else {
+            $('#lzto .info').removeClass('active').find('.inner').html('');
+            last_description = '';
+        }
+    });
 	
 	/***************************************************************************
 	 * THEME OPTIONS SWICHS

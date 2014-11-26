@@ -11,7 +11,7 @@ class Text extends Field
             $content = '/.*/',
             $attribute_string = '',
             $class = '',
-            $required = true,
+            $required = false,
     		$attributes;
     public $error = array(),
             $field_type = 'text';
@@ -74,5 +74,7 @@ class Text extends Field
 
         return !empty($this->error) ? false : true;
     }
+
+
 
 }

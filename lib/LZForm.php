@@ -165,7 +165,8 @@ class LZForm
             return false;
         }
 
-        $this->fields->$field_name = $this->getFieldTypeInstance( $type, $attributes['label'], $attributes );
+        $label = isset($attributes['label']) ? $attributes['label'] : '';
+        $this->fields->$field_name = $this->getFieldTypeInstance( $type, $label, $attributes );
 
         if( false == $this->fields->$field_name ){
         	return false;
@@ -248,33 +249,55 @@ class LZForm
      *
      * @return boolean
      */
-    public function validate( $request = array(), $returnData = false )
+    public function validate( $form_name, $returnData = false )
     {
     	$errors = array();
-    	if( empty($request) ){
-        	$request = strtoupper($this->method) == 'POST' ? $_POST : $_GET;
-    	}
+        $request = \Params::getParam($this->name);
+        $un_request = \Params::getParam($this->name, false, false);
 
-        if (isset($request[$this->name])) {
-            $form_data = $request[$this->name];
+        if (isset($request[$form_name])) {
+            $form_data = array_filter( $request[$form_name]);
+            $un_form_data = array_filter( $un_request[$form_name]);
         } else {
             $this->valid = false;
             return false;
         }
-        
+
         if ($this->sticky) {
             $this->addData($form_data);
         }
         
-        foreach ($this->fields as $key => $value) {
-            if ( !$value->validate(
-                (isset($form_data[$key])
-                    ? $form_data[$key] : (isset($_FILES[$this->name][$key]) ? $_FILES[$this->name][$key] : '' ) ) ) ) {
+        foreach ($this->fields as $key => $field ) {
 
-                $this->valid = false;
-                return false;
+            $real_value = (isset($form_data[$key])? $form_data[$key] : (isset($_FILES[$form_name][$key]) ? $_FILES[$form_name][$key] : '' ) );
+            $filter = $field->getAttribute('filter');
+
+            if( $filter !== -1 ){
+                $filter = (bool)$filter;
+            } else {
+                $filter = true;
+            }
+
+            if( !$filter && isset($un_form_data[$key]) ){
+                $real_value = $un_form_data[$key];
+                $form_data[$key] = $real_value;
+                if($this->sticky){
+                    $this->data[$key] = $real_value;
+                }
+            }
+
+            if( empty($real_value) && !$field->isRequired() ){
+
+            } else {
+                if ( !$field->validate( $real_value ) ) {
+                    printR('second');
+                    $this->valid = false;
+                    return false;
+                }
             }
         }
+
+
         
         return ( false !== $returnData )? $form_data : $this->valid;
     }
@@ -472,7 +495,7 @@ FORM;
     public function getErrors(){
     	$errors = array();
     	foreach ( $this->fields as $name => $value ) {
-    		$messages = $this->getFieldData( $name, 'messages' );
+    		$messages = $this->getFieldData( $name, 'error' );
 			if( !empty($messages) ){
 	    		foreach ( $messages as $error) {
 	    			$errors[$name] .= $error;

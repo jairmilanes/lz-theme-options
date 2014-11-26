@@ -427,44 +427,38 @@ class Builder {
 	 */
 	public function save(){
 
-		$params = Params::getParam('lzto');
 		$forms = $this->form->getAllInstances();
 
-		
-		
 		if ( count( $forms ) > 0 ){
 			$data   = array();
 			$errors = array();
+
 			foreach( $forms as $parent => $form ){
 				$name = $form->getName();
 				$group = $form->getGroup();
-				
-				if( isset( $params[$parent] ) ){
-					$pars = array_filter( $params[$parent] );
-					if( !empty($pars) ){
-						$isValid = $form->validate( array( $name => $pars ), true );
-						if(!$isValid){
-							$errors[$parent] = $form->getErrors();
-						} else {
-							if( !empty($group) ){
-								if( !isset($data[$group])){
-									$data[$group] = array();
-								}
-								$data[$group][$parent] = $isValid;
-							} else {
-								$data[$parent] = $isValid;
-							}
-						}
-					}
-				}
+
+                if( !empty($parent) && $parent !== 'lzto' ){
+                    $isValid = $form->validate( $parent, true );
+
+
+                    if(false === $isValid){
+                        $errors[$parent] = $form->getErrors();
+                    } else {
+                        if( !empty($group) ){
+                            if( !isset($data[$group])){
+                                $data[$group] = array();
+                            }
+                            $data[$group][$parent] = $isValid;
+                        } else {
+                            $data[$parent] = $isValid;
+                        }
+                    }
+                }
 			}
 
 			if( count($errors) == 0 ){
-				
-				
 				$form_data = serialize( $data );
-				
-				
+
 				if(defined('DEMO')){
 					$status = OSCLztoModel::newInstance()->updateUserSettings( DEMO_USER_IP, array('s_ip' => DEMO_USER_IP, 's_name' => osc_current_web_theme(), 's_settings' => $form_data) );
 				} else {

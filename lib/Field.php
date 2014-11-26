@@ -38,4 +38,14 @@ abstract class Field
         $this->custom_error[] = $message;
     }
 
+    public function getAttribute($name){
+        if( isset($this->attributes[$name])){
+            return $this->attributes[$name];
+        }
+        return -1;
+    }
+
+    public function isRequired(){
+        return (isset( $this->required )? (bool)$this->required : false );
+    }
 }

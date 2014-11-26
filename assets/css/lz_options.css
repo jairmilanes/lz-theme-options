@@ -114,23 +114,30 @@ MENU INFO
 	height: 100%;
 	background: #21A3B1;
 	color: #fff;
-	-webkit-transition: all 200ms linear;
-    -moz-transition: all 200ms linear;
-    -o-transition: all 200ms linear;
-    -ms-transition: all 200ms linear;
-    transition: all 200ms linear;
+	-webkit-transition: left 200ms linear, opacity 160ms linear, visibility 50ms linear;
+    -moz-transition: left 200ms linear, opacity 160ms linear, visibility 50ms linear;
+    -o-transition: left 200ms linear, opacity 160ms linear, visibility 50ms linear;
+    -ms-transition: left 200ms linear, opacity 160ms linear, visibility 50ms linear;
+    transition: left 200ms linear, opacity 160ms linear, visibility 50ms linear;
+    opacity: 0;
+    visibility: hidden;
 }
 #lzto .info.active {
-	left: 320px;	
+	left: 320px;
+    opacity: 1;
+    visibility: visible;
 }
 #lzto .info > .inner {
 	position: relative;
 	top: 50%;
-	margin: 0 15px 0 15px;
+	margin: 0 20px 0 20px;
 	margin-top: -50%;
 	
 }
-
+#lzto .info > .inner p {
+    font-size: 16px;
+    text-align: justify;
+}
 
 /***********************************************************
 MENU
@@ -277,8 +284,7 @@ MENU
 	padding-left: 13%;
 	text-align:  left;
 	font-weight:  normal;
-	text-shadow: none; /* 1px 1px 1px #E1EEEF; */
-	background: #32C9D9 url( ../img/menu-icon.png ) no-repeat 0 center;
+	background: #ce2b37 url( ../img/menu-icon.png ) no-repeat 0 center;
 }
 
 
@@ -306,8 +312,7 @@ MENU
 	bottom: 0;
 	left: 0;
 	top: 45px;
-	width: 98.5%;
-	margin-right: 1%;
+	width: 100%;
 	padding-right: 0.5%;
 	overflow: hidden;
 }
@@ -339,18 +344,19 @@ MENU
 /* FIELDSET */
 
 #lzto .menu_form fieldset {
-	width: 95%;
+	display: block;
 	margin: 0;
 	padding: 0;
 	border: none;
 }
 #lzto .menu_form fieldset legend {
 	display: block;
-	width: 100%;
-	font-size: 13px;
+    width: 100%;
+	font-size: 14px;
 	color: #ccc;
-	line-height: 35px;
-	height: 35px;
+	line-height: 45px;
+	height: 45px;
+    text-indent: 15px;
 	font-weight: 700;
 	-webkit-transition: all 200ms linear;
     -moz-transition: all 200ms linear;
@@ -364,46 +370,28 @@ MENU
 	width: 100%;
 }
 
-#lzto .menu_form fieldset:hover > div {
-	/*border-color: #32C9D9; */
-}
-#lzto .menu_form fieldset:hover legend {
-	/* color: #fff ; */
-}
-
-
 #lzto .menu_form fieldset > .fieldset_inner {
 	width: 100%;
 	float: left;
-	height: 35px;
+    height: 46px;
 	padding: 0;
-	margin: 2%;
 	overflow: hidden;
-	border-bottom: 1px solid #333;
+    border-bottom: 1px solid #222;
 	-webkit-transition: all 200ms linear;
     -moz-transition: all 200ms linear;
     -o-transition: all 200ms linear;
     -ms-transition: all 200ms linear;
 	 transition: all 200ms linear;
 }
-#lzto .menu_form fieldset > .fieldset_inner legend {
-	display: block;
-	width: 96%;
-	padding: 0 2%;
-	height: 35px;
-	line-height: 34px;
-	font-size: 12px;	
-}
 #lzto .menu_form fieldset > .fieldset_inner .form-group {
 	width: 94%;
 	padding: 5% 3%;
 }
 #lzto .menu_form fieldset.open > .fieldset_inner {
-	border: 1px solid #32C9D9;
+    background: #333;
 }
 #lzto .menu_form fieldset.open > .fieldset_inner legend {
 	background: #32C9D9;
-	color: #333;	
 }
 
 /* FIELDS */
@@ -476,7 +464,6 @@ MENU
 
 #lzto .menu_form select {
 	width: 100%;
-	height: 35px;
 	color: #fff;
 	padding: 0 3%;
 	background-color: #383838;
@@ -493,18 +480,14 @@ MENU
 }
 #lzto .menu_form .select-box > a {
 	width: 80%;
-	padding: 5px 15% 7px 5%;
-	background-color: #f3f3f3;
-	border: solid 1px #ddd;
+	padding: 10px 15% 10px 5%;
+	border: solid 1px #555;
 	color: #F0F0F0;
-	background-image: linear-gradient(bottom,#2C2C2C 0,#5A5A5A 100%);
-	background-image: -o-linear-gradient(bottom,#2C2C2C 0,#5A5A5A 100%);
-	background-image: -moz-linear-gradient(bottom,#2C2C2C 0,#5A5A5A 100%);
-	background-image: -webkit-linear-gradient(bottom,#2C2C2C 0,#5A5A5A 100%);
-	background-image: -ms-linear-gradient(bottom,#2C2C2C 0,#5A5A5A 100%);
-	background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0,#2C2C2C),color-stop(1,#5A5A5A));
+	background-image: none;
+    background: #5A5A5A;
 	border-radius: 0px;
-	border: solid 1px #838383;
+
+	border: solid 1px #2C2C2C;
 }
 #lzto .menu_form .select-box select {
 	width: 100%;
@@ -624,9 +607,7 @@ MENU
 	margin: 25%;	
 }
 
-
 /* SLIDERANGE */
-
 #lzto .menu_form .sliderange_field,
 #lzto .menu_form .sliderange_field .slider {
 	width: 100%;	
@@ -870,7 +851,7 @@ MENU
 	opacity: 0;
 	height: 45px;
 	width: 45px;
-	background: #32C9D9;
+	background: #ce2b37;
 	-webkit-transition: all 200ms linear;
     -moz-transition: all 200ms linear;
     -o-transition: all 200ms linear;
@@ -987,12 +968,17 @@ FULL SCREEN
 /***********************************************************************
  * MENU OPEN
  ***********************************************************************/
+#lzto .menu_form fieldset.open legend {
+    color: #333;
+}
 #lzto .menu_form fieldset.open > div {
 	height: auto;
 	border-color: #32C9D9;	
 }
 #lzto .menu_form fieldset.open legend {
-	font-size: 11px;
+    -webkit-box-shadow: 0px 3px 11px 0px rgba(0, 0, 0, 0.77);
+    -moz-box-shadow:    0px 3px 11px 0px rgba(0, 0, 0, 0.77);
+    box-shadow:         0px 3px 11px 0px rgba(0, 0, 0, 0.77);
 }
 #lzto .menu.open {
 	border-right-color: #222;

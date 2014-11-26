@@ -28,4 +28,11 @@ class Textarea extends Text
         );
     }
 
+    public function validate($val){
+        if( isset($this->attributes['filter']) && true == (bool)$this->attributes['filter'] ){
+            return parent::validate($val);
+        }
+        return true;
+    }
+
 }

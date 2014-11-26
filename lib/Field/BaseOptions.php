@@ -8,7 +8,7 @@ abstract class BaseOptions extends Field
 {
 	protected $attributes = array();
     protected $label, $options = array();
-    protected $required = true;
+    protected $required = false;
     protected $false_values = array();
     public $error = array();
 
