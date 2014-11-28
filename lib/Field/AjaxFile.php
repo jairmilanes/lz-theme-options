@@ -15,19 +15,20 @@ class AjaxFile extends Field
     
     private $max_files;
 
-    private $height;
-    private $width;
-
     private $min_height;
     private $min_width;
 
+    private $max_height;
+    private $max_width;
+
     private $upload_path;
+    private $upload_thumb_path;
     private $multiple;
 
     private $mime_types = array(
         'image' => array(
-            'image/gif', 'image/gi_', 'image/png', 'application/png', 'application/x-png',
-            'image/jp_', 'application/jpg', 'application/x-jpg', 'image/pjpeg', 'image/jpeg'
+            'image/gif', 'image/gi_', 'image/png', 'application/png', 'application/x-png', 'image/jp_',
+            'application/jpg', 'application/x-jpg', 'image/pjpeg', 'image/jpeg', 'image/x-icon'
         ),
         'document' => array(
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -53,43 +54,34 @@ class AjaxFile extends Field
         'archive' => 'must be and archive, e.g example.zip or example.tar',
         'document' => 'must be a document, e.g example.doc or example.pdf',
         'all' => 'must be a document, archive or image',
-        'custom' => 'is invalid'
+        'custom' => 'is invalid, must be of type ( %s )'
     );
 
 
 
-    public function __construct($label, $type = 'all', $required = false, $max_size = 2097152, $width = 1600, $height = 1600, $min_width = 0, $min_height = 0)
+    public function __construct($label, $attributes = array() )
     {
-    	//printR($type);
-    	if( is_array($type) ){
-    		extract($type);
-    	}
+        $this->type                 = lzto_var($attributes, 'type',                 'all');
+        $this->label 		        = lzto_var($attributes, 'label',                '');
+        $this->required 	        = lzto_var($attributes, 'required',             false);
+        $this->max_size 	        = lzto_var($attributes, 'max-size',             osc_max_size_kb());
+        $this->max_width 	        = lzto_var($attributes, 'max-width',            0);
+        $this->max_height 	        = lzto_var($attributes, 'max-height',           0);
+        $this->min_width 	        = lzto_var($attributes, 'min-width',            0);
+        $this->min_height           = lzto_var($attributes, 'min-height',           0);
 
-        $this->label 		= @$label;
-        $this->required 	= @$required;
-        $this->max_size 	= @$max_size;
-        $this->width 		= @$width;
-        $this->height 		= @$height;
-        $this->min_width 	= @$min_width;
-        $this->min_height   = @$min_height;
-        $this->max_files    = 1;
-		/*
-        $upload_path 	 	= osc_content_path().'uploads/theme_options_uploads';
-		if( !file_exists($upload_path) ){
-			mkdir($upload_path);
-		}
-		*/
-        $this->multiple 	= ( isset( $multiple ) )? true : false;
-        $this->upload_path  =   LZO_UPLOAD_PATH;
-        //$this->max_files 	= ( isset( $this->max_files ) && is_numeric( $this->max_files ) && $this->max_files > 0 ) ? $this->max_files : 1;
+        $this->max_files            = lzto_var($attributes, 'max-files',            1);
+        $this->multiple 	        = lzto_var($attributes, 'multiple',             false);
+        $this->upload_path          = lzto_var($attributes, 'upload-path',          LZO_UPLOAD_PATH);
+        $this->upload_thumb_path    = lzto_var($attributes, 'upload-thumb-path',    LZO_THUMB_PATH);
 
-        if (is_array($type)) {
-            $this->mime_types = $type;
+
+        if (is_array($this->type )) {
+            $this->mime_types = $this->type;
             $this->type = 'custom';
         } else {
-            $this->type = $type;
-            if (isset($this->mime_types[$type])) {
-                $this->mime_types = $this->mime_types[$type];
+            if (isset($this->mime_types[$this->type])) {
+                $this->mime_types = $this->mime_types[$this->type];
             } else {
                 $temp = array();
                 foreach ($this->mime_types as $mime_array)
@@ -100,6 +92,13 @@ class AjaxFile extends Field
                 unset($temp);
             }
         }
+    }
+
+    public function getConfig($key){
+        if( isset($this->$key ) ){
+            return $this->$key;
+        }
+        return false;
     }
 
     public function returnField($form_name, $name, $value = '', $group = '')
@@ -129,17 +128,22 @@ class AjaxFile extends Field
 	            }
 	            if ($this->type == 'image') {
 	                $image = getimagesize($val['tmp_name']);
-	                if ($image[0] > $this->width || $image[1] > $this->height) {
-	                    $this->error[] = sprintf('must contain an image no more than %s pixels wide and %s pixels high', $this->width, $this->height);
+
+	                if ($this->max_width > 0 && $image[0] > $this->max_width || $this->max_height > 0 && $image[1] > $this->max_height) {
+	                    $this->error[] = sprintf('must contain an image no more than %s pixels wide and %s pixels high', $this->max_width, $this->max_height);
 	                }
-	                if ($image[0] < $this->min_width || $image[1] < $this->min_height) {
+	                if ($this->min_width > 0 && $image[0] < $this->min_width || $this->min_height > 0 && $image[1] < $this->min_height) {
 	                    $this->error[] = sprintf('must contain an image at least %s pixels wide and %s pixels high', $this->min_width, $this->min_height);
 	                }
 	                if (!in_array($image['mime'], $this->mime_types)) {
-	                    $this->error[] = $this->error_types[$this->type];
+                        $this->error[] = $this->error_types[$this->type];
 	                }
 	            } elseif (!in_array($val['type'], $this->mime_types)) {
-	                $this->error[] = $this->error_types[$this->type];
+                    if( $this->type == 'custom' ){
+                        $this->error[] = sprintf($this->error_types[$this->type], implode(',',$this->mime_types));
+                    } else {
+                        $this->error[] = $this->error_types[$this->type];
+                    }
 	            }
 	        }
     	}

@@ -161,15 +161,17 @@ $(document).ready(function(){
 		var self = $(this);
 		var url  = $(this).attr('action');
 		var data = $(this).serialize();
+
 		self.find('p.error').remove();
 		self.find('.error').removeClass('error');
+
 		$.post(url, data, function(json){
 			if( !json.status ){
 				if( json.errors ){
 					$.each( json.errors, function( name, error ){						
 						if( typeof error == 'object' ){							
 							$.each( error,function(field, msg ){
-								var input = $('input[name^="lzto['+name+']['+field+']"]');
+								var input = $('input[name="lzto['+name+']['+field+']"]');
 								input.parent().find('p.error').remove();
 								input.addClass('error');
 								input.after('<p class="error">'+msg+'</p>');
@@ -572,6 +574,7 @@ function lzto_init( settings ){
 				fileTemplate: settings.upload_file_template
 					
 			}).on('submit', function(){
+                self.closest('.form-group').find('p.error').remove();
 				showOptionsLoader();
 			}).on('delete', function(event, id, name, json){
 				showOptionsLoader();
@@ -579,25 +582,35 @@ function lzto_init( settings ){
 				reloadCanvas();
 			}).on('complete', function(event, id, name, json){
 				showOptionsLoader();
-				if( json.thumbnailUrl ){
-					self.find('.thumb')
-							.find('img')
-								.attr({ 
-									id: field_name+'_thumb',
-									src : json.thumbnailUrl, 
-									//width : 150, 
-									//height : 16, 
-									alt : "Test Image", 
-									title : "Test Image"
-								});
-					
-				}
+                if( json.success ){
+                    if( json.thumbnailUrl ){
+                        self.find('.thumb')
+                            .find('img')
+                            .attr({
+                                id: field_name+'_thumb',
+                                src : json.thumbnailUrl,
+                                //width : 150,
+                                //height : 16,
+                                alt : "Test Image",
+                                title : "Test Image"
+                            });
+
+                    }
+                    setTimeout(function(){
+                        self.find('.qq-progress-bar').animate({backgroundColor: '#333'},1000);
+                    },2000);
+
+                    reloadCanvas();
+                } else {
+
+                    self.after('<p class="error">'+json.message+'</p>');
+                }
+
+
 				
-				setTimeout(function(){
-					self.find('.qq-progress-bar').animate({backgroundColor: '#333'},1000);
-				},2000);
-				
-				reloadCanvas();
+
+
+				//
 			}).on('progress',function( id, name, uploadedBytes, totalBytes ){
 				var per = parseInt( ( ( uploadedBytes / totalBytes ) * 100 ) );
 				self.find('.qq-progress-bar').css({ width: per+'%' });

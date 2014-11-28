@@ -760,7 +760,12 @@ MENU
 	border-color: #F00;
 }
 #lzto .menu_form p.error {
-	font-size: 11px; text-align: right; color: #F00; margin: 0; margin-top: 4px;
+	font-size: 11px;
+    text-align: right;
+    color: #F00;
+    margin: 0;
+    margin-top: 4px;
+    clear: both;
 }
 
 

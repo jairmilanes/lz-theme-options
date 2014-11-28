@@ -398,7 +398,7 @@ class OptionsHelper {
 				'label'			=> @$data['label'],
 				'max_length' 	=> @$data['max_length'],
 				'min_length' 	=> @$data['min_length'],
-				'value'			=> @$data['value'],
+				//'value'			=> @$data['value'],
 				'placeholder'	=> @$data['placeholder'],
                 'filter'        => (isset($data['filter'])? (bool)$data['filter'] : true )
 		));
@@ -439,12 +439,26 @@ class OptionsHelper {
 	 * @param string $group_parent
 	 */
 	protected function setOptionTypeAjaxFile( $type, $title, array $data, $group_slug, $group_parent = null ){
+        $min_size = osc_thumbnail_dimensions();
+        $min_size = explode('x',$min_size);
+        $max_size = osc_normal_dimensions();
+        $max_size = explode('x',$max_size);
+
 		return Lib\LZForm::getInstance( $group_slug )->addField( $title, $type, array(
-				'id'			=> 'field_'.strtolower( $title ),
-				'class' 		=> 'text_field '.@$data['class'],
-				'required' 		=> @$data['required'],
-				'label'			=> @$data['label'],
-				'value'			=> @$data['value']
+            'id'			        => 'field_'.strtolower( $title ),
+            'class' 		        => 'text_field '.lzto_var($data, 'class', ''),
+            'required' 		        => lzto_var($data, 'required', false),
+            'label'			        => lzto_var($data, 'label', ''),
+            'type'			        => lzto_var($data, 'type', 'all'),
+            'min-width'             => lzto_var($data, 'min-width', $min_size[0]),
+            'min-height'            => lzto_var($data, 'min-height', $min_size[1]),
+            'max-width'             => lzto_var($data, 'max-width', $max_size[0]),
+            'max-height'            => lzto_var($data, 'max-height', $max_size[1]),
+            'multiple'              => lzto_var($data, 'multiple', false),
+            'max-files'             => lzto_var($data, 'max-files', 1),
+            'max-size'              => lzto_var($data, 'max-size', osc_max_size_kb()),
+            'upload-path'           => lzto_var($data, 'upload-path', LZO_UPLOAD_PATH ),
+            'upload-thumb-path'     => lzto_var($data, 'upload-thumb-path', LZO_THUMB_PATH )
 		));
 	}
 

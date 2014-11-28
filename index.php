@@ -373,6 +373,12 @@ if( !function_exists('osc_uploads_url') ){
 	}
 }
 
+function lzto_var($array, $key, $default = ''){
+    if( isset($array[$key])){
+        return $array[$key];
+    }
+    return $default;
+}
 
 /**
  * Install

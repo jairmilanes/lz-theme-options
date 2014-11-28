@@ -312,6 +312,7 @@ class Builder {
 			$data = array_filter($data);
 		}
 
+
 		if( !empty( $data ) ){
 			
 			$forms = Lib\LZForm::getInstance()->getAllInstances();
@@ -439,7 +440,6 @@ class Builder {
 
                 if( !empty($parent) && $parent !== 'lzto' ){
                     $isValid = $form->validate( $parent, true );
-
 
                     if(false === $isValid){
                         $errors[$parent] = $form->getErrors();

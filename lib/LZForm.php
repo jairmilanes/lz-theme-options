@@ -255,18 +255,20 @@ class LZForm
         $request = \Params::getParam($this->name);
         $un_request = \Params::getParam($this->name, false, false);
 
+        $form_data = array();
+        $un_form_data = array();
         if (isset($request[$form_name])) {
             $form_data = array_filter( $request[$form_name]);
             $un_form_data = array_filter( $un_request[$form_name]);
-        } else {
+        } /*else {
             $this->valid = false;
             return false;
-        }
+        }*/
 
         if ($this->sticky) {
             $this->addData($form_data);
         }
-        
+
         foreach ($this->fields as $key => $field ) {
 
             $real_value = (isset($form_data[$key])? $form_data[$key] : (isset($_FILES[$form_name][$key]) ? $_FILES[$form_name][$key] : '' ) );
@@ -290,15 +292,12 @@ class LZForm
 
             } else {
                 if ( !$field->validate( $real_value ) ) {
-                    printR('second');
                     $this->valid = false;
                     return false;
                 }
             }
         }
 
-
-        
         return ( false !== $returnData )? $form_data : $this->valid;
     }
 
@@ -537,6 +536,13 @@ FORM;
     public function checkField($field)
     {
         return isset($this->fields->$field);
+    }
+
+    public function getField($name){
+        if( $this->checkField($name)){
+            return $this->fields->$name;
+        }
+        return false;
     }
 
     public function countFields(){

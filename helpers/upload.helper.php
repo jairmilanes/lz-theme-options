@@ -8,11 +8,11 @@ class UploadHelper {
 	protected static $thumb_width  = 250;
 	protected static $thumb_height = 150;
 	
-	protected static function getUploader(){
+	protected static function getUploader($allowedExtensions = null, $sizeLimit = null){
 		if( !class_exists('AjaxUploader') ){
 			require_once(LIB_PATH."AjaxUploader.php");
 		}
-		return new AjaxUploader();
+		return new AjaxUploader($allowedExtensions, $sizeLimit);
 	}
 
 	/**
@@ -23,39 +23,54 @@ class UploadHelper {
 		$field_name = Params::getParam('field_name');
 		$group      = Params::getParam('group');
 		$uid        = Params::getParam('qquuid');
+        $file       = Params::getFiles('qqfile');
 		$files      = Session::newInstance()->_get('ajax_files');
 
-		if( !empty($field_name) && !isset($files[$uid]) ){
+        $form = \Lib\LZForm::getInstance($group);
+        $field = $form->getField($field_name);
 
-			self::$uploader = self::getUploader();
-			
-			$original   = pathinfo( self::$uploader->getOriginalName() );
-			$filename   = self::getUniqueFilename( $original['extension'] );
+        if( !$field || empty($file) ){
+            return 	$result = array('success' => false, 'message' => sprintf(__('Field %s not found!','lz_theme_options'),$field_name) );
+        }
 
-			$path 		= LZO_UPLOAD_PATH;
-			$thumb_path = LZO_THUMB_PATH;
-			$thumb_url  = sprintf( 'lz_theme_options/thumbnails/%s', $filename);
-			
-			if( defined('DEMO') ){
-				$path 		= LZO_DEMO_USER_PATH;
-				$thumb_path = LZO_DEMO_USER_THUMB_PATH;
-				$thumb_url  = sprintf( 'lz_theme_demo_users/%s/thumbnails/%s', DEMO_USER_IP, $filename);
-			}
-			
-			if( !file_exists( $path ) ){
-				@mkdir( $path, 0777 );
-			}
-			//var_dump($path.$filename);
-			$result = self::$uploader->handleUpload( $path.$filename );
-			//var_dump($result);
-			if( isset( $result['success'] ) && $result['success'] == true && self::saveAndResize( $field_name, $group, $uid, $filename ) ){
-				$result['success'] = true;
-				$result['thumbnailUrl'] = osc_uploads_url( $thumb_url );
-				$result['uploadName'] = $filename;
-				return $result;
-			}
+		if( !isset($files[$uid]) ){
+
+            self::$uploader = self::getUploader(null, (1024*$field->getConfig('max_size')));
+
+            $original   = pathinfo( $file['name'] );
+            if( $field->validate($file) ){
+
+                $filename   = self::getUniqueFilename( $original['extension'] );
+
+                $path 		= $field->getConfig('upload_path');
+                $thumb_path = $field->getConfig('upload_thumb_path');
+                $thumb_url  = 'lz_theme_options/thumbnails/'.$filename;
+
+                if( defined('DEMO') ){
+                    $path 		= LZO_DEMO_USER_PATH;
+                    $thumb_path = LZO_DEMO_USER_THUMB_PATH;
+                    $thumb_url  = sprintf( 'lz_theme_demo_users/%s/thumbnails/%s', DEMO_USER_IP, $filename);
+                }
+
+                if( !file_exists( $path ) ){
+                    @mkdir( $path, 0777 );
+                }
+
+                $result = self::$uploader->handleUpload( $path.$filename, true );
+
+                if( isset( $result['success'] ) && $result['success'] == true && self::saveAndResize( $field_name, $group, $uid, $filename ) ){
+                    $result['success'] = true;
+                    $result['thumbnailUrl'] = osc_uploads_url( $thumb_url );
+                    $result['uploadName'] = $filename;
+                    return $result;
+                }
+            }
+
+            return 	$result = array('success' => false, 'message' => sprintf(__('Invalid file, upload files with one of the following extensions (%s)','lz_theme_options'),implode(',',$field->getConfig('mime_types'))) );
+
 		}
-		return 	$result = array('success' => false, 'message' => _m('File already exists, try another file or change the filename.','lz_theme_options') );
+
+		return 	$result = array('success' => false, 'message' => __('File already exists, try another file or change the filename.','lz_theme_options') );
 	}
 
 	/**
@@ -203,6 +218,7 @@ class UploadHelper {
 		
 	}
 	*/
+
 
 	/**
 	 * get all uploads for the current template
