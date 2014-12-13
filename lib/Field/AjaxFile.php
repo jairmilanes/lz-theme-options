@@ -75,6 +75,7 @@ class AjaxFile extends Field
         $this->upload_path          = lzto_var($attributes, 'upload-path',          LZO_UPLOAD_PATH);
         $this->upload_thumb_path    = lzto_var($attributes, 'upload-thumb-path',    LZO_THUMB_PATH);
 
+        $this->max_size = $this->max_size*1024;
 
         if (is_array($this->type )) {
             $this->mime_types = $this->type;
@@ -123,8 +124,9 @@ class AjaxFile extends Field
 	            }
 	        }
 	        if ($val['error'] == 0) {
+
 	            if ($val['size'] > $this->max_size) {
-	                $this->error[] = sprintf('must be less than %sMb', $this->max_size / 1024 / 1024);
+	                $this->error[] = sprintf('must be less than %s', lzto_format_file_size($this->max_size) );
 	            }
 	            if ($this->type == 'image') {
 	                $image = getimagesize($val['tmp_name']);
@@ -149,5 +151,7 @@ class AjaxFile extends Field
     	}
         return !empty($this->error) ? false : true;
     }
+
+
 
 }

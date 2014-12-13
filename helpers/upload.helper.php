@@ -65,8 +65,12 @@ class UploadHelper {
                     return $result;
                 }
             }
+            $message = sprintf(__('Invalid file, upload files with one of the following extensions (%s)','lz_theme_options'),osc_allowed_extension());
+            if( count($field->error) ){
+                $message = implode('<br/>', $field->error);
+            }
 
-            return 	$result = array('success' => false, 'message' => sprintf(__('Invalid file, upload files with one of the following extensions (%s)','lz_theme_options'),implode(',',$field->getConfig('mime_types'))) );
+            return 	$result = array('success' => false, 'message' => $message );
 
 		}
 
@@ -303,7 +307,7 @@ class UploadHelper {
 			if( file_exists($path.$filename ) ){
 				$results['name'] = $filename;
 				$results['uuid'] = $uid;
-				$results['size'] = self::human_filesize( filesize( $path.$filename ) );
+				$results['size'] = lzto_format_file_size( filesize( $path.$filename ) );
 				$results['url']  = osc_uploads_url( $url.$filename );
 				$results['thumbnailUrl'] = osc_uploads_url( $thumb_url.$filename );
 			} else {
@@ -337,13 +341,5 @@ class UploadHelper {
 		return array( 'status' => false );
 	}
 
-	/**
-	 * Returns a formatted filesize
-	 */
-	protected static function human_filesize($bytes, $decimals = 2) {
-		$sz = 'BKMGTP';
-		$factor = floor((strlen($bytes) - 1) / 3);
-		return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
-	}
 
 }
