@@ -3,7 +3,7 @@ module.exports  = function(grunt){
     var plugin_name = 'lz_theme_options',
         base_dir = '',
         build_dir = '../../../../../PACKAGES/PLUGINS/'+plugin_name,
-        build_zip_dir = '../../../../../PACKAGES/PLUGINS/ZIPS/'+plugin_name;
+        build_zip_dir = '../../../../../PACKAGES/PLUGINS/ZIPS/';
 
         // configure the tasks
         grunt.initConfig({
@@ -32,7 +32,7 @@ module.exports  = function(grunt){
                         expand: true
                     }]
                 }
-            },
+            }/*,
             uglify: {
                 build: {
                     options: {
@@ -45,28 +45,21 @@ module.exports  = function(grunt){
                         expand: true
                     }]
                 }
-            }/*,
+            }*/,
             compress: {
-                assets: {
-                    options: {
-                        arquive: 'lz_theme_options.zip'
-                    },
-                    expand: true,
-                    cwd: build_dir,
-                    src: ['**'],
-                    dest: build_zip_dir
-                }
-            }/*,
-            imagemin: {
                 build: {
-                    files: [{
-                        expand: true,
-                        cwd: build_dir+'/img',
-                        src: ['*.{png,jpg,gif}'],
-                        dest: build_dir+'/img'
-                    }]
+                    options: {
+                        archive: build_zip_dir+'/lz_theme_options.zip'
+                    },
+                    files: [
+                        {
+                            cwd: build_dir,
+                            src: ['**/*'],
+                            expand: true
+                        }
+                    ]
                 }
-            }*/
+            }
         });
 
     require('load-grunt-tasks')(grunt);
