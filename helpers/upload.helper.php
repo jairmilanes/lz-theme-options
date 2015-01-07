@@ -46,7 +46,7 @@ class UploadHelper {
                 $thumb_path = $field->getConfig('upload_thumb_path');
                 $thumb_url  = 'lz_theme_options/thumbnails/'.$filename;
 
-                if( defined('DEMO') ){
+                if( lzto_isDemo() ){
                     $path 		= LZO_DEMO_USER_PATH;
                     $thumb_path = LZO_DEMO_USER_THUMB_PATH;
                     $thumb_url  = sprintf( 'lz_theme_demo_users/%s/thumbnails/%s', DEMO_USER_IP, $filename);
@@ -87,7 +87,7 @@ class UploadHelper {
 		
 		$pref_name = osc_current_web_theme().'_'.$group.'_'.$field_name;
 		
-		if( defined('DEMO')){
+		if( lzto_isDemo() ){
 			$current_file = OSCLztoModel::newInstance()->getUserFileByName(DEMO_USER_IP, $pref_name);
 			$path 		= LZO_DEMO_USER_PATH;
 			$thumb_path = LZO_DEMO_USER_THUMB_PATH;
@@ -160,7 +160,7 @@ class UploadHelper {
 			$files = Session::newInstance()->_get('ajax_files');
 			if( empty($uuid)){
 
-				if( defined('DEMO') ){
+				if( lzto_isDemo() ){
 					$db_file = OSCLztoModel::newInstance()->getUserFileByName( DEMO_USER_IP, osc_current_web_theme().'_'.$group.'_'.$field_name);
 					$path 		= LZO_DEMO_USER_PATH;
 					$thumb_path = LZO_DEMO_USER_THUMB_PATH;
@@ -174,7 +174,7 @@ class UploadHelper {
 					$filename = $f[1];
 				}
 			} else {
-				if( defined('DEMO') ){
+				if( lzto_isDemo() ){
 					$path 		= LZO_DEMO_USER_PATH;
 					$thumb_path = LZO_DEMO_USER_THUMB_PATH;
 				}
@@ -188,7 +188,7 @@ class UploadHelper {
 				@unlink( $thumb_path.$filename );
 			}
 			
-			if( defined('DEMO') ){
+			if( lzto_isDemo() ){
 				OSCLztoModel::newInstance()->deleteUserFileByName(DEMO_USER_IP, osc_current_web_theme().'_'.$group.'_'.$field_name );
 			} else {
 				osc_delete_preference( osc_current_web_theme().'_'.$group.'_'.$field_name, 'lz_theme_options_uploads');
@@ -285,12 +285,14 @@ class UploadHelper {
 			$theme = lz_demo_selected_theme();
 		}
 		
-		if( defined( 'DEMO' ) ){
+		if( lzto_isDemo() ){
+
 			$path = LZO_DEMO_USER_PATH;
 			$thumb_path = LZO_DEMO_USER_THUMB_PATH;
 			$url = 'lz_theme_demo_users/'.DEMO_USER_IP.'/';
 			$thumb_url = 'lz_theme_demo_users/'.DEMO_USER_IP.'/thumbnails/';
 			$file = OSCLztoModel::newInstance()->getUserFileByName(DEMO_USER_IP, $theme.'_'.$group.'_'.$field_name );
+
 		} else {
 			$path = LZO_UPLOAD_PATH;
 			$thumb_path = LZO_THUMB_PATH;
@@ -298,6 +300,9 @@ class UploadHelper {
 			$thumb_url = 'lz_theme_options/thumbnails/';
 			$file = osc_get_preference( $theme.'_'.$group.'_'.$field_name, 'lz_theme_options_uploads' );
 		}
+
+
+
 
 		if( !empty( $file ) ){
 			$f 				 = explode( '||', $file );
@@ -311,7 +316,7 @@ class UploadHelper {
 				$results['url']  = osc_uploads_url( $url.$filename );
 				$results['thumbnailUrl'] = osc_uploads_url( $thumb_url.$filename );
 			} else {
-				if( defined('DEMO') ){
+				if( lzto_isDemo() ){
 					OSCLztoModel::newInstance()->deleteUserFileByName(DEMO_USER_IP, $theme.'_'.$group.'_'.$field_name );
 				} else {
 					osc_delete_preference( $theme.'_'.$group.'_'.$field_name, 'lz_theme_options_uploads' );

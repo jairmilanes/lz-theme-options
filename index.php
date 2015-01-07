@@ -10,6 +10,7 @@
 	Plugin update URI: lzto
 */
 define('ENABLE_FRONTEND_OPTIONS_PANEL', true);
+
 /**
  * Load
  */
@@ -53,7 +54,7 @@ function lzto_init(){
             define( 'LZO_THUMB_PATH', LZO_UPLOAD_PATH.'thumbnails/' );
             define( 'LZO_PRESETS_PATH', UPLOADS_PATH.'presets/' );
 
-            if( defined('DEMO') ){
+            if( lzto_isDemo() ){
                 $ip = filter_var( $_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP );
                 define('DEMO_USER_IP', ip2long($ip) );
                 define('LZO_DEMO_USER_PATH', UPLOADS_PATH.'lz_theme_demo_users/'.DEMO_USER_IP.'/' );
@@ -319,18 +320,15 @@ function lzto_admin_menu_init(){
         'lz_theme_options',
         'administrator'
     );
-    /*
-    osc_add_admin_submenu_page(
-        'lz',
-        __('Theme Options', 'lzto'),
-        osc_admin_render_plugin_url(osc_plugin_folder(__FILE__) . '/view/settings.php'),
-        'lz_theme_options',
-        'administrator'
-    );
-    */
 }
 
-
+/**
+ * Formats a file size
+ *
+ * @param $bytes
+ * @param int $decimals
+ * @return string
+ */
 function lzto_format_file_size($bytes, $decimals = 2)
 {
     $sz = 'BKMGTP';
@@ -341,6 +339,7 @@ function lzto_format_file_size($bytes, $decimals = 2)
 
     return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)).$prefix;
 }
+
 /**
  * Creates a link on the admin toolbar menu
  */
@@ -350,6 +349,9 @@ function lzto_admin_toolbar_menus(){
     //}
 }
 
+/**
+ * Add to Admin menu
+ */
 function lzto_admin_menu_icon() { ?>
     <style>
         .ico-lz_theme_options {
@@ -389,6 +391,14 @@ if( !function_exists('osc_uploads_url') ){
     }
 }
 
+/**
+ * Returns a value from a array
+ *
+ * @param $array
+ * @param $key
+ * @param string $default
+ * @return string
+ */
 function lzto_var($array, $key, $default = ''){
     if( isset($array[$key])){
         return $array[$key];
@@ -399,7 +409,6 @@ function lzto_var($array, $key, $default = ''){
 /**
  * Install
  */
-
 function lzto_install(){
     if( !class_exists('Builder')){
         require osc_plugins_path('lz_theme_options').'lz_theme_options/builder.php';
@@ -427,7 +436,7 @@ function lzto_theme_delete(){
     Session::newInstance()->_drop('ajax_files');
 }
 
-/**
+/**+
  * Registers necessary scripts
  */
 function lzto_register_scripts(){
@@ -449,6 +458,11 @@ function lzto_db_reset(){
 function lzto_is_ready(){
     return defined('THEME_OPTIONS_ENABLED') && THEME_OPTIONS_ENABLED;
 }
+
+function lzto_isDemo(){
+    return defined('DEMO') && DEMO == true && !osc_is_admin_user_logged_in();
+}
+
 /*************************************************************
  * HOOKS
  ************************************************************/
@@ -471,7 +485,6 @@ osc_add_hook( 'add_admin_toolbar_menus', 						'lzto_admin_toolbar_menus');
 
 osc_register_plugin( osc_plugin_path( __FILE__ ), 'lzto_install' );
 osc_add_hook( osc_plugin_path( __FILE__ ) . '_uninstall', 'lzto_uninstall' );
-
 
 
 osc_add_hook( 'lz_demo_reset_complete', 'lzto_db_reset');

@@ -153,7 +153,10 @@ class Builder {
 			if( $file->isFile() ){
 				$name = $file->getFilename();
 				$parts = explode( '-', $name );
-				$preset_name = str_replace( '.zip', '', $parts[1] );
+                array_shift($parts);
+                $parts = implode('-', $parts);
+
+				$preset_name = str_replace( '.zip', '', $parts );
 				
 				$files[$preset_name] = array(
 						'title'      => ucfirst( strtolower( str_replace('_', ' ', $preset_name ) ) ),
@@ -289,7 +292,8 @@ class Builder {
 	public function setOptions( array $options ){
 		$data = null;
 
-		if( defined('DEMO') ){
+        /// Load specific user theme options settings
+		if( lzto_isDemo() ){
 			$data = $this->getUserSettings();
 		}
 		
@@ -311,7 +315,6 @@ class Builder {
 			$data = $this->options->getDefaults();
 			$data = array_filter($data);
 		}
-
 
 		if( !empty( $data ) ){
 			
@@ -353,7 +356,7 @@ class Builder {
 			return $rs;
 		}
 
-		if( defined('DEMO') ){
+		if( lzto_isDemo() ){
 			$settings = osc_get_preference(osc_current_web_theme(), 'lz_theme_options');
 			$files    = UploadHelper::getFiles();
 			$user_settings = OSCLztoModel::newInstance()->createUserSettings( DEMO_USER_IP, $settings, $files );
@@ -362,8 +365,25 @@ class Builder {
 			}
 		}
 		return false;
-	}	
+	}
 
+    /**
+     * Resets a user settings
+     *
+     * @param $ip
+     * @return mixed
+     */
+    protected function resetUserSettings($ip){
+        if( OSCLztoModel::newInstance()->deleteUserSettings($ip) ){
+            $settings = osc_get_preference(osc_current_web_theme(), 'lz_theme_options');
+            $files    = UploadHelper::getFiles();
+            $user_settings = OSCLztoModel::newInstance()->createUserSettings( DEMO_USER_IP, $settings, $files );
+            if( false !== $user_settings ){
+                return $user_settings;
+            }
+        }
+        return OSCLztoModel::newInstance()->getUserSettings($ip);
+    }
 	/**
 	 * Gets a new form instance
 	 */
@@ -459,7 +479,7 @@ class Builder {
 			if( count($errors) == 0 ){
 				$form_data = serialize( $data );
 
-				if(defined('DEMO')){
+				if(lzto_isDemo()){
 					$status = OSCLztoModel::newInstance()->updateUserSettings( DEMO_USER_IP, array('s_ip' => DEMO_USER_IP, 's_name' => osc_current_web_theme(), 's_settings' => $form_data) );
 				} else {
 					$status = osc_set_preference( osc_current_web_theme(), $form_data, 'lz_theme_options', 'STRING' );
@@ -488,11 +508,11 @@ class Builder {
 	 * Resets the form to it's default values
 	 */
 	public function resetOptions(){		
-		$ip = ( defined('DEMO') )? DEMO_USER_IP : null;
+		$ip = ( lzto_isDemo() )? DEMO_USER_IP : null;
 		$rs = OSCLztoModel::newInstance()->resetDb($ip);
 		
 		if( $rs ){
-			$path = ( defined('DEMO') )? LZO_DEMO_USER_PATH : LZO_UPLOAD_PATH;
+			$path = ( lzto_isDemo() )? LZO_DEMO_USER_PATH : LZO_UPLOAD_PATH;
 			if( file_exists($path)){
 				osc_deleteDir($path);
 			}
@@ -520,7 +540,7 @@ class Builder {
 		$group    = Params::getParam('group');
 		$uuid     = Params::getParam('qquuid');
 		$success  = UploadHelper::delete( $filename, $group, $uuid );
-		die( json_encode( array( 'success' => $success, 'deletedFile' => $filename ) ) );
+		die( json_encode( array( 'success' => $success, 'uuid' => $uuid, 'deletedFile' => $filename ) ) );
 	}
 
 	/**

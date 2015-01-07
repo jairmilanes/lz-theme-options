@@ -1,13 +1,15 @@
-<?php 
+<?php
 	$lz_options = defined( 'THEME_OPTIONS_ENABLED' ) && THEME_OPTIONS_ENABLED === true;
-	$theme = ( Params::existParam('theme') )? '?theme='.Params::getParam('theme') : '';
-	if( OC_ADMIN ){
-		$prefix = ( empty($theme)? '?' : '&' );
-		$theme .= $prefix.'oc-admin=1';
-	}?>
+	$theme = ( Params::existParam('theme') )? '?theme='.Params::getParam('theme') : ''; ?>
 	<div id="lzto" class="<?php echo ( (!OC_ADMIN)? 'use_bootstrap' : '' ); ?>">
 		<div class="canvas <?php echo ( $lz_options !== false )? 'no-options' : 'options'; ?>">
-			<iframe id="preview_iframe" style="visibility:hidden;" onload="this.style.visibility = 'visible';" src="<?php echo osc_base_url(true).$theme;?>" width="100%" height="100%" ></iframe>
+			<iframe
+                id="preview_iframe"
+                style="visibility:hidden;"
+                onload="this.style.visibility = 'visible';"
+                src="<?php echo osc_base_url(true).$theme;?>"
+                width="100%" height="100%"
+                ></iframe>
 			<div class="options_loader">
 				<div class="overlay"></div>
 				<img src="<?php echo osc_plugin_url('lz_theme_options/assets').'assets/img/loader.GIF'?>"/>
@@ -168,6 +170,7 @@
 			adjust();
 		});
 		<?php }?>
+
 		<?php if( $lz_options ){  ?>
 			lzto_init({
 				upload_endpoint: 				'<?php echo osc_ajax_hook_url('lzto_upload_file'); ?>&ajax_upload=true&field_name=',
@@ -193,8 +196,9 @@
 				    	'<a class="qq-upload-cancel-selector qq-upload-cancel" style="display: none;" href="#">Cancel</a>'+
 				    	'<a class="qq-upload-delete-selector qq-upload-delete" href="#"></a>'+
 				    	'<div class="thumb"><img src="<?php echo osc_plugin_url('lz_theme_options/assets/img').'img/thumb-placeholder.png'?>" /></div>'+
-				    '<li>',
+				    '<li>'
 			});
 		<?php } ?>
+
 	});
 </script>

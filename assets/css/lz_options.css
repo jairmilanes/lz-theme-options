@@ -728,7 +728,8 @@ MENU
 	margin-top: 5px;
 	margin-right: 5px;
 }
-#lzto .upload_button li > a.qq-upload-delete {
+#lzto .upload_button li > a.qq-upload-delete,
+#lzto .upload_button li > a.qq-uploaded-delete {
 	width: 15px;
 	height: 15px;
 	background: url( ../img/close-icon15.png ) no-repeat center center;	

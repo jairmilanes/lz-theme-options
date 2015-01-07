@@ -215,7 +215,7 @@ $(document).ready(function(){
 				} else {
 					showMessage( 'ok', json.message );	
 					setTimeout(function(){
-						location.reload(true);
+                        reloadCanvas();
 					},1000);
 				}
 				
@@ -558,8 +558,8 @@ function lzto_init( settings ){
 			var group = $(this).data('group');
 			var self = $(elem);
 		
-			$(elem).fineUploader({
-			   //debug: true,
+			var uploader = $(elem).fineUploader({
+			   debug: true,
 				multiple: false,
 				request: {
 					endpoint: settings.upload_endpoint+field_name+'&group='+group
@@ -570,15 +570,20 @@ function lzto_init( settings ){
 					forceConfirm: true,
 					endpoint: settings.upload_delete_endpoint+field_name+'&group='+group
 				},
+                session: {
+                    endpoint: settings.upload_load_endpoint
+                },
 				template: settings.upload_template,
 				fileTemplate: settings.upload_file_template
 					
 			}).on('submit', function(){
                 self.closest('.form-group').find('p.error').remove();
 				showOptionsLoader();
-			}).on('delete', function(event, id, name, json){
+			}).on('delete', function(id, event, name, json){
+
 				showOptionsLoader();
 			}).on('deleteComplete', function(event, id, name, json){
+
 				reloadCanvas();
 			}).on('complete', function(event, id, name, json){
 				showOptionsLoader();
@@ -602,15 +607,9 @@ function lzto_init( settings ){
 
                     reloadCanvas();
                 } else {
-
                     self.after('<p class="error">'+json.message+'</p>');
                 }
 
-
-				
-
-
-				//
 			}).on('progress',function( id, name, uploadedBytes, totalBytes ){
 				var per = parseInt( ( ( uploadedBytes / totalBytes ) * 100 ) );
 				self.find('.qq-progress-bar').css({ width: per+'%' });
@@ -618,7 +617,9 @@ function lzto_init( settings ){
 				
 				
 			var url = settings.upload_load_endpoint+field_name+'&group='+group
-				
+
+
+
 			$.get( url, {}, function( json ){
 
 				if( false !== json.status ){
@@ -633,8 +634,11 @@ function lzto_init( settings ){
 						$( '.qq-upload-file', list ).html(options.name);
 						$( '.qq-upload-size', list ).html(options.size);
 						$( '.thumb', list ).find('img').attr( 'src', options.thumbnailUrl );
-						
-						list.find( '.qq-upload-delete' ).on('click', function(){
+
+                        var delete_btn = list.find( '.qq-upload-delete' );
+                        delete_btn.removeClass('qq-upload-delete').addClass('qq-uploaded-delete');
+
+                        delete_btn.on('click', function(){
 							if( confirm('Are you sure you want to delete '+options.name+'?') ){
 								var delete_button = $(this);
 								var delete_url = settings.upload_init_delete_endpoint;
@@ -646,6 +650,7 @@ function lzto_init( settings ){
 								$.post( delete_url, data, function( json ){
 									if( json.success ){
 										delete_button.parent().remove();
+                                        reloadCanvas();
 									}
 								},'json');
 							}
