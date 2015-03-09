@@ -4,22 +4,16 @@ module.exports  = function(grunt){
         base_dir = '',
         build_dir = '../../../../../PACKAGES/PLUGINS/'+plugin_name+'/'+plugin_name,
         build_to_zip = '../../../../../PACKAGES/PLUGINS/'+plugin_name,
-        build_zip_dir = '../../../../../PACKAGES/PLUGINS/ZIPS/';
+        build_zip_dir = '../../../../../PACKAGES/PLUGINS/ZIPS/'+plugin_name;
 
         // configure the tasks
         grunt.initConfig({
             clean: {
-                src: {
-                    options: {
-                        force: true
-                    },
-                    src: [ build_to_zip ]
+                options: {
+                    force: true
                 },
-                build: {
-                    options: {
-                        force: true
-                    },
-                    src: [ build_dir+'/node_modules' ]
+                src: {
+                    src: [ build_to_zip ]
                 }
             },
             copy: {
@@ -28,6 +22,9 @@ module.exports  = function(grunt){
                     src: [ '**', '!node_modules' ],
                     dest: build_dir,
                     expand: true,
+                    filter: function(src_path){
+                        return ( src_path.indexOf('node_modules') < 0 );
+                    },
                     options: {
                         processContentExclude: ['**/*.{png,gif,jpg,ico,eot,svg,ttf,woff}']
                     }
@@ -64,11 +61,11 @@ module.exports  = function(grunt){
     grunt.registerTask(
         'build',
         'Compiles all of the assets and copies the files to the build directory.',
-        [ 'clean:src', 'copy', 'cssmin', 'clean:build' ] //, 'imagemin'
+        [ 'clean:src', 'copy', 'cssmin', 'compress' ] //, 'imagemin'
     );
 
     function getName(){
         var date = new Date();
-        return plugin_name+'-'+date.getFullYear()+date.getMonth()+date.getDate()+date.getHours()+date.getMinutes()+'.zip';
+        return plugin_name+'-'+date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate()+'-'+date.getHours()+'-'+date.getMinutes()+'.zip';
     }
 };
