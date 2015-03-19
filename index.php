@@ -166,6 +166,21 @@ function lzto_getOption( $group, $field ){
 }
 
 /**
+ * Retrieves a boolean value from a switch button element from db
+ *
+ * @param $group
+ * @param $field
+ * @return bool
+ */
+function lzto_getSwitchOption( $group, $field ){
+    $option = Builder::newInstance()->getOption( $group, $field );
+    if( is_array($option) ){
+        return (boolval($option[0]));
+    }
+    return false;
+}
+
+/**
  * Get all available fields in array format
  * @return array Field array:
  */
