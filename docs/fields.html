@@ -1,0 +1,465 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+
+    <title>Lz Theme Options Framework for OsClass cms</title>
+
+    <!-- CSS  -->
+    <link href='http://fonts.googleapis.com/css?family=Exo+2:700,600,800,300,400,500,900' rel='stylesheet' type='text/css'>
+    <link href="/assets/css/materialize.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/assets/css/prism.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/assets/css/style.css" rel="stylesheet" type="text/css" media="all" />
+
+  </head>
+  <body>
+
+    <nav class="blue-grey darken-4" role="navigation">
+  <div class="container">
+    <div class="nav-wrapper">
+        <a id="logo-container" href="/index.html" class="brand-logo">
+          <img src="/assets/img/logo.png" height="44" />
+        </a>
+      <ul class="right hide-on-med-and-down">
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/docs/index.html">Get Started</a></li>
+          <li><a href="http://jmilanes.ninja/#contact">Contact</a></li>
+      </ul>
+      <ul id="nav-mobile" class="side-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/docs/index.html">Get Started</a></li>
+          <li><a href="http://jmilanes.ninja/#contact">Contact</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse right">
+          <i class="mdi-navigation-menu"></i>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+    
+  <section class="docs fields blue-grey lighten-5">
+    <div class="container">
+      <div class="row">
+        <div id="docs-wrapper" class="col s12 m8 l9">
+          <section class="content">
+            <div id="fields" class="card-panel scrollspy">
+              <h1>Theme Options Fields</h1>
+              <p>Here is a list of the currently available fields, please keep in mind that, some of this fields may still have bugs, but most of them are ready to use, updates will
+                come to fix all the current bugs.</p>
+              <p>Help is always welcome, please use the Github Issue System to register and discuss bugs, solutions and submit pull requests.</p>
+            </div>
+            <div id="text-field" class="card-panel scrollspy">
+  <h4>Text field</h4>
+  <p>Simple input type text</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'text', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'placeholder' => 'Placeholder text' // Fields placeholder string
+        'max_length' 	=> 25,
+				'min_length' 	=> 3,
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="textarea-field" class="card-panel scrollspy">
+  <h4>Textarea field</h4>
+  <p>Simple textarea field</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'textarea', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'placeholder' => 'Placeholder text' // Fields placeholder string
+        'cols' => 60,
+        'rows' => 6
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="radio-field" class="card-panel scrollspy">
+  <h4>Radio field</h4>
+  <p>Simple input type radio field</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'radio', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'choices' => array(
+            'key' => 'value',
+            'key' => 'value'
+        )
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="checkbox-field" class="card-panel scrollspy">
+  <h4>Checkbox field</h4>
+  <p>Simple input type checkbox field</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'checkbox', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'choices' => array(
+            'key' => 'value',
+            'key' => 'value'
+        )
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="select-field" class="card-panel scrollspy">
+  <h4>Select field</h4>
+  <p>Simple select field</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'select', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'choices' => array(
+            'key' => 'value',
+            'key2' => 'value2',
+            'key3' => 'value3'
+        )
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="email-field" class="card-panel scrollspy">
+  <h4>Email field</h4>
+  <p>Simple input type email</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'email', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'placeholder' => 'Placeholder text' // Fields placeholder string
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="url-field" class="card-panel scrollspy">
+  <h4>Url field</h4>
+  <p>Simple input type url</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'url', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'placeholder' => 'Placeholder text' // Fields placeholder string
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="password-field" class="card-panel scrollspy">
+  <h4>Password field</h4>
+  <p>Simple input type password</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'password', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'placeholder' => 'Placeholder text', // Fields placeholder string
+        'max_length' 	=> 4, // Field max chars length
+				'min_length' 	=> 10, // Field min chars length
+        'alphanumeric' 	=> true, // Accept only alphanumeric chars
+        'confirm'  => 'field_name', // The password field name to compare against
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="ajax-upload-field" class="card-panel scrollspy">
+  <h4>Ajax File field</h4>
+  <p>Ajax upload field</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'ajaxFile', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'placeholder' => 'Placeholder text' // Fields placeholder string
+        'type' => 'image', // Upload type ( image[jpg,png,gif,ico], archive[zip, rar], document[doc, pdf], all, custom[[mime_type]])
+        'max_size' => 2000, // Max upload size in bytes
+        'width' => '1024', // Max image with ( only for image uploads )
+        'height = '768', // Max image height ( only for image uploads )
+        'min_width' => '600', // Min image width ( only for image uploads )
+        'min_height' => 480, // Min image height ( only for image uploads )
+        'multiple' => false // Should allow multiple uploads if so how many ( *Under development )
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+<p>If you choose to use a custom upload type remember to pass a "array of mime_types", even if is only one mime_type you want to allow.</p>
+</div>
+
+            <div id="html-field" class="card-panel scrollspy">
+  <h4>Html field</h4>
+  <p>Allows to enter simple html markup</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'html', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'placeholder' => 'Placeholder text' // Fields placeholder string
+        'allowed_tags' => '' // Allwed html tags, defaults to "a,b,i,br,ul,ol,li"
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="toggle-switch-field" class="card-panel scrollspy">
+  <h4>Toggle switch field</h4>
+  <p>Toggle switch field used to get boolean values.</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'toggleSwitch', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name') // Field Label
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="color-selector-field" class="card-panel scrollspy">
+  <h4>Color selector field</h4>
+  <p>Allows to choose from a list of colors</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'colorSelector', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'option_size' => 'large', // The size of each color square (small, medium, large)
+        'choices'	=> array(
+          'orange' => '#D86934', // Name and hax color
+          'pink'   => '#E1287B',
+          'red'    => '#C2292E',
+          'purple' => '#9E4E9E',
+          'blue'   => '#2E81C5',
+          'green'  => '#A2CA28',
+          'yellow' => '#DCD830',
+          'orange_black'   => '#333333,#D86934', // Name an 2 color representation
+          'pink_black'     => '#333333,#E1287B',
+          'red_black'      => '#333333,#CE2B37',
+          'purple_black'   => '#333333,#773FBC',
+          'blue_black'     => '#333333,#3D83C9',
+          'green_black'    => '#333333,#85B200',
+          'yellow_black'   => '#333333,#FFCC33'
+        )
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="texture-selector-field" class="card-panel scrollspy">
+  <h4>Texture selector field</h4>
+  <p>Allows to choose from a list of textures</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'textureSelector', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'option_size' => 'large', // The size of each color square (small, medium, large)
+        'choices'	=> array(
+          'texture-1' => 'img/textures/texture-1.jpg', // Name and path to the texture file
+          'texture-2' => 'img/textures/texture-2.png',
+          'texture-3' => 'img/textures/texture-3.gif',
+          'texture-4' => 'img/textures/texture-4.jpg',
+          'texture-5' => 'img/textures/texture-5.png',
+          'texture-6' => 'img/textures/texture-6.gif',
+          'texture-7' => 'img/textures/texture-7.jpg'
+        )
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+<p>The "choices" parameter can also be a path, relative to you theme root folder, it
+will try and load textures from that folder.</p>
+</div>
+
+            <div id="google-font-field" class="card-panel scrollspy">
+  <h4>Google font selector field</h4>
+  <p>Allows to choose from a list of all available Google Fonts, a few filters are available to narrow down the list if needed.</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'googleFont', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'api-key' => 'AIzaSyBTY43wLYJEOnJY7IiChTn8-JCZ-TsaKRB', // Google fonts api key
+        'sort' => 'popularity', // alpha, date, popularity, style & trending
+        'variants' => array( 'regular', 200, 600), // If the font does not have one of the sizes it will load the available ones
+        'subsets' => array('latin', 'greek'), // Arabic, Cyrillic, Cyrillic Extended, Devanagari, Greek, Greek Extended, Khmer, Latin, Latin Extended, Telugu, Vietnamese
+        'category' => array('serif','sans-serif'), // serif, sans-serif,
+        'limit' => 10 // Limit the number of fonts loaded by group
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+<p>This setup will load a 10 fonts for each of the categories, including each subset & variants sorted by popularity."
+</div>
+
+            <div id="country-selector-field" class="card-panel scrollspy">
+  <h4>Country selector field</h4>
+  <p>Displays a select box with all the available countries to choose from</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'countrySelector', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'limit' => array('US','BR'), // This limits the list of countries to the ones in the array
+        'exclude' => array('US','BR') // This will eclude this countries from the list
+    ),
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="region-selector-field" class="card-panel scrollspy">
+  <h4>Region selector field</h4>
+  <p>Displays a select box with all the available regions to choose from given a country code</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'regionSelector', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'country_field' => 'Country field name', // This will make this field change according to the selected country
+        'country' => '', // Default region to load cities from ( name or id )
+    ),
+    'default' => 'Default region name', // selected city id, only if used region from options
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+            <div id="city-selector-field" class="card-panel scrollspy">
+  <h4>City selector field</h4>
+  <p>Displays a select box with all the available citys to choose from given a country code</p>
+  <pre><code class="language-php">'field_name' => array(
+    'type' => 'citySelector', // Field type
+    'options' => array( // Field options
+        'label' => __('Field title','theme_name'), // Field Label
+        'required' => false, // Field is required?
+        'region_field' => 'Country field name', // This will make this field change according to the selected country
+        'region' => '', // Default region to load cities from ( name or id )
+    ),
+    'default' => 'Default city name', // selected city id, only if used region from options
+    'description' => __('Field description','theme_name')
+)</code></pre>
+</div>
+
+          </section>
+        </div>
+        <aside class="col hide-on-small-only m4 l3">
+          <div class="sidebar pushpin" data-parent="#docs-wrapper">
+
+  <ul class="collapsible navigation">
+    <li><a class="collapsible-header grey lighten-4" href="#text-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Text</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#textarea-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Textarea</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#radio-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Radio</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#checkbox-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Checkbox</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#select-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Select</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#email-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Email</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#url-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Url</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#password-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Password</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#ajax-file-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Ajax File</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#html-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Html</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#toggle-switch-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Toggle Switch</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#color-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Color Selector</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#texture-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Texture Selector</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#google-font-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Google Font Selector</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#country-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Country Selector</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#region-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> Region Selector</a></li>
+    <li><a class="collapsible-header grey lighten-4" href="#city-field"><i class="mdi-navigation-more-horiz blue-grey-text text-lighten-4"></i> City Selector</a></li>
+  </ul>
+
+</div>
+
+        </aside>
+      </div>
+    </div>
+  </section>
+  
+
+    <div class="github-stats amber lighten-1">
+    <div class="container">
+      <div class="row">
+        <div class="col m6">
+          <p class="last-commit blue-grey-text text-darken-4">Last commit on Github: <a class="sha"></a> <span class="date"></span></p>
+        </div>
+        <div class="col m6">
+          <div class="likes">
+            <iframe src="http://ghbtns.com/github-btn.html?user=layoutzweb&amp;repo=lz-theme-options&amp;type=watch&amp;count=true&amp;size=large" allowtransparency="true" frameborder="0" scrolling="0" width="170" height="30"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<footer class="page-footer blue-grey darken-4">
+  <div class="container">
+    <div class="row">
+      <div class="col l6 s12">
+        <h5 class="white-text">About</h5>
+        <p class="grey-text text-lighten-4">
+            My name is <a href="http://jmilanes.ninja/" title="Jair Milanes Junior | Web &amp; Mobile Developer  Software Development Engineer">Jair Milanes</a>, I´m a solo developer who makes a living developing paid and open source projects like this, if you think this software was or can be usefull for you please consider donating, any amount would help support and continue development on this project and is greatly appreciated.
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+    <input type="hidden" name="cmd" value="_s-xclick">
+    <input type="hidden" name="hosted_button_id" value="8Z7SBP2F7C59A">
+    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+    <img alt="" border="0" src="https://www.paypalobjects.com/pt_BR/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+        </p>
+      </div>
+      <div class="col l3 s12">
+        <h5 class="white-text">Navigate</h5>
+        <ul>
+          <li><a class="white-text" href="/docs/index.html">Get started</a></li>
+          <li><a class="white-text" href="/docs/field.html">Fields</a></li>
+          <li><a class="white-text" href="#!">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col l3 s12">
+        <h5 class="white-text">Links</h5>
+        <ul>
+          <li><a class="white-text" href="http://layoutz.com.br/">OsClass themes</a></li>
+          <li><a class="white-text" href="http://layoutz.com.br/">OsClass plugins</a></li>
+          <li><a class="white-text" href="http://jmilanes.ninja/">My blog</a></li>
+          <li><a class="white-text" href="https://www.linkedin.com/profile/public-profile-settings?trk=prof-edit-edit-public_profile">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+    Made by <a class="orange-text text-lighten-3" href="http://jmilanes.ninja/">jMilanes</a> | <a class="orange-text text-lighten-3" href="http://layoutz.com.br">LayoutzWeb</a>
+    </div>
+  </div>
+</footer>
+<script type="text/javascript">
+    var disqus_shortname = 'lzthemeoptions';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+<!--  Scripts-->
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="/assets/scripts/timeago.js"></script>
+<script src="/assets/scripts/materialize.js"></script>
+<script src="/assets/scripts/prism.js"></script>
+<script src="/assets/scripts/init.js"></script>
+
+
+  </body>
+</html>

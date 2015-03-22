@@ -1,0 +1,13 @@
+{
+  "site": {
+    "title": "",
+    "description": ""
+  },
+  "urls": {
+    "store": "http://layoutz.com.br",
+    "store_themes": "http://layoutz.com.br/",
+    "store_plugins": "http://layoutz.com.br/",
+    "blog": "http://jmilanes.ninja/",
+    "linkedin": "https://www.linkedin.com/profile/public-profile-settings?trk=prof-edit-edit-public_profile"
+  }
+}

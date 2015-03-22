@@ -1,0 +1,330 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+
+    <title>Lz Theme Options Framework for OsClass cms</title>
+
+    <!-- CSS  -->
+    <link href='http://fonts.googleapis.com/css?family=Exo+2:700,600,800,300,400,500,900' rel='stylesheet' type='text/css'>
+    <link href="/assets/css/materialize.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/assets/css/prism.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/assets/css/style.css" rel="stylesheet" type="text/css" media="all" />
+
+  </head>
+  <body>
+
+    <nav class="blue-grey darken-4" role="navigation">
+  <div class="container">
+    <div class="nav-wrapper">
+        <a id="logo-container" href="/index.html" class="brand-logo">
+          <img src="/assets/img/logo.png" height="44" />
+        </a>
+      <ul class="right hide-on-med-and-down">
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/docs/index.html">Get Started</a></li>
+          <li><a href="http://jmilanes.ninja/#contact">Contact</a></li>
+      </ul>
+      <ul id="nav-mobile" class="side-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/docs/index.html">Get Started</a></li>
+          <li><a href="http://jmilanes.ninja/#contact">Contact</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse right">
+          <i class="mdi-navigation-menu"></i>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+    
+  <section class="docs blue-grey lighten-5">
+    <div class="container">
+      <div class="row">
+        <div id="docs-wrapper" class="col s12 m8 l9">
+          <section class="content">
+            <div id="get-started" class="card-panel scrollspy">
+              <h1>Getting started</h1>
+              <p>Integrating the Theme Options plugin with your template is easy, the first thing to do is to install the plugin, you can clone it from <a title="Lz Theme Options on Github" href="https://github.com/layoutzweb/lz-theme-options">Github</a></p>
+              <pre><code class="language-git">git clone https://github.com/layoutzweb/lz-theme-options.git
+              </code></pre>
+              <p>or download a installable copy of Lz Theme Options, witch can be installed using the oc-admin plugins area, <a title="Lz Theme Options for OsClass" href="https://github.com/layoutzweb/lz-theme-options">clique here to download</a></p>
+              <p>Don´t forget to "intall" the plugin after uploading to your server.</p>
+            </div>
+            <div id="options-file" class="card-panel scrollspy">
+              <h3>Creating the options file</h3>
+              <p>With the plugin installed you can now start creating your configuration options, to do that first create a "options.php" file in the root directory of your theme, located at:</p>
+              <pre><code class="language-markup">path/to/root/dir/oc-content/themes/your-theme-name
+              </code></pre>
+              <p>Now inside this file create a function that the name is formed by your theme slug name followed by "_get_theme_options", this function must return a array, like the exemple below:</p>
+              <pre><code class="language-php">function mythemename_get_theme_options(){
+  return array();
+}
+</code></pre>
+              <p>We are now ready to start creating fields.</p>
+            </div>
+            <div id="create-fields" class="card-panel scrollspy">
+              <h3>Creating fields</h3>
+              <p>Fields are created using an array notation, nesting arrays to group fields, currently the Lz Theme Options plugin cames with a variety of fields, check out all the available
+                fields and their basic configuration markup in the <a href="/docs/fields.html" title="Lz Theme Options Fields Section">Fields</a> section.</p>
+                <p>Here is a complete options file, you can keep extending the options ti fit your needs:</p>
+                <pre><code class="language-php">function mythemename_get_theme_options(){
+	return array(
+		'first_group' => array(
+			'title'  => __('First group title','theme_name'),
+			'fields' => array(
+				'first_field' => array(
+					'type' => 'text',
+					'options' => array(
+						'label' => __('Field title','theme_name'),
+						'required' => false,
+						'placeholder' => 'Placeholder text',
+						'max_length' 	=> 25,
+						'min_length' 	=> 3
+					),
+					'description' => __('Field description','theme_name')
+				),
+				'second_field' => array(
+					'type' => 'textarea',
+					'options' => array(
+						'label' => __('Field title','theme_name'),
+						'required' => false,
+						'placeholder' => 'Placeholder text',
+						'cols' => 60,
+						'rows' => 6
+					),
+					'description' => __('Field description','theme_name')
+				),
+				'third_field' => array(
+					'type' => 'select',
+					'options' => array(
+						'label' => __('Field title','theme_name'),
+						'required' => false,
+						'choices' => array(
+							'key' => 'value',
+							'key2' => 'value2',
+							'key3' => 'value3'
+						)
+					),
+					'description' => __('Field description','theme_name')
+				)
+			)
+		),
+		'second_group' => array(
+			'title'  => __('Second group title','theme_name'),
+			'fields' => array(
+				'first_field' => array(
+					'type' => 'checkbox',
+					'options' => array(
+						'label' => __('Field title','theme_name'),
+						'required' => false,
+						'choices' => array(
+							'key' => 'value',
+							'key' => 'value'
+						)
+					),
+					'description' => __('Field description','theme_name')
+				),
+				'second_field' => array(
+					'type' => 'toggleSwitch',
+					'options' => array(
+						'label' => __('Field title','theme_name')
+					),
+					'description' => __('Field description','theme_name')
+				),
+				'third_field' => array(
+					'type' => 'ajaxFile',
+					'options' => array(
+						'label' => __('Field title','theme_name'),
+						'required' => false,
+						'placeholder' => 'Placeholder text',
+						'type' => 'image',
+						'max_size' => 2000,
+						'width' => 1024,
+						'height' => 768,
+						'min_width' => 600,
+						'min_height' => 480,
+						'multiple' => false
+					),
+					'description' => __('Field description','theme_name')
+				)
+			)
+		)
+	);
+}</code></pre>
+
+            </div>
+            <div id="checking-form" class="card scrollspy">
+              <div class="card-content">
+                <h3>Checking the form</h3>
+                <p>With some some options created you can now check how is your settings looking in the backend, look for the "Theme Options" on your oc-admin appearance menu.</p>
+              </div>
+              <div class="card-image">
+                <img src="/assets/img/docs/theme-options-link.jpg" alt="Lz Theme Options admin link" />
+              </div>
+            </div>
+            <div class="card scrollspy">
+              <div class="card-content">
+                <p>Once there you will see the preview window, with a big square button on the left side, this is the settings menu trigger.</p>
+              </div>
+              <div class="card-image">
+                <img src="/assets/img/docs/theme-options-page.jpg" alt="Lz Theme Options admin page" />
+              </div>
+            </div>
+            <div class="card scrollspy">
+              <div class="card-content">
+                <p>Clique the button to open the settings you have just created above.</p>
+              </div>
+              <div class="card-image">
+                <img src="/assets/img/docs/theme-options-menu.jpg" alt="Lz Theme Options admin menu" />
+              </div>
+              <div class="card-image">
+                <img src="/assets/img/docs/theme-options-fields.jpg" alt="Lz Theme Options admin fields" />
+              </div>
+            </div>
+            <div id="retrieving-values" class="card-panel scrollspy">
+              <h3>Retrieving values</h3>
+              <p>To retrieve the settings values you can use one of the functions below, choose the best one for each situation:</p>
+              <pre><code class="language-php">lzto_getOptionsByGroupName( $group_name );
+              </code></pre>
+              <p>"lzto_getOptionsByGroupName" returns an array with the field name and value for each field on that group.</p>
+              <pre><code class="language-php">lzto_getOption( $group_name, $field_name );
+              </code></pre>
+              <p>"lzto_getOption" returns the value of the field, maybe a string, array, number, depends on the field type.</p>
+              <pre><code class="language-php">lzto_getSwitchOption( $group_name, $field_name );
+              </code></pre>
+              <p>"lzto_getSwitchOption" returns true or false for a "toggle switch" type of field.</p>
+              <pre><code class="language-php">lzto_getGoogleFont( $group_name, $field_name );
+              </code></pre>
+              <p>"lzto_getGoogleFont" returns an array with the name and url of the chosen font, you can then use the url to enqueue the google font and the name to overwrite you css.</p>
+            </div>
+            <div id="retrieving-values" class="card-panel scrollspy">
+              <h3>That's is it!</h3>
+              <p>Easy right? You can now start creating great themes full of functionality, and leave the heavy backend work with the Lz Theme Options plugin.</p>
+              <p>If you feel that this documentation is missing something, or have a suggestion about the plugin maybe a feature request, I can't promisse a super
+                fast response or implementation of you suggestion, but I promisse I will look into it and do my best.</p>
+            </div>
+            <div class="card-panel">
+              <!-- Lz Theme Options Github - Docs footer -->
+              <ins class="adsbygoogle"
+                 style="display:inline-block;width:728px;height:90px"
+                 data-ad-client="ca-pub-2854095030244130"
+                 data-ad-slot="9243561800"></ins>
+            </div>
+            <div id="comments-values" class="card-panel scrollspy">
+              <h2>Leave your comments</h2>
+              <p>Maybe you can help or be helped by another user, keep up with the comunity spirit!</p>
+              <div id="disqus_thread"></div>
+              <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+            </div>
+          </section>
+        </div>
+        <aside class="col hide-on-small-only m4 l3">
+          <div class="sidebar pushpin" data-parent="#docs-wrapper">
+
+  <ul class="navigation">
+
+    <li class="no-padding">
+      <ul class="collapsible" data-collapsible="expandable">
+        <li class="bold"><a href="#get-started" class="collapsible-header active waves-effect waves-teal bold">Get started</a></li>
+        <li class="bold"><a href="#options-file" class="collapsible-header waves-effect waves-teal bold">The options file</a></li>
+        <li class="bold"><a href="#create-fields" class="collapsible-header waves-effect waves-teal bold">Creating fields</a></li>
+        <li class="bold"><a href="#retrieving-values" class="collapsible-header waves-effect waves-teal bold">Retrieving values</a></li>
+        <li class="bold"><a href="/docs/fields.html" class="collapsible-header waves-effect waves-teal">Field types</a></li>
+        <li class="bold"><a href="#comments-values" class="collapsible-header waves-effect waves-teal bold">Comments</a></li>
+      </ul>
+    </li>
+  </ul>
+  <p>&nbsp;</p>
+  <ins class="adsbygoogle"
+       style="display:inline-block;width:300px;height:250px"
+       data-ad-client="ca-pub-2854095030244130"
+       data-ad-slot="1580694203"></ins>
+</div>
+
+        </aside>
+      </div>
+    </div>
+  </section>
+
+
+    <div class="github-stats amber lighten-1">
+    <div class="container">
+      <div class="row">
+        <div class="col m6">
+          <p class="last-commit blue-grey-text text-darken-4">Last commit on Github: <a class="sha"></a> <span class="date"></span></p>
+        </div>
+        <div class="col m6">
+          <div class="likes">
+            <iframe src="http://ghbtns.com/github-btn.html?user=layoutzweb&amp;repo=lz-theme-options&amp;type=watch&amp;count=true&amp;size=large" allowtransparency="true" frameborder="0" scrolling="0" width="170" height="30"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<footer class="page-footer blue-grey darken-4">
+  <div class="container">
+    <div class="row">
+      <div class="col l6 s12">
+        <h5 class="white-text">About</h5>
+        <p class="grey-text text-lighten-4">
+            My name is <a href="http://jmilanes.ninja/" title="Jair Milanes Junior | Web &amp; Mobile Developer  Software Development Engineer">Jair Milanes</a>, I´m a solo developer who makes a living developing paid and open source projects like this, if you think this software was or can be usefull for you please consider donating, any amount would help support and continue development on this project and is greatly appreciated.
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+    <input type="hidden" name="cmd" value="_s-xclick">
+    <input type="hidden" name="hosted_button_id" value="8Z7SBP2F7C59A">
+    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+    <img alt="" border="0" src="https://www.paypalobjects.com/pt_BR/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+        </p>
+      </div>
+      <div class="col l3 s12">
+        <h5 class="white-text">Navigate</h5>
+        <ul>
+          <li><a class="white-text" href="/docs/index.html">Get started</a></li>
+          <li><a class="white-text" href="/docs/field.html">Fields</a></li>
+          <li><a class="white-text" href="#!">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col l3 s12">
+        <h5 class="white-text">Links</h5>
+        <ul>
+          <li><a class="white-text" href="http://layoutz.com.br/">OsClass themes</a></li>
+          <li><a class="white-text" href="http://layoutz.com.br/">OsClass plugins</a></li>
+          <li><a class="white-text" href="http://jmilanes.ninja/">My blog</a></li>
+          <li><a class="white-text" href="https://www.linkedin.com/profile/public-profile-settings?trk=prof-edit-edit-public_profile">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+    Made by <a class="orange-text text-lighten-3" href="http://jmilanes.ninja/">jMilanes</a> | <a class="orange-text text-lighten-3" href="http://layoutz.com.br">LayoutzWeb</a>
+    </div>
+  </div>
+</footer>
+<script type="text/javascript">
+    var disqus_shortname = 'lzthemeoptions';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+<!--  Scripts-->
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="/assets/scripts/timeago.js"></script>
+<script src="/assets/scripts/materialize.js"></script>
+<script src="/assets/scripts/prism.js"></script>
+<script src="/assets/scripts/init.js"></script>
+
+
+  </body>
+</html>
