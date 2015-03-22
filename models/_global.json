@@ -1,7 +1,7 @@
 {
   "site": {
-    "title": "",
-    "description": ""
+    "title": "Lz Theme Options Plugin Framework",
+    "description": "The first theme framework for OsClass cms, create complex settings form fast & easy"
   },
   "urls": {
     "base": "http://layoutzweb.github.io/lz-theme-options/",
