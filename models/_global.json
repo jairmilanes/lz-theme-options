@@ -4,6 +4,7 @@
     "description": ""
   },
   "urls": {
+    "base": "http://lzthemeoptions.localhost/",
     "store": "http://layoutz.com.br",
     "store_themes": "http://layoutz.com.br/",
     "store_plugins": "http://layoutz.com.br/",
