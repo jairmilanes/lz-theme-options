@@ -45,21 +45,92 @@ section.banner .banner-img {
   display: inline-block;
   max-width: 100%;
   max-height: 100%; }
-section.banner .row {
+section.banner .row:last-child {
   margin-bottom: 0; }
 section.banner h1 {
   margin-top: 5px; }
-  section.banner h1 span:last-child {
-    letter-spacing: -4px; }
-section.banner h5 {
+  section.banner h1 > img {
+    margin-bottom: 30px; }
+  section.banner h1 > span {
+    display: block; }
+section.banner h4 {
   margin-top: 0;
-  margin-bottom: 30px; }
+  margin-bottom: 10px; }
 section.banner .info {
   padding-left: 20px; }
-  section.banner .info .buttons {
-    padding-left: 20px; }
-    section.banner .info .buttons a {
-      margin-right: 15px; }
+section.banner .buttons {
+  padding-left: 20px; }
+  section.banner .buttons a {
+    margin-right: 15px; }
+
+@media only screen and (min-width: 1500px) {
+  section.banner .info h1 {
+    font-size: 3.3rem;
+    line-height: 3.3rem; }
+  section.banner .info h4 {
+    font-size: 2.2rem;
+    line-height: 2.2rem; } }
+
+@media only screen and (min-width: 1200px) and (max-width: 1500px) {
+  section.banner .info h1 {
+    font-size: 2.6rem;
+    line-height: 2.6rem; }
+  section.banner .info h4 {
+    font-size: 2.2rem;
+    line-height: 2.2rem; } }
+
+@media only screen and (min-width: 992px) and (max-width: 1200px) {
+  section.banner .info h1 {
+    font-size: 2.2rem;
+    line-height: 2.2rem; }
+  section.banner .info h4 {
+    font-size: 1.8rem;
+    line-height: 1.8rem; } }
+
+@media only screen and (max-width: 992px) {
+  nav .brand-logo {
+    -webkit-transform: translate(-50%, 0);
+    -moz-transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 0);
+    -o-transform: translate(-50%, 0);
+    transform: translate(-50%, 0); }
+  section h2 {
+    font-size: 3rem;
+    line-height: 3rem; }
+  section.banner .info {
+    text-align: center  !important; }
+    section.banner .info h1 {
+      font-size: 2.6rem;
+      line-height: 2.6rem; }
+    section.banner .info h4 {
+      font-size: 2.2rem;
+      line-height: 2.2rem; } }
+
+@media only screen and (max-width: 600px) {
+  section h2 {
+    font-size: 2.5rem;
+    line-height: 2.5rem; }
+  section.banner .info {
+    text-align: center  !important; }
+    section.banner .info h1 {
+      font-size: 2rem;
+      line-height: 2rem; }
+    section.banner .info h4 {
+      font-size: 1.6rem;
+      line-height: 1.6rem; } }
+
+@media only screen and (max-width: 480px) {
+  section h2 {
+    font-size: 2.5rem;
+    line-height: 2.5rem; }
+  section.banner .info {
+    text-align: center  !important; }
+    section.banner .info h1 {
+      font-size: 1.8rem;
+      line-height: 1.8rem; }
+    section.banner .info h4 {
+      font-size: 1.6rem;
+      line-height: 1.6rem; } }
 
 section.strongs .icon-block h2 i {
   font-size: 145px;
