@@ -1,3 +1,6 @@
+html, body {
+  font-size: 16px; }
+
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Exo 2', sans-serif;
   font-weight: 800; }
@@ -7,6 +10,9 @@ code, pre {
 
 :not(pre) > code[class*="language-"] {
   background: #263238; }
+
+a:not([class*="btn-"]):hover {
+  color: #00bcd4 !important; }
 
 pre[class*="language-"] {
   background: #263238;
@@ -68,6 +74,8 @@ div.github-stats .row {
   margin-bottom: 0; }
   div.github-stats .row .last-commit .date {
     font-weight: 800; }
+  div.github-stats .row .last-commit .sha {
+    color: #fff; }
   div.github-stats .row .likes {
     padding: 10px 0; }
 
@@ -78,14 +86,18 @@ section.docs .card .card-image {
 footer.page-footer {
   margin-top: 0; }
 
-.sidebar {
+.docs .sidebar {
   width: 100%;
   max-width: 290px;
   min-width: 134px; }
-  .sidebar .collapsible-body ul li a {
+.docs.fields .sidebar .sidebar {
+  width: 100%;
+  max-width: 290px;
+  min-width: 134px; }
+  .docs.fields .sidebar .sidebar ul li a {
     height: 2rem;
     line-height: 2rem; }
-    .sidebar .collapsible-body ul li a i {
+    .docs.fields .sidebar .sidebar ul li a i {
       line-height: 2rem;
       font-size: .8rem;
       margin-right: 0; }
