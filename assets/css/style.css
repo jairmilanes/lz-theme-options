@@ -1,8 +1,5 @@
-html, body {
-  font-family: 'Exo 2', sans-serif;
-  font-weight: 400; }
-
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Exo 2', sans-serif;
   font-weight: 800; }
 
 code, pre {
@@ -36,7 +33,7 @@ pre[class*="language-"] {
   padding: 0 15px; }
 
 body > section {
-  padding: 80px 0 70px 0; }
+  padding: 40px 0 50px 0; }
 
 section.banner .banner-img {
   display: inline-block;
@@ -75,7 +72,8 @@ div.github-stats .row {
     padding: 10px 0; }
 
 section.docs .card .card-image {
-  margin: 0 20px 20px; }
+  margin: 0 20px 20px;
+  border: 1px solid #EFEEEE; }
 
 footer.page-footer {
   margin-top: 0; }
