@@ -153,22 +153,17 @@ div.github-stats .row {
 section.docs .card .card-image {
   margin: 0 20px 20px;
   border: 1px solid #EFEEEE; }
+section.docs .sidebar {
+  width: 100%;
+  max-width: 290px;
+  min-width: 134px; }
+section.docs.fields .sidebar ul li a {
+  height: 2rem;
+  line-height: 2rem; }
+  section.docs.fields .sidebar ul li a i {
+    line-height: 2rem;
+    font-size: .8rem;
+    margin-right: 0; }
 
 footer.page-footer {
   margin-top: 0; }
-
-.docs .sidebar {
-  width: 100%;
-  max-width: 290px;
-  min-width: 134px; }
-.docs.fields .sidebar .sidebar {
-  width: 100%;
-  max-width: 290px;
-  min-width: 134px; }
-  .docs.fields .sidebar .sidebar ul li a {
-    height: 2rem;
-    line-height: 2rem; }
-    .docs.fields .sidebar .sidebar ul li a i {
-      line-height: 2rem;
-      font-size: .8rem;
-      margin-right: 0; }
