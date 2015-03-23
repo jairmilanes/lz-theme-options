@@ -4,11 +4,13 @@
     "description": "The first theme framework for OsClass cms, create complex settings form fast & easy"
   },
   "urls": {
-    "base": "http://layoutzweb.github.io/lz-theme-options/",
+    "base": "http://localhost:7774/",
     "store": "http://layoutz.com.br",
-    "store_themes": "http://layoutz.com.br/",
-    "store_plugins": "http://layoutz.com.br/",
+    "store_themes": "http://layoutz.com.br/cms-themes-templates/",
+    "store_plugins": "http://layoutz.com.br/cms-plugins/",
     "blog": "http://jmilanes.ninja/",
+    "github": "https://github.com/layoutzweb/lz-theme-options",
+    "issues": "https://github.com/layoutzweb/lz-theme-options/issues",
     "demo": "http://themes.osclass.lzadmin.com/demo/lzt_one",
     "linkedin": "https://www.linkedin.com/profile/public-profile-settings?trk=prof-edit-edit-public_profile"
   }
