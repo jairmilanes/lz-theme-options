@@ -58,7 +58,6 @@ class AjaxFile extends Field
     );
 
 
-
     public function __construct($label, $attributes = array() )
     {
         $this->type                 = lzto_var($attributes, 'type',                 'all');
@@ -151,7 +150,5 @@ class AjaxFile extends Field
     	}
         return !empty($this->error) ? false : true;
     }
-
-
 
 }

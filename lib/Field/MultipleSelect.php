@@ -1,5 +1,5 @@
 <?php
-namespace Nibble\NibbleForms\Field;
+namespace Lib\Field;
 
 class MultipleSelect extends MultipleOptions
 {

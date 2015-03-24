@@ -18,7 +18,7 @@
 		<?php if( $lz_options ){  ?>
 			<div class="menu">
 				<div class="inner">
-				<?php echo lzto_openForm();?>
+				<?php echo Builder::newInstance()->openForm(); ?>
 					<?php  if( OC_ADMIN ){ ?>
 					<h2><?php _e('LZ Theme options','lzto')?></h2>
 					<?php  } ?>
@@ -35,15 +35,15 @@
 			        		<input type="hidden" name="plugin_short_name" value="lz_theme_options" />
 						<ul>
 							<?php
-								$fields = lzto_getFields();
+								$fields = Builder::newInstance()->getFields();
 								foreach(  $fields as $grandpa => $field ){
 									echo '<li>';
-									echo '	<a href="#" >'.ucfirst( strtolower( lzto_getGroupTitle( $grandpa ) ) ).'<span></span></a>';
+									echo '	<a href="#" >'.ucfirst( strtolower( Builder::newInstance()->getGroupName( $grandpa ) ) ).'<span></span></a>';
 									echo '	<div class="menu_form">';
-									echo '		<h3>'.lzto_getGroupTitle( $grandpa ).'</h3>';
+									echo '		<h3>'.Builder::newInstance()->getGroupName( $grandpa ).'</h3>';
 									echo '      <div class="form-group-container">';
 									echo '			<div class="scroll">';
-														lzto_prepareRowHtml( $field, $grandpa );
+                                                        Builder::newInstance()->renderGroup( $field, $grandpa );
 									echo '			</div>';
 									echo '      </div>';
 									echo '	</div>';
@@ -107,7 +107,7 @@
 						</a>
 						<?php /*<input type="submit" value="save" class="side_btn"/> */?>
 					</div>
-					<?php echo lzto_closeForm();?>
+					<?php echo Builder::newInstance()->closeForm();?>
 				</div>
 				<div class="toggle_btn active" data-close_title="<?php _e('Close options?', 'lz_theme_options');?>" data-open_title="<?php _e('Change options?', 'lz_theme_options');?>" title="<?php _e('Change options?', 'lz_theme_options');?>"></div>
 		        <div class="close_btn"></div>

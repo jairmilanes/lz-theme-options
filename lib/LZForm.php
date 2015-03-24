@@ -1,32 +1,12 @@
 <?php
+namespace Lib;
+use Lib\Utils;
 
 /**
- * Nibble Forms 2 library
- * Copyright (c) 2013 Luke Rotherfield, Nibble Development
+ * Class LZForm
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * @package Lib
  */
-
-namespace Lib;
-
-use Lib\Useful;
-
 class LZForm
 {
 
@@ -68,15 +48,16 @@ class LZForm
     private static $instance = array();
 
     /**
-     * @param string  $action
-     * @param string  $submit_value
-     * @param string  $method
-     * @param boolean $sticky
-     * @param string  $message_type
-     * @param string  $format
-     * @param string  $multiple_errors
+     * LzForm Construct
      *
-     * @return NibbleForm
+     * @param $action
+     * @param $submit_value
+     * @param $html5
+     * @param $method
+     * @param $sticky
+     * @param $message_type
+     * @param $format
+     * @param $multiple_errors
      */
     public function __construct(
     	//$name,
@@ -100,7 +81,6 @@ class LZForm
         $this->format = $format;
         $this->message_type = $message_type;
         $this->multiple_errors = $multiple_errors;
-        // spl_autoload_register(array($this, 'nibbleLoader'));
     }
 
     /**
@@ -114,7 +94,7 @@ class LZForm
      * @param string  $format
      * @param string  $multiple_errors
      *
-     * @return NibbleForm
+     * @return LZForm
      */
     public static function getInstance(
         $name = '',
@@ -135,6 +115,11 @@ class LZForm
         return self::$instance[$name];
     }
 
+    /**
+     * Return all form instances
+     *
+     * @return array
+     */
     public function getAllInstances(){
     	return self::$instance;
     }
@@ -159,7 +144,7 @@ class LZForm
             $label = ucfirst(str_replace('_', ' ', $field_name));
         }
 
-        $field_name = Useful::slugify($field_name, '_');
+        $field_name = Utils::slugify($field_name, '_');
 
         if (isset($this->fields->$field_name) && !$overwrite) {
             return false;
@@ -177,10 +162,24 @@ class LZForm
         return $this->fields->$field_name;
     }
 
+    /**
+     * Add a description to the field
+     *
+     * @param $field
+     * @param $description
+     */
     public function addDescription( $field, $description ){
     	$this->descriptions[$field] = $description;
     }
 
+    /**
+     * Return a instance of a field given it's properties
+     *
+     * @param $type
+     * @param $label
+     * @param array $attributes
+     * @return bool
+     */
     protected function getFieldTypeInstance( $type, $label, $attributes = array() ){
     	$file = $this->base_path.'Field'.DIRECTORY_SEPARATOR.ucfirst($type).'.php';
     	$namespace = "Lib\\Field\\" . ucfirst($type);
@@ -223,10 +222,20 @@ class LZForm
         return $this->method;
     }
 
+    /**
+     * Set group name
+     *
+     * @param $group
+     */
     public function setGroup($group){
     	$this->group = $group;
     }
-    
+
+    /**
+     * Return group name
+     *
+     * @return mixed
+     */
     public function getGroup(){
     	return $this->group;
     }
@@ -239,7 +248,12 @@ class LZForm
     public function addData(array $data){
         $this->data = array_merge($this->data, $data);
     }
-    
+
+    /**
+     * Return current form data
+     *
+     * @return array
+     */
     public function getData(){
     	return $this->data;
     }
@@ -365,7 +379,6 @@ FORM;
      * Returns the HTML for a specific form field ususally in the form of input tags
      *
      * @param string $name
-     *
      * @return string
      */
     public function renderField($name)
@@ -377,7 +390,6 @@ FORM;
      * Returns the HTML for a specific form field's label
      *
      * @param string $name
-     *
      * @return string
      */
     public function renderLabel($name)
@@ -389,7 +401,6 @@ FORM;
      * Returns the error string for a specific form field
      *
      * @param string $name
-     *
      * @return string
      */
     public function renderError($name)
@@ -410,7 +421,6 @@ FORM;
      * form field
      *
      * @param string $name
-     *
      * @return boolean
      */
     public function hasError($name)
@@ -427,7 +437,6 @@ FORM;
      * Returns the entire HTML structure for a form field
      *
      * @param string $name
-     *
      * @return string
      */
     public function renderRow($name)
@@ -491,6 +500,11 @@ FORM;
         return $error_string === '' ? false : "<ul>$error_string</ul>";
     }
 
+    /**
+     * Return current form errors
+     *
+     * @return array|bool
+     */
     public function getErrors(){
     	$errors = array();
     	foreach ( $this->fields as $name => $value ) {
@@ -530,7 +544,6 @@ FORM;
      * Check if a field exists
      *
      * @param string $field
-     *
      * @return boolean
      */
     public function checkField($field)
@@ -538,6 +551,12 @@ FORM;
         return isset($this->fields->$field);
     }
 
+    /**
+     * Return an instance a a field or false
+     *
+     * @param $name
+     * @return bool
+     */
     public function getField($name){
         if( $this->checkField($name)){
             return $this->fields->$name;
@@ -545,6 +564,11 @@ FORM;
         return false;
     }
 
+    /**
+     * Return how many fields are in this form
+     *
+     * @return int
+     */
     public function countFields(){
     	return count($this->fields);
     }
@@ -622,28 +646,17 @@ FORM;
         }
         return $field[$key];
     }
-    
+
+    /**
+     * Returns the value of a specific field
+     *
+     * @param $field
+     * @return string
+     */
     public function getFieldValue( $field ){
     	return ( isset( $this->data[$field] ) )? $this->data[$field] : '';
     }
 
-    /**
-     * Creates a new CRSF token
-     *
-     * @return string
 
-    private function setToken()
-    {
-        if (!isset($_SESSION["nibble_forms"])) {
-            $_SESSION["nibble_forms"] = array();
-        }
-        if (!isset($_SESSION["nibble_forms"]["_crsf_token"])) {
-            $_SESSION["nibble_forms"]["_crsf_token"] = array();
-        }
-        $_SESSION["nibble_forms"]["_crsf_token"][$this->name] = Useful::randomString(20);
-        $this->addField("_crsf_token", "hidden");
-        $this->addData(array("_crsf_token" => $_SESSION["nibble_forms"]["_crsf_token"][$this->name]));
-    }
-	*/
 }
 

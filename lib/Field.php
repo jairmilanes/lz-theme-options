@@ -1,8 +1,14 @@
 <?php
 namespace Lib;
+use Lib\Utils;
 
-use Lib\Useful;
-
+/**
+ * Class Field
+ *
+ * @package Lib
+ * @author Jair Milanes Junior
+ * @version 1.0
+ */
 abstract class Field
 {
 
@@ -38,6 +44,12 @@ abstract class Field
         $this->custom_error[] = $message;
     }
 
+    /**
+     * Get an attribute
+     *
+     * @param $name
+     * @return int
+     */
     public function getAttribute($name){
         if( isset($this->attributes[$name])){
             return $this->attributes[$name];
@@ -45,7 +57,27 @@ abstract class Field
         return -1;
     }
 
+    /**
+     * Check if is required
+     *
+     * @return bool
+     */
     public function isRequired(){
         return (isset( $this->required )? (bool)$this->required : false );
+    }
+
+    /**
+     * Builds data attributes string
+     *
+     * @return string
+     */
+    public function getDataAttributes(){
+        $attr = '';
+        if( isset($this->attributes['data']) && is_array($this->attributes['data']) ){
+            foreach($this->attributes['data'] as $name => $value ){
+                $attr .= ' data-'.$name.'="'.$value.'"';
+            }
+        }
+        return $attr;
     }
 }

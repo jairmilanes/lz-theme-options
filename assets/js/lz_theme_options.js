@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
 	var last_message_type = 'flashmessage-info';
 	var last_description = '';
@@ -109,6 +108,8 @@ $(document).ready(function(){
         $('#lzto .info').removeClass('active').find('.inner').html('');
 	});
 	$('#lzto .menu .toggle_btn').trigger('click');
+
+
 	/***************************************************************************
 	 * THEME OPTIONS MENU
 	 **************************************************************************/
@@ -157,6 +158,7 @@ $(document).ready(function(){
 	 **************************************************************************/
 	 $('#lzto .form').submit( function(e){
 		e.preventDefault();
+
 		showOptionsLoader();
 		var self = $(this);
 		var url  = $(this).attr('action');
@@ -166,6 +168,7 @@ $(document).ready(function(){
 		self.find('.error').removeClass('error');
 
 		$.post(url, data, function(json){
+
 			if( !json.status ){
 				if( json.errors ){
 					$.each( json.errors, function( name, error ){						
@@ -182,6 +185,7 @@ $(document).ready(function(){
 				}
 				return false;
 			}
+
 			showMessage( 'ok', json.message );
 			reloadCanvas();
 		},'json'); //
@@ -367,11 +371,55 @@ $(document).ready(function(){
 			  
 		  });
 	 }
-	
-	
-	 
-	
-	 
+
+
+    $('select.region').each( function(index, elem){
+        var select = $(this),
+            watch = $(elem).data('watch');
+
+        if( $(elem).find('option').length <= 1 ){
+            select.attr('disabled','disabled').closest('.select-box').css('opacity',.5);
+        }
+
+        $('[id$="_'+watch+'"]').on('change', function(e){
+            select.closest('.select-box').css('opacity',.5);
+            $.get('/index.php?page=ajax&action=regions&countryId='+$(this).val(), function(regions){
+                if( regions ){
+                    select.html('');
+                    var html = '';
+                    $.each(regions, function(index, region){
+                        html += '<option value="'+region.pk_i_id+'">'+region.s_name+'</option>'+"\n";
+                    });
+                    select.html(html).removeAttr('disabled').closest('.select-box').css('opacity',1);
+                }
+            },'json');
+        });
+
+    });
+
+    $('select.city').each( function(index, elem){
+        var select = $(this),
+            watch = $(elem).data('watch');
+
+        if( $(elem).find('option').length <= 1 ){
+            select.attr('disabled','disabled').closest('.select-box').css('opacity',.5);
+        }
+
+        $('[id$="_'+watch+'"]').on('change', function(e){
+            select.closest('.select-box').css('opacity',.5);
+            $.get('/index.php?page=ajax&action=cities&regionId='+$(this).val(), function(city){
+                if( city ){
+                    select.html('');
+                    var html = '';
+                    $.each(city, function(index, city){
+                        html += '<option value="'+city.pk_i_id+'">'+city.s_name+'</option>'+"\n";
+                    });
+                    select.html(html).removeAttr('disabled').closest('.select-box').css('opacity',1);
+                }
+            },'json');
+        });
+
+    });
 });
 
 
@@ -495,9 +543,7 @@ function refreshPresets(presets){
 	init_presets();
 }
 
-
 if( typeof selectUi !== 'function'){
-
 	function selectUi(thatSelect){
 		var uiSelect = $('<a href="#" class="select-box-trigger"></a>');
 		var uiSelectIcon = $('<span class="select-box-icon"><div class="ico ico-20 ico-drop-down"></div></span>');
@@ -520,6 +566,7 @@ if( typeof selectUi !== 'function'){
 		});
 	}
 }
+
 function reloadCanvas(){
 	var frame = $('iframe#preview_iframe')
 	/*

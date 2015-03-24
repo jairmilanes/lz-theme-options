@@ -2,7 +2,7 @@
 
 namespace Lib\Field;
 
-use Lib\Useful;
+use Lib\Utils;
 
 class SlideRange extends Text
 {
@@ -24,7 +24,7 @@ class SlideRange extends Text
     		if ( !parent::validate($range) ) {
     			$this->error[$type] = 'must be a valid range of numbers';
     		}
-    		if ( Useful::stripper($range) !== false ) {
+    		if ( Utils::stripper($range) !== false ) {
     			if (!filter_var( (int)$range, FILTER_VALIDATE_INT ) ) {
     				$this->error[$type] = 'must be a valid range of numbers';
     			}

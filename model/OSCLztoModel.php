@@ -1,23 +1,31 @@
 <?php
-
+/**
+ * Class OSCLztoModel
+ *
+ * @author Jair Milanes Junior
+ * @version 1.0
+ */
 class OSCLztoModel extends DAO {
-	
-	/**
-	 * It references to self object: ModelProducts.
-	 * It is used as a singleton
-	 *
-	 * @access private
-	 * @since 3.0
-	 * @var $instance
-	 */
+
+    /**
+     * OSCLztoModel instance
+     *
+     * @access private
+     * @var
+     */
 	private static $instance ;
 
-	/**
-	 * 
-	 * @var $log_file
-	 */
+    /**
+     * Log file name
+     *
+     * @access protected
+     * @var
+     */
 	protected $log_file;
-	
+
+    /**
+     * Construct
+     */
 	public function __construct(){
 		parent::__construct();
 		$this->log_file = osc_plugins_path(__FILE__).'lz_theme_options/logs/database.log';
@@ -41,16 +49,24 @@ class OSCLztoModel extends DAO {
 		}
 		return self::$instance ;
 	}
-	
-	
+
+    /**
+     * Save settings
+     *
+     * @param $settings
+     * @return bool
+     */
 	public function saveSettings($settings){
 		return osc_set_preference('lzto_theme_settings', serialize($settings) );
 	}
-	
-	
-	/************************************************************
-	 * USER SETTINGS
-	 */
+
+    /**
+     * Update user settings
+     *
+     * @param $ip
+     * @param $settings
+     * @return bool
+     */
 	public function updateUserSettings( $ip, $settings ){
 		if( !isset($settings['s_ip']) || $ip !== $settings['s_ip'] ){
 			return false;
@@ -77,7 +93,15 @@ class OSCLztoModel extends DAO {
 		}
 		return false;
 	}
-	
+
+    /**
+     * Create user settings
+     *
+     * @param $ip
+     * @param $settings
+     * @param $files
+     * @return bool
+     */
 	public function createUserSettings($ip, $settings, $files){
 		$s_name = '';
 		
@@ -108,7 +132,15 @@ class OSCLztoModel extends DAO {
 		$this->log('FAILED TO CREATE DEMO - IP( '.long2ip(DEMO_USER_IP).' ) ERROR ( '.$this->dao->errorDesc.' )' );
 		return false;
 	}
-	
+
+    /**
+     * Save settings
+     *
+     * @param $ip
+     * @param $name
+     * @param $settings
+     * @return bool
+     */
 	public function saveUserSettings( $ip, $name, $settings  ){
 		
 		if( !filter_var( $ip, FILTER_VALIDATE_INT ) ){
@@ -134,11 +166,23 @@ class OSCLztoModel extends DAO {
 		$rs = $this->dao->query($sql);
 		return ( $rs )? true : false;
 	}
-	
+
+    /**
+     * Delete all settings of a user given a IP
+     *
+     * @param $ip
+     * @return mixed
+     */
 	public function deleteUserSettings($ip){
 		return $this->dao->delete($this->getTableName(), sprintf('s_ip = %s', $ip));
 	}
-	
+
+    /**
+     * Return a user settings given an IP address
+     *
+     * @param $ip
+     * @return bool
+     */
 	public function getUserSettings($ip){
 		$this->dao->from( $this->getTableName() );
 		$this->dao->select('s_settings');
@@ -150,7 +194,13 @@ class OSCLztoModel extends DAO {
 		}
 		return false;
 	}
-	
+
+    /**
+     * Return all user uploads
+     *
+     * @param $ip
+     * @return bool
+     */
 	public function getUserUploads($ip){
 		$this->dao->from( $this->getTableName() );
 		$this->dao->select('s_name, s_settings');
@@ -161,7 +211,14 @@ class OSCLztoModel extends DAO {
 		}
 		return false;
 	}
-	
+
+    /**
+     * Return a file settings given a ip & name
+     *
+     * @param $ip
+     * @param $name
+     * @return bool
+     */
 	public function getUserFileByName($ip, $name){
 		$this->dao->from( $this->getTableName() );
 		$this->dao->select('s_settings');
@@ -173,25 +230,31 @@ class OSCLztoModel extends DAO {
 		}
 		return false;
 	}
-	
+
+    /**
+     * Cleans up the user settings database, only on LZ DEMO websites
+     *
+     * @return mixed
+     */
 	public function cleanUpUsersSettings(){
 
 		$this->dao->select('s_ip, s_name, s_settings, dt_updated');
 		$this->dao->from( $this->getTableName() );
-		$this->dao->where('dt_updated < ADDTIME(NOW(), INTERVAL -1HOURS)');
+		$this->dao->where('dt_updated < DATE_SUB(CURDATE(),INTERVAL 1 HOUR)');
 		$rs = $this->dao->get();
-		$files = Session::newInstance()->_drop('ajax_files');
+
+		$files = Session::newInstance()->_get('ajax_files');
 		if( $rs->numRows() > 0 ){
 			foreach( $rs as $user ){
-				if( $user['s_name'] !== osc_current_web_theme() 
+				if( $user['s_name'] !== osc_current_web_theme()
 						&& isset( $user['s_setting'] ) ){
-					
+
 					$file = explode('||', $user['s_setting']);
-					
+
 					if( isset($files[$file[0]])){
 						unset($files[$file[0]]);
 					}
-					
+
 					if( file_exists(LZO_DEMO_USER_PATH.$file[1]) ){
 						@unlink(LZO_DEMO_USER_PATH.$file[1]);
 					}
@@ -204,13 +267,26 @@ class OSCLztoModel extends DAO {
 			}
 		}
 		Session::newInstance()->_set('ajax_files', $files);
-		return $this->dao->delete($this->getTableName(), 'dt_updated < ADDTIME(NOW(), INTERVAL -1HOURS)');
+		return $this->dao->delete($this->getTableName(), 'dt_updated < DATE_SUB(CURDATE(),INTERVAL 1 HOUR)');
 	}
-	
+
+    /**
+     * Delete a user file
+     *
+     * @param $ip
+     * @param $name
+     * @return mixed
+     */
 	public function deleteUserFileByName($ip, $name){
 		return $this->dao->delete( $this->getTableName(), sprintf("s_ip = %s AND s_name = '%s'", $ip, $name ) );
 	}
-	
+
+    /**
+     * Reset current configurations
+     *
+     * @param null $ip
+     * @return bool|mixed
+     */
 	public function resetDb( $ip = null ){
 		if( defined('DEMO')){
 			return $this->deleteUserSettings($ip);
@@ -221,10 +297,13 @@ class OSCLztoModel extends DAO {
 		}
 	}
 	
-	
-	/***************************************************************
-	 * INSTALL & UNISTALL
-	 */
+
+    /**
+     * Install plugin
+     *
+     * @return bool
+     * @throws Exception
+     */
 	public function install(){
 		$path = osc_plugin_resource('lz_theme_options/struct.sql');
 		$sql = file_get_contents($path);
@@ -233,7 +312,13 @@ class OSCLztoModel extends DAO {
 		}
 		return true;
 	}
-	
+
+    /**
+     * Uninstall plugin
+     *
+     * @return bool
+     * @throws Exception
+     */
 	public function uninstall(){
 		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options\'');
 		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options_uploads\'');
@@ -244,7 +329,12 @@ class OSCLztoModel extends DAO {
 		}
 		return true;
 	}
-	
+
+    /**
+     * File error log
+     *
+     * @param $msg
+     */
 	protected function log( $msg )
 	{
 		$fd = fopen( $this->log_file, "a+" );

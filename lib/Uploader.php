@@ -1,23 +1,34 @@
 <?php
-
-
-class UploadHelper {
+/**
+ * Class Uploader
+ *
+ * Responsible to handle all Theme Options uploads
+ */
+class Uploader {
 
 	protected static $uploader;
-
 	protected static $thumb_width  = 250;
 	protected static $thumb_height = 150;
-	
+
+    /**
+     * Returns a instance of the AjaxUploader
+     *
+     * @param null $allowedExtensions
+     * @param null $sizeLimit
+     * @return AjaxUploader
+     */
 	protected static function getUploader($allowedExtensions = null, $sizeLimit = null){
 		if( !class_exists('AjaxUploader') ){
-			require_once(LIB_PATH."AjaxUploader.php");
+			require_once(LIB_PATH . "AjaxUploader.php");
 		}
 		return new AjaxUploader($allowedExtensions, $sizeLimit);
 	}
 
-	/**
-	 * Saves new uploaded files
-	 */
+    /**
+     * Saves a new file
+     *
+     * @return array
+     */
 	public static function saveFile(){
 
 		$field_name = Params::getParam('field_name');
@@ -77,9 +88,15 @@ class UploadHelper {
 		return 	$result = array('success' => false, 'message' => __('File already exists, try another file or change the filename.','lz_theme_options') );
 	}
 
-	/**
-	 * Saves the new file while it creates a thumbnail
-	 */
+    /**
+     * Saves & resize the a new file
+     *
+     * @param $field_name
+     * @param $group
+     * @param $uid
+     * @param $filename
+     * @return bool
+     */
 	protected function saveAndResize( $field_name, $group, $uid, $filename ){
 		
 		$path 		= LZO_UPLOAD_PATH;
@@ -102,9 +119,7 @@ class UploadHelper {
 			$current_file = osc_get_preference($pref_name,'lz_theme_options_uploads');
 			$saved = osc_set_preference( $pref_name, $uid.'||'.$filename, 'lz_theme_options_uploads', 'STRING' );
 		}
-		
-		
-		
+
 		if( $saved !== false ){
 			
 			if(!empty($current_file)){
@@ -141,17 +156,25 @@ class UploadHelper {
 		}
 		return false;
 	}
-	
-	/**
-	 * Gets a unique name for a new upload file
-	 */
+
+    /**
+     * Return a unique file name prefixed by "qqfile_"
+     *
+     * @param $ext
+     * @return string
+     */
 	protected static function getUniqueFileName($ext){
 		return uniqid("qqfile_").".".$ext;
 	}
-	
-	/**
-	 * Completly deletes the file from the database and filesystem
-	 */
+
+    /**
+     * Delete uploaded file
+     *
+     * @param $field_name
+     * @param $group
+     * @param null $uuid
+     * @return bool
+     */
 	public static function delete($field_name, $group, $uuid = null ){
 		try {
 			$path = LZO_UPLOAD_PATH;
@@ -204,29 +227,14 @@ class UploadHelper {
 		}
 		return true;
 	}
-	
-	/*
-	public function cleanUpFile($user_file){
-		
-		$file = explode('||', $user_file);
-		
-		if( file_exists(LZO_UPLOAD_PATH.$file[1]) ){
-			@unlink(LZO_DEMO_USER_PATH.$file[1]);
-		}
-		else if( file_exists(LZO_DEMO_USER_THUMB_PATH.$file[1]) ){
-			@unlink(LZO_DEMO_USER_THUMB_PATH.$file[1]);
-		}
-		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options\'');
-		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options_uploads\'');
-		
-		
-	}
-	*/
 
 
-	/**
-	 * get all uploads for the current template
-	 */
+    /**
+     * Return all uploads
+     *
+     * @param array $upload_fields
+     * @return array
+     */
 	public static function getFiles( $upload_fields = array() ){
 		
 		Preference::newInstance()->dao->select();
@@ -260,7 +268,12 @@ class UploadHelper {
 		}
 		return $results;
 	}
-	
+
+    /**
+     * Get demo user files
+     *
+     * @return array
+     */
 	public function getUserFiles(){
 		$user_files = OSCLztoModel::newInstance()->getUserUploads( DEMO_USER_IP );
 		if( false !== $user_files ){
@@ -273,12 +286,15 @@ class UploadHelper {
 		return array();
 	}
 
-	/**
-	 * Ajax funtion to load existing uploaded files
-	 */
+    /**
+     * Ajax funtion to load existing uploaded files
+     *
+     * @param $field_name
+     * @param $group
+     * @return array
+     */
 	public static function getFileByName($field_name, $group){
 		$results 	= array();
-		
 		$theme = osc_current_web_theme();
 
 		if( function_exists('lz_demo_selected_theme') ){
@@ -301,9 +317,6 @@ class UploadHelper {
 			$file = osc_get_preference( $theme.'_'.$group.'_'.$field_name, 'lz_theme_options_uploads' );
 		}
 
-
-
-
 		if( !empty( $file ) ){
 			$f 				 = explode( '||', $file );
 			$uid 		     = $f[0];
@@ -323,12 +336,15 @@ class UploadHelper {
 				}
 			}
 		}
+
 		return $results;
 	}
 
-	/**
-	 * Ajax funtion to load existing uploaded files in json format
-	 */
+    /**
+     * Ajax funtion to load existing uploaded files array
+     *
+     * @return array
+     */
 	public static function getFilesAsJson(){
 		if( Params::existParam('field_name') ){
 			$field_name = Params::getParam('field_name');

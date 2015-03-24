@@ -1,15 +1,45 @@
 <?php
 /**
- * Theme options - Options helper
+ * Theme Options Class
  *
  * @author Jmilanes
+ * @version 1.0
  */
-class OptionsHelper {
+class Options {
 
+    /**
+     * Groups array
+     *
+     * @var array
+     */
 	protected $groups             = array();
+
+    /**
+     * Fields array
+     *
+     * @var array
+     */
 	protected $fields             = array();
+
+    /**
+     * Database data array
+     *
+     * @var array|null
+     */
 	protected $db_data			  = array();
+
+    /**
+     * Uploaded files array
+     *
+     * @var array
+     */
 	protected $uploaded_files 	  = array();
+
+    /**
+     * Default values array
+     *
+     * @var array
+     */
 	protected $default_values  	  = array();
 
 	public function __construct( $options, $data = null ){
@@ -20,14 +50,17 @@ class OptionsHelper {
 		return $this->setOptions();
 	}
 
-	/**
-	 * Set options
-	 */
+    /**
+     * Set options
+     *
+     * @return bool
+     */
 	protected function setOptions(){
 		foreach( $this->options as $group_slug => $group ){
 			$this->groups[$group_slug] = $group['title'];
 			$this->setOptionsField( $group['fields'], $group_slug );
 		}
+
 		if( empty($this->db_data) ){
 			$this->db_data = $this->default_values;
 		}
@@ -105,14 +138,16 @@ class OptionsHelper {
 			case 'select':
 			case 'multipleSelect':
 			case 'colorSelector':
-			case 'textureSelector':
-			case 'countrySelector':
 			case 'regionSelector':
 			case 'citySelector':
-			case 'countrySelector':
+            case 'citySelector':
+            case 'countrySelector':
 			case 'googleFont':
 				$method = 'setOptionTypeOptions';
 				break;
+            case 'textureSelector':
+                $method = 'setOptionTypeTextureSelector';
+                break;
 			case 'toggleSwitch':
 				$method = 'setOptionTypeToggleSwitch';
 				break;
@@ -120,7 +155,7 @@ class OptionsHelper {
 				$method = 'setOptionTypeSlideRange';
 				break;
 			case 'ajaxFile':
-				$t =  UploadHelper::getFileByName( $title, $group_slug );
+				$t =  Uploader::getFileByName( $title, $group_slug );
 				if( !empty($t) ){
 					$this->addToUploaded( $title, $t, $group_slug, $group_parent );
 				}
@@ -352,19 +387,6 @@ class OptionsHelper {
 			}
 			return ( (isset($this->uploaded_files[$parent][$field]))? $this->uploaded_files[$parent][$field] : false );
 		}
-
-		/*
-		if( !is_null($group) ){
-			if( !isset( $this->uploaded_files[$group][$parent] )){
-				return false;
-			}
-			return ( in_array( $field, $this->uploaded_files[$group][$parent] ) )? $this->uploaded_files[$group][$parent][$field] : false;
-		}
-		if( !isset( $this->uploaded_files[$parent] )){
-			return false;
-		}
-		return ( array_key_exists( $field, $this->uploaded_files[$parent] ) )? $this->uploaded_files[$parent][$field] : false;
-		*/
 	}
 
 	/**
@@ -377,9 +399,33 @@ class OptionsHelper {
 	protected function setOptionTypeColorpicker( $type, $title, array $data, $group_slug, $group_parent = null ){
 		$data['id'] = 'colorpicker_id'; // id of the field * only used internally
 		$data['class'] = 'colorpicker colorpicker_class'; // class of the field * only used internally
-		$this->setOptionTypeText( 'text', $title, $data, $group_slug, $group_parent );
+		return $this->setOptionTypeText( 'text', $title, $data, $group_slug, $group_parent );
 
 	}
+
+    /**
+     * Creates a password input field
+     *
+     * @param $type
+     * @param $title
+     * @param array $data
+     * @param $group_slug
+     * @param null $group_parent
+     * @return bool
+     */
+    protected function setOptionTypePassword( $type = 'password', $title, array $data, $group_slug, $group_parent = null ){
+        return Lib\LZForm::getInstance( $group_slug )->addField( $title, 'password', array(
+            'id'			=> 'field_'.strtolower( $title ),
+            'class' 		=> 'text_field password '.@$data['class'],
+            'required' 		=> @$data['required'],
+            'label'			=> @$data['label'],
+            'max_length' 	=> @$data['max_length'],
+            'min_length' 	=> @$data['min_length'],
+            'alphanumeric' 	=> @$data['alphanumeric'],
+            'confirm' 	    => @$data['confirm'],
+            'placeholder'	=> @$data['placeholder']
+        ));
+    }
 
 	/**
 	 * Adds a text field to the form
@@ -398,9 +444,7 @@ class OptionsHelper {
 				'label'			=> @$data['label'],
 				'max_length' 	=> @$data['max_length'],
 				'min_length' 	=> @$data['min_length'],
-				//'value'			=> @$data['value'],
-				'placeholder'	=> @$data['placeholder'],
-                'filter'        => (isset($data['filter'])? (bool)$data['filter'] : true )
+				'placeholder'	=> @$data['placeholder']
 		));
 	}
 	
@@ -419,12 +463,9 @@ class OptionsHelper {
 				'class' 		=> 'text_field '.@$data['class'],
 				'required' 		=> @$data['required'],
 				'label'			=> @$data['label'],
-				//'max_length' 	=> @$data['max_length'],
-				//'min_length' 	=> @$data['min_length'],
 				'max' 			=> @$data['max'],
 				'min' 			=> @$data['min'],
 				'type' 			=> @$data['type'],
-				//'value'			=> @$data['value'],
 				'step'			=> @$data['step']
 		));
 	}
@@ -470,19 +511,50 @@ class OptionsHelper {
 	 * @param array $data
 	 */
 	protected function setOptionTypeOptions( $type, $title, array $data, $group_slug, $group_parent = null ){
-		return Lib\LZForm::getInstance( $group_slug )->addField( $title, $type, array(
-				'id'			=> 'field_'.strtolower( $title ),
-				'class' 		=> 'options_field '.@$data['class'],
-				'required' 		=> @$data['required'],
-				'label'			=> @$data['label'],
-				'false_values'  => array(),
-				'value'			=> @$data['value'],
-				'choices'       => @$data['choices'],
-				'false_values'  => @$data['false_values'],
-				'option_size'   => @$data['option_size']
-		));
+        $options = array_merge( array(
+            'id'			=> 'field_'.strtolower( $title ),
+            'required' 		=> false,
+            'label'			=> 'Default label',
+            'value'			=> null,
+            'choices'       => array(),
+            'false_values'  => array()
+        ), $data);
+        $options['class'] = @$options['class'].' options_field';
+		return Lib\LZForm::getInstance( $group_slug )->addField( $title, $type, $options);
 	}
-	
+
+    /**
+     * Creates a texture select field
+     *
+     * @param $type
+     * @param $title
+     * @param array $data
+     * @param $group_slug
+     * @param null $group_parent
+     * @return bool
+     */
+    protected function setOptionTypeTextureSelector($type, $title, array $data, $group_slug, $group_parent = null){
+        if( !is_array($data['choices']) || empty($data['choices']) ){
+            $path = WebThemes::newInstance()->getCurrentThemePath().$data['choices'];
+            if( file_exists($path) ){
+                $rel_dir = $data['choices'];
+                $dir = osc_themes_path().osc_current_web_theme().'/'.$rel_dir;
+                $allowed_extentions = array('png', 'jpeg', 'gif');
+                $dir = new DirectoryIterator($dir);
+                $data['choices'] = array();
+                foreach( $dir as $file ){
+                    if( $file->isFile() ){
+                        if( in_array( strtolower($file->getExtension()), $allowed_extentions ) ){
+                            $name = str_replace('.'.$file->getExtension(), '', $file->getFilename());
+                            $data['choices'][$name] = $rel_dir.'/'.$file->getFilename();
+                        }
+                    }
+                }
+            }
+        }
+        return $this->setOptionTypeOptions($type, $title, $data, $group_slug, $group_parent);
+    }
+
 	/**
 	 * Creates a toggleSwtch type of field
 	 *
@@ -492,6 +564,7 @@ class OptionsHelper {
 	 */
 	protected function setOptionTypeToggleSwitch( $type = 'checkbox', $title, array $data, $group_slug, $group_parent = null ){
 		$data['class'] = 'toggleSwitch';
+        $data['choices'] = array(1=>'');
 		$this->setOptionTypeOptions('checkbox', $title, $data, $group_slug, $group_parent);
 	}
 

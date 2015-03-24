@@ -1,9 +1,8 @@
 <?php
-//namespace Nibble\NibbleForms\Field;
-//use Nibble\NibbleForms\Useful;
+
 namespace Lib\Field;
 
-use Lib\Useful;
+use Lib\Utils;
 
 class Checkbox extends MultipleOptions
 {
@@ -17,13 +16,14 @@ class Checkbox extends MultipleOptions
         	    	
             $attributes = $this->getAttributeString($val);
             $field .= sprintf('<input type="checkbox" name="%5$s[%6$s][%1$s][]" id="%5$s_%6$s_%3$s" value="%2$s" %4$s class="%7$s"/>', 
-            		$name, 
-            		$key, 
-            		Useful::slugify($name) . '_' . Useful::slugify($key), 
-            		(is_array($value) && in_array((string) $key, $value) ? 'checked="checked"' : '') . $attributes['string'], 
-            		$form_name, 
-            		$group,
-					$this->attributes['class'] );
+                $name,
+                $key,
+                Utils::slugify($name) . '_' . Utils::slugify($key),
+                (is_array($value) && in_array((string) $key, $value) ? 'checked="checked"' : '') . $attributes['string'],
+                $form_name,
+                $group,
+                $this->attributes['class']
+            );
         }
         
         $class = !empty($this->error) ? 'error choice_label' : 'choice_label';

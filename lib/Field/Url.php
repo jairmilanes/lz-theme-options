@@ -2,7 +2,7 @@
 
 namespace Lib\Field;
 
-use Lib\Useful;
+use Lib\Utils;
 
 class Url extends Text
 {
@@ -14,7 +14,7 @@ class Url extends Text
             return false;
         }
         if (parent::validate($val)) {
-            if (Useful::stripper($val) !== false) {
+            if (Utils::stripper($val) !== false) {
                 if (!filter_var($val, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) {
                     $this->error[] = 'must be a valid URL';
                 }

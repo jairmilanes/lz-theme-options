@@ -3,17 +3,25 @@ namespace Lib\Field;
 
 class Html extends Text
 {
+    protected $allowed_tags;
 	public $field_type = 'textarea';
 	
     public function __construct($label, $attributes)
     {
-        parent::__construct($label, $attributes);
+        if(isset($attributes['allowed_tags'])){
+            $this->allowed_tags = $attributes['allowed_tags'];
+            unset($attributes['allowed_tags']);
+        } else {
+            $this->allowed_tags = '<a><b><i><br/><ul><ol><li>';
+        }
+
         if (!isset($attributes['rows'])) {
             $attributes['rows'] = 6;
         }
         if (!isset($attributes['cols'])) {
             $attributes['cols'] = 60;
         }
+        parent::__construct($label, $attributes);
     }
 
     public function returnField($form_name, $name, $value = '', $group = '')
@@ -30,7 +38,7 @@ class Html extends Text
     
     public function validate($val)
     {				
-    	$val = strip_tags( $val, '<a><b><i><br/><ul><ol><li>' );
+    	$val = strip_tags( $val, $this->allowed_tags );
     	return parent::validate($val);
     }
 

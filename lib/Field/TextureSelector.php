@@ -4,12 +4,16 @@ namespace Lib\Field;
 class TextureSelector extends Options
 {
 	protected $size;
-	public $field_type = 'textureselector';
+    public $field_type = 'textureselector';
 	
     public function __construct($label, array $attributes = array())
     {
+        $this->size = 'small';
+        if( isset($attributes['option_size']) ){
+            $this->size = $attributes['option_size'];
+        }
+        unset($attributes['option_size']);
         parent::__construct($label, $attributes);
-        $this->size = ( !isset( $attributes['option_size'] ))? 'small' : $attributes['option_size']; 
     }
 
     public function returnField($form_name, $name, $value = '', $group = '')

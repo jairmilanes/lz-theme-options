@@ -1,12 +1,10 @@
 <?php
+namespace Lib\Field;
 
-namespace Nibble\NibbleForms\Field;
-
-use Nibble\NibbleForms\Useful;
+use Lib\Utils;
 
 class Password extends Text
 {
-
     private $confirm = false;
     private $min_length = false;
     private $alphanumeric = false;
@@ -20,6 +18,9 @@ class Password extends Text
         if (isset($attributes['min_length'])) {
             $this->min_length = $attributes['min_length'];
         }
+        if (isset($attributes['max_length'])) {
+            $this->max_length = $attributes['max_length'];
+        }
     }
 
     public function validate($val)
@@ -28,9 +29,12 @@ class Password extends Text
             return false;
         }
         if (parent::validate($val)) {
-            if (Useful::stripper($val) !== false) {
+            if (Utils::stripper($val) !== false) {
                 if ($this->min_length && strlen($val) < $this->min_length) {
                     $this->error[] = sprintf('must be more than %s characters', $this->min_length);
+                }
+                if ($this->max_length && strlen($val) < $this->max_length) {
+                    $this->error[] = sprintf('must be less than %s characters', $this->max_length);
                 }
                 if ($this->alphanumeric && (!preg_match("/[A-Za-z]+/", $val) || !preg_match("/[0-9]+/", $val))) {
                     $this->error[] = 'must have at least one alphabetic character and one numeric character';

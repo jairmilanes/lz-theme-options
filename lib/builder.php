@@ -1,40 +1,23 @@
 <?php
-require dirname(__FILE__)."/lib/LZForm.php";
-require dirname(__FILE__)."/helpers/options.helper.php";
-require dirname(__FILE__)."/helpers/upload.helper.php";
-require dirname(__FILE__)."/model/OSCLztoModel.php";
-require dirname(__FILE__)."/lib/Useful.php";
-require dirname(__FILE__)."/lib/Field.php";
-require dirname(__FILE__)."/lib/Field/BaseOptions.php";
-require dirname(__FILE__)."/lib/Field/Options.php";
-require dirname(__FILE__)."/lib/Field/MultipleOptions.php";
-require dirname(__FILE__)."/lib/Field/Text.php";
-
 /**
  * Class Builder 
  * 
  * @author Jair Milanes Junior
  * @version 1.0
- *
  */
-
 class Builder {
 
-	/**
-	 * It references to self object: Builder.
-	 * It is used as a singleton
-	 *
-	 * @access private
-	 * @since 1.0
-	 * @var ModelProducts
-	 */
+    /**
+     * Builder instance
+     * @access private
+     * @var
+     */
 	private static $instance;
 	
 	/**
 	 * It is a instance of our form object
 	 * 
 	 * @access protected
-	 * @since 1.0
 	 */
 	protected $form;
 	
@@ -42,7 +25,6 @@ class Builder {
 	 * Instance of the options object
 	 * 
 	 * @access protected
-	 * @since 1.0
 	 */
 	protected $options;
 	
@@ -50,7 +32,6 @@ class Builder {
 	 * Log file path
 	 * 
 	 * @access protected
-	 * @since 1.0
 	 */
 	protected $log_file;
 
@@ -96,7 +77,6 @@ class Builder {
 	public function savePreset(){
 		
 		if( !osc_is_admin_user_logged_in() ){
-			//$this->log('Trying to save a preset with no admin logged in');
 			return 2;
 		}
 		
@@ -112,26 +92,23 @@ class Builder {
 			$data = array();
 		} 
 		
-		$uploads = UploadHelper::getFiles();
+		$uploads = Uploader::getFiles();
 		
 		if( count( $uploads ) > 0 ){
 			$data['uploads'] = $uploads;
 		}
 
 		if( empty($data) ){
-			//$this->log('No data to create a preset, save options at least one time before creating a preset.');
 			return 1;
 		}
 
 		$preset_json = json_encode($data);
-		
 		//chmod( LZO_UPLOAD_PATH , 0755);
 
 		if( $this->zipPreset( $preset_json, LZO_UPLOAD_PATH, $preset_name )  ){
-			//$this->log('New preset created, name: '.$preset_name.'.');
 			return 3;
 		}
-		//$this->log('Failed to save a new preset, name: '.$preset_name.'.');
+
 		return false;
 		
 	}
@@ -171,7 +148,7 @@ class Builder {
 			return $files;
 		}
 		return array('empty' => array(
-			'title' => _m('There is no presets, click below to create one.', 'lz_theme_options')
+			'title' => __('There is no presets, click below to create one.', 'lz_theme_options')
 		));
 	}
 	
@@ -278,7 +255,6 @@ class Builder {
 	    return true;
 	}
 
-
 	/***********************************************************************
 	 * FIELDS SETUP FUNCTIONS
 	 *********************************************************************/
@@ -292,7 +268,6 @@ class Builder {
 	public function setOptions( array $options ){
 		$data = null;
 
-        /// Load specific user theme options settings
 		if( lzto_isDemo() ){
 			$data = $this->getUserSettings();
 		}
@@ -309,7 +284,7 @@ class Builder {
 			$data = json_decode(json_encode($data), true);
 		}
 
-		$this->options = new OptionsHelper( $options, $data );
+		$this->options = new Options( $options, $data );
 		
 		if( empty( $data ) ){
 			$data = $this->options->getDefaults();
@@ -351,14 +326,15 @@ class Builder {
 	 * @return string|boolean Returns de s_setting string or false if feils to grab it.
 	 */
 	protected function getUserSettings(){
-		$rs = OSCLztoModel::newInstance()->getUserSettings(DEMO_USER_IP);
+
+        $rs = OSCLztoModel::newInstance()->getUserSettings(DEMO_USER_IP);
 		if( !empty($rs) ){
 			return $rs;
 		}
 
 		if( lzto_isDemo() ){
 			$settings = osc_get_preference(osc_current_web_theme(), 'lz_theme_options');
-			$files    = UploadHelper::getFiles();
+			$files    = Uploader::getFiles();
 			$user_settings = OSCLztoModel::newInstance()->createUserSettings( DEMO_USER_IP, $settings, $files );
 			if( false !== $user_settings ){
 				return $user_settings;
@@ -373,27 +349,35 @@ class Builder {
      * @param $ip
      * @return mixed
      */
-    protected function resetUserSettings($ip){
-        if( OSCLztoModel::newInstance()->deleteUserSettings($ip) ){
+    protected function resetUserSettings($ip)
+    {
+        if (OSCLztoModel::newInstance()->deleteUserSettings($ip)) {
             $settings = osc_get_preference(osc_current_web_theme(), 'lz_theme_options');
-            $files    = UploadHelper::getFiles();
-            $user_settings = OSCLztoModel::newInstance()->createUserSettings( DEMO_USER_IP, $settings, $files );
-            if( false !== $user_settings ){
+            $files = Uploader::getFiles();
+            $user_settings = OSCLztoModel::newInstance()->createUserSettings(DEMO_USER_IP, $settings, $files);
+            if (false !== $user_settings) {
                 return $user_settings;
             }
         }
         return OSCLztoModel::newInstance()->getUserSettings($ip);
     }
-	/**
-	 * Gets a new form instance
-	 */
+
+    /**
+     * Gets a new form instance
+     *
+     * @param $name
+     * @return \Lib\LZForm
+     */
 	protected function getSubForm( $name ){
 		return Lib\LZForm::getInstance( $name );
 	}
 
-	/**
-	 * Get all the available fields
-	 */
+    /**
+     * Get all fields from a group
+     *
+     * @param null $group
+     * @return mixed
+     */
 	public function getFields( $group = null ){
 		return $this->options->getFields($group);
 	}
@@ -438,16 +422,11 @@ class Builder {
 		$val = Lib\LZForm::getInstance($group_slug)->getFieldValue($field);
 		return ( !empty( $val )? $val : false );
 	}
-	
-	/***********************************************************************
-	 * ACTION METHODS
-	**********************************************************************/
 
 	/**
 	 * Saves theme options values
 	 */
 	public function save(){
-
 		$forms = $this->form->getAllInstances();
 
 		if ( count( $forms ) > 0 ){
@@ -486,27 +465,34 @@ class Builder {
 				}
 
 				$message = ( !$status )?
-				array('status' => false, 'errors' => _m('Could not save to database.', 'lz_theme_options') ) :
-				array('status' => true, 'message' => _m('Theme options updated!', 'lz_theme_options') );
+				array('status' => false, 'errors' => __('Could not save to database.', 'lz_theme_options') ) :
+				array('status' => true, 'message' => __('Theme options updated!', 'lz_theme_options') );
 
-				die( json_encode( $message ) );
-			}
-			die( json_encode( array('status' => false, 'message' => _m('There were some errors in the form.', 'lz_theme_options'), 'errors' => $errors ) ) );
-		}
+			} else {
+                $message = array('status' => false, 'message' => __('There were some errors in the form.', 'lz_theme_options'), 'errors' => $errors ) ;
+            }
 
-		die( json_encode( array('status' => false, 'errors' => _m('No forms found.', 'lz_theme_options') ) ) );
+		} else {
+            $message = array('status' => false, 'errors' => __('No forms found.', 'lz_theme_options') );
+        }
+
+		die( json_encode( $message ) );
 	}
 
-	/**
-	 * Validates form post values
-	 */
+    /**
+     * Validates form post values
+     *
+     * @return bool
+     */
 	public function validate(){
 		return $this->form->validate( Params::getParamsAsArray() );
 	}
 
-	/**
-	 * Resets the form to it's default values
-	 */
+    /**
+     * Resets the form to it's default values
+     *
+     * @return bool
+     */
 	public function resetOptions(){		
 		$ip = ( lzto_isDemo() )? DEMO_USER_IP : null;
 		$rs = OSCLztoModel::newInstance()->resetDb($ip);
@@ -521,14 +507,11 @@ class Builder {
 		return false;
 	}
 
-	/*********************************************************************
-	 * AJAX UPLOADING CRUD FUNCTIONS
-	**********************************************************************/
 	/**
 	 * Saves new uploaded files
 	 */
 	public function saveUpload(){
-		$result = UploadHelper::saveFile();
+		$result = Uploader::saveFile();
 		die( htmlspecialchars( json_encode($result), ENT_NOQUOTES) );
 	}
 
@@ -539,7 +522,7 @@ class Builder {
 		$filename = Params::getParam('field_name');
 		$group    = Params::getParam('group');
 		$uuid     = Params::getParam('qquuid');
-		$success  = UploadHelper::delete( $filename, $group, $uuid );
+		$success  = Uploader::delete( $filename, $group, $uuid );
 		die( json_encode( array( 'success' => $success, 'uuid' => $uuid, 'deletedFile' => $filename ) ) );
 	}
 
@@ -547,33 +530,38 @@ class Builder {
 	 * get all uploads for the current template
 	 */
 	public function getAllUploadFiles(){
-		return UploadHelper::getFiles();
-	}
-
-	/**
-	 * Ajax funtion to load existing uploaded files
-	 */
-	protected function getUploadFileByName($field_name){
-		$result = UploadHelper::getFileByName( $field_name );
-		return $result;
+		return Uploader::getFiles();
 	}
 
 	/**
 	 * Ajax funtion to load existing uploaded files in json format
 	 */
 	public function getUploadFilesAsJson(){
-		$result = UploadHelper::getFilesAsJson();
+		$result = Uploader::getFilesAsJson();
 		die( json_encode( $result ) );
 	}
-
-
-
 
 	/**********************************************************************
 	 * RENDERING FUNCTIONS
 	**********************************************************************/
+
+    /**
+     * Build options menu
+     */
+    public function renderGroup( $fields, $parent, $group = null ){
+        foreach(  $fields as $par => $field ){
+            // we are in a group
+            if( is_array($field) ){
+                $this->renderGroup( $field, $par, $parent );
+            }
+            // this is a single field
+            else {
+                echo $this->renderField( $field, $parent, $group );
+            }
+        }
+    }
 	/**
-	 * Render the form fields given it�s name
+	 * Render the form fields given it's name
 	 *
 	 * @param string $field Name of the field
 	 * @param string $parent Name of the field parent
@@ -588,36 +576,22 @@ class Builder {
 		return false;
 	}
 
-	/**
-	 * Open form for rendering
-	 */
+    /**
+     * Open form tag render
+     *
+     * @return mixed
+     */
 	public function openForm(){
 		return $this->form->openForm();
 	}
 
-	/**
-	 * Close form for rendering
-	 */
+    /**
+     * Close form tag render
+     *
+     * @return mixed
+     */
 	public function closeForm(){
 		return $this->form->closeForm();
-	}
-
-
-	/**********************************************************************
-	 * SYSTEM FUNCTIONS
-	**********************************************************************/
-	/**
-	 * Install LZTO
-	 */
-	public function install(){
-		return OSCLztoModel::newInstance()->install();
-	}
-
-	/**
-	 * Uninstall LZTO
-	 */
-	public function uninstall(){
-		return OSCLztoModel::newInstance()->uninstall();
 	}
 
 	
@@ -640,25 +614,19 @@ class Builder {
 			return false;
 		}
 		$preset_name = strtolower( implode('_', explode(' ', $preset_name) ) );
-		//$this->log('PRESET NAME '.$preset_name);
-		
-		//$this->log('PRESETS PATH EXISTS '.file_exists(LZO_PRESETS_PATH));
+
 		if( !file_exists(LZO_PRESETS_PATH) ){
 			mkdir(LZO_PRESETS_PATH);
 		}
 		
 		$destination = LZO_PRESETS_PATH.'preset-'.$preset_name.'.zip';
-		//$this->log('DESTINATION PATH '.$destination);
-		
-		//$this->log('JSON PATH '.$source.'preset.json');
-		//$this->log('JSON EXISTS "'.file_exists( $source.'preset.json' ).'"');
+
 		if( file_exists( $source.'preset.json' ) ){
 			unlink($source.'preset.json');
 		}
-		
-		//$this->log('EXTENTION CHECK "'.(extension_loaded('zip') === true).'"');
+
 		$file_put_contents = file_put_contents($source.'preset.json', $json);
-		//$this->log('PUT CONTENTS CHECK "'.($file_put_contents).'"');
+
 	    if ( extension_loaded('zip') === true &&  $file_put_contents )
 	    {
 	        if (file_exists($source) === true)
@@ -741,3 +709,18 @@ class Builder {
 		fclose($fd);
 	}
 }
+
+/** Loading system **/
+require_once dirname(__FILE__) . "/Autoloader.php";
+require_once dirname(__FILE__) . "/LZForm.php";
+require_once dirname(__FILE__) . "/Options.php";
+require_once dirname(__FILE__) . "/Uploader.php";
+require_once dirname(__FILE__) . "/Utils.php";
+require_once dirname(__FILE__) . "/../model/OSCLztoModel.php";
+
+/** Loading helpers **/
+require_once dirname(__FILE__) . "/../helpers/admin.php";
+require_once dirname(__FILE__) . "/../helpers/presets.php";
+require_once dirname(__FILE__) . "/../helpers/uploads.php";
+require_once dirname(__FILE__) . "/../helpers/utils.php";
+

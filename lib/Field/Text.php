@@ -3,7 +3,7 @@
 namespace Lib\Field;
 
 use Lib\Field;
-use Lib\Useful;
+use Lib\Utils;
 
 class Text extends Field
 {
@@ -62,11 +62,11 @@ class Text extends Field
     public function validate($val)
     {
         if ($this->required) {
-            if (Useful::stripper($val) === false) {
+            if (Utils::stripper($val) === false) {
                 $this->error[] = 'is required';
             }
         }
-        if (Useful::stripper($val) !== false) {
+        if (Utils::stripper($val) !== false) {
             if (!preg_match($this->content, $val)) {
                 $this->error[] = 'is not valid';
             }

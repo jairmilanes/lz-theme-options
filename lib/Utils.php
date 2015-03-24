@@ -2,7 +2,7 @@
 
 namespace Lib;
 
-class Useful
+class Utils
 {
 
     /**
@@ -51,7 +51,13 @@ class Useful
 
         return $return;
     }
-    
+
+    /**
+     * Convert html2txt
+     *
+     * @param $document
+     * @return mixed
+     */
     public static function html2txt($document){
     	$search = array('@<script[^>]*?>.*?</script>@si',  // Strip out javascript
     			'@<[\/\!]*?[^<>]*?>@si',            // Strip out HTML tags
