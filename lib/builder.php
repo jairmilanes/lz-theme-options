@@ -275,11 +275,12 @@ class Builder {
 		if( empty($data) ){
 			$data    = osc_get_preference( osc_current_web_theme(), 'lz_theme_options' );
 		}
+
 		
 		if( !empty($data)){
 			$data = unserialize($data);
 		}
-		
+
 		if( is_object($data)){
 			$data = json_decode(json_encode($data), true);
 		}

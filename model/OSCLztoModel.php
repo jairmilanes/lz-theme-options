@@ -338,7 +338,7 @@ class OSCLztoModel extends DAO {
 	protected function log( $msg )
 	{
 		$fd = fopen( $this->log_file, "a+" );
-		$str = "[" . date("Y/m/d h:i:s", mktime()) . "] " . $msg;
+		$str = "[" . date("Y/m/d h:i:s", time()) . "] " . $msg;
 		fwrite($fd, $str . "\r\n\r\n");
 		fclose($fd);
 	}

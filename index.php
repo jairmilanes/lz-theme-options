@@ -31,7 +31,7 @@ if( lzto_isDemo() ){
     }
 }
 
-define('ENABLE_FRONTEND_OPTIONS_PANEL', false);
+define('ENABLE_FRONTEND_OPTIONS_PANEL', false); // UNDER DEVELOPMENT
 
 /**
  * Load Lz Theme Options
@@ -53,6 +53,7 @@ function lzto_init(){
     if(!file_exists( $file )){
         osc_add_flash_error_message('Theme options.php file not found! If your theme does not use Lz Theme Options plugin please disabled it to avoid conflicts with your theme.','admin');
     } else {
+
         require_once $file;
         if( function_exists( $options_method ) ){
             $theme_options = Builder::newInstance()->setOptions( $options_method() );
@@ -129,6 +130,7 @@ function lzto_getSwitchOption( $group, $field ){
  */
 function lzto_getGoogleFont($group, $name ){
     $font_uri = lzto_getOption($group, $name);
+
     if( !empty($font_uri) ){
         parse_str(html_entity_decode($font_uri), $parsed);
 
