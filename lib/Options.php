@@ -444,7 +444,8 @@ class Options {
 				'label'			=> @$data['label'],
 				'max_length' 	=> @$data['max_length'],
 				'min_length' 	=> @$data['min_length'],
-				'placeholder'	=> @$data['placeholder']
+				'placeholder'	=> @$data['placeholder'],
+                'filter'        => @$data['filter']
 		));
 	}
 	

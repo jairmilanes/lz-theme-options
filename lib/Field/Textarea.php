@@ -7,6 +7,7 @@ class Textarea extends Text
 	
     public function __construct($label, $attributes)
     {
+        //var_dump($attributes);
         parent::__construct($label, $attributes);
         if (!isset($attributes['rows'])) {
             $attributes['rows'] = 6;

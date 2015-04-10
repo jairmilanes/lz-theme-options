@@ -286,7 +286,7 @@ class Builder {
 		}
 
 		$this->options = new Options( $options, $data );
-		
+
 		if( empty( $data ) ){
 			$data = $this->options->getDefaults();
 			$data = array_filter($data);

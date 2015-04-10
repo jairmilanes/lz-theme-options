@@ -157,6 +157,10 @@ function lzto_db_reset(){
 osc_add_hook( 'cron_hourly', 'lzto_db_reset');
 
 
+
+
+
+
 /*************************************************************
  * HOOKS
  ************************************************************/
@@ -168,5 +172,3 @@ osc_add_hook( 'admin_menu', 									'lzto_admin_menu');
 osc_add_hook( 'admin_menu_init', 								'lzto_admin_menu_init');
 osc_add_hook( 'add_admin_toolbar_menus', 						'lzto_admin_toolbar_menus');
 osc_add_hook('admin_page_header',                               'lzto_admin_menu_icon',9);
-osc_register_plugin( osc_plugin_path( __FILE__ ),               'lzto_install' );
-osc_add_hook( osc_plugin_path( __FILE__ ) . '_uninstall',       'lzto_uninstall' );

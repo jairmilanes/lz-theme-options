@@ -23,6 +23,8 @@ class OSCLztoModel extends DAO {
      */
 	protected $log_file;
 
+
+    protected $user_options_table;
     /**
      * Construct
      */
@@ -34,15 +36,12 @@ class OSCLztoModel extends DAO {
 		$this->setFields(array('s_ip', 's_name', 's_settings'));
 		
 	}
-	
-	/**
-	 * It creates a new ModelProducts object class ir if it has been created
-	 * before, it return the previous object
-	 *
-	 * @access public
-	 * @since 3.0
-	 * @return ModelProducts
-	 */
+
+    /**
+     * OSCLztoModel new instance
+     *
+     * @return OSCLztoModel
+     */
 	public static function newInstance(){
 		if( !self::$instance instanceof self ) {
 			self::$instance = new self;
@@ -322,7 +321,7 @@ class OSCLztoModel extends DAO {
 	public function uninstall(){
 		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options\'');
 		Preference::newInstance()->dao->delete(Preference::newInstance()->getTableName(),'s_section = \'lz_theme_options_uploads\'');
-		$this->dao->query(sprintf('DROP TABLE IF EXISTS %s', $this->getTableName() ));
+		$this->dao->query(sprintf('DROP TABLE %s', $this->getTableName() ));
 		$error_num = $this->dao->getErrorLevel() ;
 		if( $error_num > 0 ) {
 			throw new Exception($this->dao->getErrorLevel().' - '.$this->dao->getErrorDesc());

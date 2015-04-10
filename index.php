@@ -3,14 +3,14 @@
 	Plugin Name: LZThemeOptions
 	Plugin URI: http://www.layoutz.com.br/
 	Description: Theme options plugin, allows a developer to include theme options with ease.
-	Version: 1.0
+	Version: 1.4.0
 	Author: Jair Milanes Junior
 	Author URI: http://www.layoutz.com.br/
 	Short Name: lzto
 	Plugin update URI: lzto
 */
 
-require dirname(__FILE__) . '/lib/Builder.php';
+require dirname(__FILE__) . '/Lib/Builder.php';
 
 define( 'LZO_UPLOAD_PATH', UPLOADS_PATH.'lz_theme_options/' );
 define( 'LZO_THUMB_PATH', LZO_UPLOAD_PATH.'thumbnails/' );
@@ -51,7 +51,8 @@ function lzto_init(){
     $file = osc_themes_path().$theme.'/options.php';
 
     if(!file_exists( $file )){
-        osc_add_flash_error_message('Theme options.php file not found! If your theme does not use Lz Theme Options plugin please disabled it to avoid conflicts with your theme.','admin');
+        return;
+        //osc_add_flash_error_message('Theme options.php file not found! If your theme does not use Lz Theme Options plugin please disabled it to avoid conflicts with your theme.','admin');
     } else {
 
         require_once $file;
@@ -116,7 +117,7 @@ function lzto_getOption( $group, $field ){
 function lzto_getSwitchOption( $group, $field ){
     $option = Builder::newInstance()->getOption( $group, $field );
     if( is_array($option) ){
-        return (boolval($option[0]));
+        return (bool)($option[0]);
     }
     return false;
 }
@@ -165,6 +166,10 @@ function lzto_hasOption($form, $field){
     return Builder::newInstance()->hasOption($form, $field);
 }
 
+
+
 osc_add_hook( 'init', 'lzto_init', 0 );
+osc_register_plugin( osc_plugin_path( __FILE__ ),               'lzto_install' );
+osc_add_hook( osc_plugin_path( __FILE__ ) . '_uninstall',       'lzto_uninstall' );
 
 
