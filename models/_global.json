@@ -5,9 +5,10 @@
   },
   "urls": {
     "base": "http://layoutzweb.github.io/lz-theme-options/",
+    "base_dev": "http://layoutzweb.github.io/lz-theme-optionss/",
     "store": "http://layoutz.com.br",
-    "store_themes": "http://layoutz.com.br/cms-themes-templates/",
-    "store_plugins": "http://layoutz.com.br/cms-plugins/",
+    "store_themes": "http://layoutz.com.br/downloads/category/osclass/themes/",
+    "store_plugins": "http://layoutz.com.br/downloads/category/osclass/plugins/",
     "blog": "http://jmilanes.ninja/",
     "github": "https://github.com/layoutzweb/lz-theme-options",
     "issues": "https://github.com/layoutzweb/lz-theme-options/issues",
